@@ -1,0 +1,5 @@
+#Install the files required by SMARTS
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Albedo  ${CMAKE_CURRENT_SOURCE_DIR}/CIE_data  
+  ${CMAKE_CURRENT_SOURCE_DIR}/Gases  ${CMAKE_CURRENT_SOURCE_DIR}/Solar
+  DESTINATION share/smarts)
+  

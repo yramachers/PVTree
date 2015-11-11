@@ -1,0 +1,52 @@
+# Current defaults for plastic material
+material:
+{
+   name = "pv-plastic";
+   version = 1;
+   density = 1.45; # g/cm3, on the high end of rigid PVC densities
+   state = "solid"; # undefined, solid, liquid, gas 
+
+   # Using some nice PVC
+   composition:
+   {
+	elements = ( { name = "C";
+		       atomNumber = 2;
+                     }, 
+                     { name = "H"; 
+		       atomNumber = 3;
+		     },
+		     { name = "Cl";
+		       atomNumber = 1;
+		     }
+                   );
+   };
+
+   # For material properties that vary with energy
+   # Should cover maximum range allowed by SMARTS (280nm-4000nm)
+   defaultPhotonEnergies = ( 0.3, 4.5 ); #eV
+
+   # Material properties table
+   # Units need to be the default (e.g. mm for length, MeV for energy)
+   properties = ( { name = "ABSLENGTH";
+		    values = ( 1E-6, 1E-6 ); 
+		  }
+		);
+
+   # Surface optical configuration
+   surface:
+   {
+	type = "dielectric_dielectric";
+	finish = "ground";
+	model = "unified";
+
+   	defaultPhotonEnergies = ( 0.3, 4.5 ); #eV
+	properties = ( { name = "REFLECTIVITY";
+		         values = ( 0.1, 0.1 );
+		       },
+		       { name = "EFFICIENCY";
+		         values = ( 0.0, 0.0 );
+		       }
+		     );
+   };
+};
+

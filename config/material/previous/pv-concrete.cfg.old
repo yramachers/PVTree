@@ -1,0 +1,39 @@
+# Current defaults for concrete material
+material:
+{
+   name = "pv-concrete";
+   version = 1;
+   density = 2.3; # g/cm3
+   state = "solid"; # undefined, solid, liquid, gas 
+
+   composition:
+   {
+	baseMaterial = "G4_CONCRETE";
+   };
+
+   # For material properties that vary with energy
+   # Should cover maximum range allowed by SMARTS (280nm-4000nm)
+   defaultPhotonEnergies = ( 0.3, 4.5 ); #eV
+
+   # Material properties table
+   # Units need to be the default (e.g. mm for length, MeV for energy)
+   properties = ( { name = "ABSLENGTH";
+		    values = ( 1.0E-3, 1.0E-3 ); 
+		  }
+		);
+
+   # Surface optical configuration
+   surface:
+   {
+	type = "dielectric_dielectric";
+	finish = "groundfrontpainted";
+	model = "unified";
+
+   	defaultPhotonEnergies = ( 0.3, 4.5 ); #eV
+	properties = ( { name = "REFLECTIVITY";
+		         values = ( 0.0, 0.0 );
+		       }
+		     );
+   };
+};
+
