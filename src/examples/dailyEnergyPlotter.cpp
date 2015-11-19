@@ -170,8 +170,32 @@ int main(int argc, char** argv) {
     leaf = LeafFactory::instance()->getLeaf(leafType);
   } else {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    TList* structureList = (TList*)inputTreeFile.Get("testedStructures");
+    TIter structureListIterator(structureList);
+    
+    if ( structureList->GetSize() == 0 ){
+      std::cout << "There are no trees to consider." << std::endl;
+      return 1;
+    }
+    double area;
+    double energy;
+    double eff;
+    double besteff = 0.0;
+    while (YearlyResult* currentStructure = (YearlyResult*)structureListIterator()) {
+      TreeConstructionInterface* clonedT = currentStructure->getTree();
+      LeafConstructionInterface* clonedL = currentStructure->getLeaf();;
+      area = clonedT->getDoubleParameter("sensitiveArea");
+      energy = clonedT->getDoubleParameter("totalEnergy");
+      eff = energy / area;
+      if (eff > besteff) { // book best tree
+	tree          = std::shared_ptr<TreeConstructionInterface>( clonedT);
+	leaf          = std::shared_ptr<LeafConstructionInterface>( clonedL);
+	besteff = eff;
+	std::cout << "RETRIEVE: got total energy = " << energy << " eff: " << eff << std::endl;
+      }
+    }
+    //    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
+    //    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
     inputTreeFile.Close();
   }
 
@@ -265,6 +289,8 @@ int main(int argc, char** argv) {
       // Re-initialize the detector geometry
       G4bool destroyFirst;
       runManager->ReinitializeGeometry(destroyFirst = true);
+
+      runManager->Initialize();
     }
 
     if ( x % 50 == 0 ){
@@ -303,6 +329,8 @@ int main(int argc, char** argv) {
 
       totalEnergy += totalRunEnergy;
     }
+    std::cout << "SIM: got total energy = " << totalEnergy << std::endl;
+    std::cout << "SIM: sensitive area = " << currentSensitiveArea << std::endl;
 
     // Now fill the graph
     for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {

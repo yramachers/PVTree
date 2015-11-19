@@ -63,31 +63,31 @@ double offsetToRootTime(time_t currentTime) {
   return difftime(currentTime, rootStartTime);
 }
 
-void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs, 
+void  createSummaryCanvas(TGraphAsymmErrors& graphs, 
 			  std::string canvasName, 
 			  std::string xAxisTitle, 
 			  std::string yAxisTitle) {
 
-  if (graphs.size() < 1){
+//   if (graphs.size() < 1){
     // Don't do anything.
-    return;
-  }
+//     return;
+//   }
 
   TCanvas canvas(canvasName.c_str(), "");
 
   // Draw first graph
-  graphs[0].Draw("AL");
-  graphs[0].GetXaxis()->SetTitle(xAxisTitle.c_str());
-  graphs[0].GetYaxis()->SetTitle(yAxisTitle.c_str());
-  graphs[0].SetLineColorAlpha(kRed-2, 0.01);
-  graphs[0].GetXaxis()->SetTimeDisplay(1);
-  graphs[0].GetXaxis()->SetTimeFormat("%d/%m/%Y");
+  graphs.Draw("AL");
+  graphs.GetXaxis()->SetTitle(xAxisTitle.c_str());
+  graphs.GetYaxis()->SetTitle(yAxisTitle.c_str());
+  graphs.SetLineColorAlpha(kRed-2, 0.01);
+  graphs.GetXaxis()->SetTimeDisplay(1);
+  graphs.GetXaxis()->SetTimeFormat("%d/%m/%Y");
  
   // Repeat for other graphs
-  for (unsigned int g = 1; g < graphs.size(); g++){
-    graphs[g].SetLineColorAlpha(kRed-2, 0.01);
-    graphs[g].Draw("SAMEL");
-  }
+//   for (unsigned int g = 1; g < graphs.size(); g++){
+//     graphs[g].SetLineColorAlpha(kRed-2, 0.01);
+//     graphs[g].Draw("SAMEL");
+//   }
 
   // Save to disk
   canvas.Update();
@@ -389,9 +389,9 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
 //   TIter scanIterator(scanResults);
 
   // Store a TGraph for each tree
-  std::vector<TGraphAsymmErrors> energyGraphs; 
-  std::vector<TGraphAsymmErrors> normalizedEnergyGraphs; 
-  std::vector<TGraphAsymmErrors> energyDensityGraphs;
+//   std::vector<TGraphAsymmErrors> energyGraphs; 
+//   std::vector<TGraphAsymmErrors> normalizedEnergyGraphs; 
+//   std::vector<TGraphAsymmErrors> energyDensityGraphs;
 
   // For monthly integrations
   std::vector<TGraphAsymmErrors> monthlyEnergyDensityGraphs;
@@ -434,7 +434,7 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
   currentMonthlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
   
   TGraphAsymmErrors currentYearlyEnergyDensityGraph;
-  graphName = "monthlyEnergyDensityGraph_tree";
+  graphName = "yearlyEnergyDensityGraph_tree";
   currentYearlyEnergyDensityGraph.SetName(graphName.c_str());
   currentYearlyEnergyDensityGraph.SetTitle("");
   currentYearlyEnergyDensityGraph.GetXaxis()->SetTitle("Year");
@@ -445,7 +445,10 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
   double currentSensitiveArea         = currentStructure->getTree()->getDoubleParameter("sensitiveArea");
   std::vector<time_t> dayTimes        = currentStructure->getDayTimes();
   std::vector<double> energyDeposited = currentStructure->getEnergyDeposited();
-  double totalYearEnergySum           = currentStructure->getEnergyIntegral();
+  double totalYearEnergySum           = currentStructure->getTree()->getDoubleParameter("totalEnergy");
+  std::cout << "Got info: totalYearEnergySum = " << totalYearEnergySum << std::endl;
+  std::cout << "Got info: energy deposited size = " << energyDeposited.size() << std::endl;
+  std::cout << "Got info: sensitive area = " << currentSensitiveArea << std::endl;
   
   // Check if the sensitive area is large enough
   //     if (currentSensitiveArea <= minimumSensitiveArea){
@@ -460,6 +463,7 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
 //   }
   
   // Fill graphs with days which have all simulated days
+  std::cout << "Got info: day times size = " << dayTimes.size() << std::endl;
   for (unsigned int d=0; d<dayTimes.size(); d++) {
     
     // Add the point to the graph
@@ -470,6 +474,7 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
     currentEnergyGraph.SetPoint(nextPointIndex,           rootTime, energyDeposited[d]);
     currentNormalizedEnergyGraph.SetPoint(nextPointIndex, rootTime, energyDeposited[d]/totalYearEnergySum);
     currentEnergyDensityGraph.SetPoint(nextPointIndex,    rootTime, energyDeposited[d]/currentSensitiveArea);
+    std::cout << "Point set: " << rootTime << " energy: " << energyDeposited[d] << std::endl;
   }
   
   // Fill integrated monthly graphs
@@ -479,78 +484,78 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName){
   fillGraphWithIntegratedYear(currentYearlyEnergyDensityGraph, currentStructure);
   
   // Store for later writing.
-  energyGraphs.push_back(currentEnergyGraph);
-  normalizedEnergyGraphs.push_back(currentNormalizedEnergyGraph);
-  energyDensityGraphs.push_back(currentEnergyDensityGraph); 
-  monthlyEnergyDensityGraphs.push_back(currentMonthlyEnergyDensityGraph);
-  yearlyEnergyDensityGraphs.push_back(currentYearlyEnergyDensityGraph);
+//   energyGraphs.push_back(currentEnergyGraph);
+//   normalizedEnergyGraphs.push_back(currentNormalizedEnergyGraph);
+//   energyDensityGraphs.push_back(currentEnergyDensityGraph); 
+//   monthlyEnergyDensityGraphs.push_back(currentMonthlyEnergyDensityGraph);
+//   yearlyEnergyDensityGraphs.push_back(currentYearlyEnergyDensityGraph);
   
   //     delete currentStructure;
 
   // Store the average of all the trees
-  TGraphAsymmErrors averageTreeEnergyGraph;
-  TGraphAsymmErrors averageTreeNormalizedEnergyGraph;
-  TGraphAsymmErrors averageTreeEnergyDensityGraph;
-  TGraphAsymmErrors averageTreeMonthlyEnergyDensityGraph;
-  TGraphAsymmErrors averageTreeYearlyEnergyDensityGraph;
+//   TGraphAsymmErrors averageTreeEnergyGraph;
+//   TGraphAsymmErrors averageTreeNormalizedEnergyGraph;
+//   TGraphAsymmErrors averageTreeEnergyDensityGraph;
+//   TGraphAsymmErrors averageTreeMonthlyEnergyDensityGraph;
+//   TGraphAsymmErrors averageTreeYearlyEnergyDensityGraph;
 
   // Setup the average graph properties
-  averageTreeEnergyGraph.SetName("averageTreeEnergyGraph");
-  averageTreeEnergyGraph.SetTitle("");
-  averageTreeEnergyGraph.GetXaxis()->SetTitle("Time");
-  averageTreeEnergyGraph.GetYaxis()->SetTitle("Energy [kWh]");
-  averageTreeEnergyGraph.GetXaxis()->SetTimeDisplay(1);
-  averageTreeEnergyGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
+//   averageTreeEnergyGraph.SetName("averageTreeEnergyGraph");
+//   averageTreeEnergyGraph.SetTitle("");
+//   averageTreeEnergyGraph.GetXaxis()->SetTitle("Time");
+//   averageTreeEnergyGraph.GetYaxis()->SetTitle("Energy [kWh]");
+//   averageTreeEnergyGraph.GetXaxis()->SetTimeDisplay(1);
+//   averageTreeEnergyGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
 
-  averageTreeNormalizedEnergyGraph.SetName("averageTreeNormalizedEnergyGraph");
-  averageTreeNormalizedEnergyGraph.SetTitle("");
-  averageTreeNormalizedEnergyGraph.GetXaxis()->SetTitle("Time");
-  averageTreeNormalizedEnergyGraph.GetYaxis()->SetTitle("Fractional Energy");
-  averageTreeNormalizedEnergyGraph.GetXaxis()->SetTimeDisplay(1);
-  averageTreeNormalizedEnergyGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
+//   averageTreeNormalizedEnergyGraph.SetName("averageTreeNormalizedEnergyGraph");
+//   averageTreeNormalizedEnergyGraph.SetTitle("");
+//   averageTreeNormalizedEnergyGraph.GetXaxis()->SetTitle("Time");
+//   averageTreeNormalizedEnergyGraph.GetYaxis()->SetTitle("Fractional Energy");
+//   averageTreeNormalizedEnergyGraph.GetXaxis()->SetTimeDisplay(1);
+//   averageTreeNormalizedEnergyGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
 
-  averageTreeEnergyDensityGraph.SetName("averageTreeEnergyDensityGraph");
-  averageTreeEnergyDensityGraph.SetTitle("");
-  averageTreeEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
-  averageTreeEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
-  averageTreeEnergyDensityGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
+//   averageTreeEnergyDensityGraph.SetName("averageTreeEnergyDensityGraph");
+//   averageTreeEnergyDensityGraph.SetTitle("");
+//   averageTreeEnergyDensityGraph.GetXaxis()->SetTitle("Time");
+//   averageTreeEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+//   averageTreeEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
+//   averageTreeEnergyDensityGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
 
-  averageTreeMonthlyEnergyDensityGraph.SetName("averageTreeMonthlyEnergyDensityGraph");
-  averageTreeMonthlyEnergyDensityGraph.SetTitle("");
-  averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeMonthlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
-  averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
-  averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
+//   averageTreeMonthlyEnergyDensityGraph.SetName("averageTreeMonthlyEnergyDensityGraph");
+//   averageTreeMonthlyEnergyDensityGraph.SetTitle("");
+//   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
+//   averageTreeMonthlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+//   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
+//   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
 
-  averageTreeYearlyEnergyDensityGraph.SetName("averageTreeYearlyEnergyDensityGraph");
-  averageTreeYearlyEnergyDensityGraph.SetTitle("");
-  averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeYearlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
-  averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
-  averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
+//   averageTreeYearlyEnergyDensityGraph.SetName("averageTreeYearlyEnergyDensityGraph");
+//   averageTreeYearlyEnergyDensityGraph.SetTitle("");
+//   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
+//   averageTreeYearlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+//   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
+//   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
 
   // Create the averages from previously filled graphs
-  createAverageGraph(averageTreeEnergyGraph,           energyGraphs);
-  createAverageGraph(averageTreeNormalizedEnergyGraph, normalizedEnergyGraphs);
-  createAverageGraph(averageTreeEnergyDensityGraph,    energyDensityGraphs);
-  createAverageGraph(averageTreeMonthlyEnergyDensityGraph,    monthlyEnergyDensityGraphs);
-  createAverageGraph(averageTreeYearlyEnergyDensityGraph,    yearlyEnergyDensityGraphs);
+//   createAverageGraph(averageTreeEnergyGraph,           energyGraphs);
+//   createAverageGraph(averageTreeNormalizedEnergyGraph, normalizedEnergyGraphs);
+//   createAverageGraph(averageTreeEnergyDensityGraph,    energyDensityGraphs);
+//   createAverageGraph(averageTreeMonthlyEnergyDensityGraph,    monthlyEnergyDensityGraphs);
+//   createAverageGraph(averageTreeYearlyEnergyDensityGraph,    yearlyEnergyDensityGraphs);
 
   // Prepare a root file to store the results
   TFile resultsFile(outputFileName.c_str(), "RECREATE");
 
   // Make a canvas combining all the plots in one summary graphic
-  createSummaryCanvas(energyGraphs,           "energySummaryCanvas",     "Time", "Energy per day[kWh/day]");
-  createSummaryCanvas(normalizedEnergyGraphs, "normalizedSummaryCanvas", "Time", "Fractional Energy per day");
-  createSummaryCanvas(energyDensityGraphs,    "energyDensityCanvas",     "Time", "Energy density per day [kWhm^{-2}/day]");
+  createSummaryCanvas(currentEnergyGraph,           "energySummaryCanvas",     "Time", "Energy per day[kWh/day]");
+  createSummaryCanvas(currentNormalizedEnergyGraph, "normalizedSummaryCanvas", "Time", "Fractional Energy per day");
+  createSummaryCanvas(currentEnergyDensityGraph,    "energyDensityCanvas",     "Time", "Energy density per day [kWhm^{-2}/day]");
 
-  // Save the averaged plots
-  averageTreeEnergyGraph.Write();
-  averageTreeNormalizedEnergyGraph.Write();
-  averageTreeEnergyDensityGraph.Write();
-  averageTreeMonthlyEnergyDensityGraph.Write();
-  averageTreeYearlyEnergyDensityGraph.Write();
+  // Save the current plots
+  currentEnergyGraph.Write();
+  currentNormalizedEnergyGraph.Write();
+  currentEnergyDensityGraph.Write();
+  currentMonthlyEnergyDensityGraph.Write();
+  currentYearlyEnergyDensityGraph.Write();
 
   // Close the root file
   resultsFile.Close();

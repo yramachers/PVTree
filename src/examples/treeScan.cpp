@@ -238,7 +238,8 @@ int main(int argc, char** argv) {
       runManager->ReinitializeGeometry(destroyFirst = true);
 
       // Apply pre-selection to the tree after manual construction.
-      detector->Construct();
+      //      detector->Construct();
+      runManager->Initialize();
 
     }
 
