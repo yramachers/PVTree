@@ -232,14 +232,8 @@ int main(int argc, char** argv) {
       leaf->randomizeParameters(x + parameterSeedOffset);
 
       detector->resetGeometry(tree, leaf);
-
-      // Re-initialize the detector geometry
-      G4bool destroyFirst;
-      runManager->ReinitializeGeometry(destroyFirst = true);
-
-      // Apply pre-selection to the tree after manual construction.
-      //      detector->Construct();
-      runManager->Initialize();
+      runManager->ReinitializeGeometry(true, false); // clean up
+      runManager->DefineWorldVolume(detector->Construct()); // reconstruction
 
     }
 
@@ -284,6 +278,9 @@ int main(int argc, char** argv) {
 
     // Don't need to keep old records after analysis performed.
     recorder.reset();    
+
+//     std::cout << "Scored Energy " << totalEnergyDeposited << std::endl;
+//     std::cout << "on Area " << sensitiveArea << std::endl;
 
     // Clone the settings/results before moving onto next tree so that they can be saved at the end.
     std::string treeName = "tree" + std::to_string(x+parameterSeedOffset);

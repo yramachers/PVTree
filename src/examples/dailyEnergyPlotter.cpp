@@ -20,6 +20,7 @@
 #include "climate/climateFactory.hpp"
 #include "location/locationDetails.hpp"
 #include "solarSimulation/spectrumFactory.hpp"
+#include "analysis/yearlyResult.hpp"
 
 #include <iostream>
 #include <vector>
@@ -140,7 +141,7 @@ int main(int argc, char** argv) {
 
   // Report input parameters
   if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName << std::endl;
+    std::cout << "Just using best tree from " << inputTreeFileName << std::endl;
     singleTreeRunning = true;
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
@@ -164,6 +165,8 @@ int main(int argc, char** argv) {
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
   std::shared_ptr<LeafConstructionInterface> leaf;
+  TreeConstructionInterface* bestT;
+  LeafConstructionInterface* bestL;
 
   if (!singleTreeRunning) {
     tree = TreeFactory::instance()->getTree(treeType);
@@ -188,14 +191,17 @@ int main(int argc, char** argv) {
       energy = clonedT->getDoubleParameter("totalEnergy");
       eff = energy / area;
       if (eff > besteff) { // book best tree
-	tree          = std::shared_ptr<TreeConstructionInterface>( clonedT);
-	leaf          = std::shared_ptr<LeafConstructionInterface>( clonedL);
+	bestT = clonedT;
+	bestL = clonedL;
 	besteff = eff;
 	std::cout << "RETRIEVE: got total energy = " << energy << " eff: " << eff << std::endl;
       }
     }
-    //    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    //    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+//     tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
+//     leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    tree = std::shared_ptr<TreeConstructionInterface>( bestT);
+    leaf = std::shared_ptr<LeafConstructionInterface>( bestL);
+
     inputTreeFile.Close();
   }
 

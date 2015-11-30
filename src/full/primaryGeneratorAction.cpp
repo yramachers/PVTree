@@ -13,6 +13,7 @@
 #include "TRandom.h"
 #include "Randomize.hh"
 #include "solarSimulation/sun.hpp"
+#include <iostream>
 
 PrimaryGeneratorAction::PrimaryGeneratorAction(unsigned int photonNumber, Sun* sun) :
   G4VUserPrimaryGeneratorAction(),
@@ -66,7 +67,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
      *        as the spectrum uses TH1D to generate a random energy photon.
      */
     std::vector<std::tuple<double, double> > photonEnergies = m_sun->getSpectrum()->generatePhotons(m_photonNumber);
-
+    
+    double photonWeight = 0.0;
     for (unsigned int particleNumber=0; particleNumber<m_photonNumber; particleNumber++){
       
       G4double candidateX=0.0,candidateY=0.0;
@@ -88,11 +90,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       rnd.Circle(ret_x, ret_y, eps_r); // random tiny rad vector
       TVector3 EpsVector = TVector3(orthogonalVector1)*ret_x + TVector3(orthogonalVector2)*ret_y;
       TVector3 sprayVector = currentLightVector + EpsVector;
-	
       // Set the direction of the photon
       m_particleGun->SetParticleMomentumDirection(G4ThreeVector(sprayVector.X(),
 								sprayVector.Y(),
 								sprayVector.Z()));
+      //      m_particleGun->SetParticleMomentumDirection(G4ThreeVector(currentLightVector.X(),
+      //								currentLightVector.Y(),
+      //								currentLightVector.Z()));
 
       //Then change the starting position of the photons in the opposite direction
       TVector3 toStartingPoint = (-1.0 * generationRadius) * currentLightVector;
@@ -106,7 +110,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       setRandomPhotonPolarisation();
       
       double photonEnergy = std::get<0>(photonEnergies[particleNumber]);
-      double photonWeight = std::get<1>(photonEnergies[particleNumber])/m_photonNumber;
+      photonWeight = std::get<1>(photonEnergies[particleNumber])/m_photonNumber;
 
       // Weight also needs to take into account the surface area over which photons are
       // being generated.
@@ -115,7 +119,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       m_particleGun->SetParticleEnergy(photonEnergy*eV);
       m_particleGun->GenerateWeightedPrimaryVertex(event, photonWeight);
     }
-    
+    //    std::cout << "Weight: " << photonWeight << std::endl;
   }
   else {
     G4cerr << "Orb world volume not found." << G4endl;

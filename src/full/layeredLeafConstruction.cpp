@@ -158,27 +158,27 @@ G4LogicalVolume* LayeredLeafConstruction::constructForTree(std::shared_ptr<LeafC
 void LayeredLeafConstruction::ConstructSDandField() {
 
   // Turn all the leaves into sensitive detectors.
-  if (!m_constructedSensitiveDetectors) {
-    G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
+  //  if (!m_constructedSensitiveDetectors) {
+    //    std::cout << "SIM: in Leaf SD Construct()" << std::endl;
+  G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
 
-    // Check if the sensitive detector has already been constructed elsewhere
-    bool showSearchWarning = false;
-    m_trackerSD = static_cast<LeafTrackerSD*>( G4SDManager::GetSDMpointer()->FindSensitiveDetector(photovoltaicCellsName, showSearchWarning) );
+  // Check if the sensitive detector has already been constructed elsewhere
+  bool showSearchWarning = false;
+  m_trackerSD = static_cast<LeafTrackerSD*>( G4SDManager::GetSDMpointer()->FindSensitiveDetector(photovoltaicCellsName, showSearchWarning) );
     
-    if (m_trackerSD == 0){
-      m_trackerSD = new LeafTrackerSD(photovoltaicCellsName, "TrackerHitsCollection");
-    }
-
-    //Set as sensitive all the leave's logical volumes 
-    SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
-
-    m_constructedSensitiveDetectors = true;
-  } else { 
-    //If the sensitive detectors were previously setup don't completely recreate...
-
-    //Set as sensitive all the leave's logical volumes 
-    SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
+  if (m_trackerSD == 0){
+    m_trackerSD = new LeafTrackerSD(photovoltaicCellsName, "TrackerHitsCollection");
   }
+
+  //Set as sensitive all the leave's logical volumes 
+  SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
+
+  //  m_constructedSensitiveDetectors = true;
+    //  } else { 
+    //If the sensitive detectors were previously setup don't completely recreate...
+    //Set as sensitive all the leave's logical volumes 
+    //    SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
+    //  }
 
 }
 
@@ -288,6 +288,7 @@ G4LogicalVolume* LayeredLeafConstruction::constructLeafLogicialVolume() {
   // Calculate the surface area of the front of the sensitive mesh
   double currentSurfaceArea = calculateExtrapolatedSurfaceArea(initialSystemSurface, 0.03*thickness, 0.0*thickness);
   m_sensitiveArea = currentSurfaceArea;
+  //  std::cout << "SIM: Layered Leaf Build - sensitive area = " << currentSurfaceArea << std::endl;
 
   // Convert the meshes into Geant4 solids
   G4TessellatedSolid* frontSolid     = convertMeshToTessellatedSolid(frontMesh,     std::string("LeafFrontSolid"));
@@ -328,10 +329,12 @@ G4LogicalVolume* LayeredLeafConstruction::constructLeafLogicialVolume() {
   new G4PVPlacement(identityTransform, frontLogicalVolume,     "LeafFront",     envelopeLogicalVolume, false, 0);
   G4VPhysicalVolume* sensitivePhysicalVolume =
   new G4PVPlacement(identityTransform, sensitiveLogicalVolume, "LeafSensitive", envelopeLogicalVolume, false, 0);
+  G4VPhysicalVolume* backPhysicalVolume =
   new G4PVPlacement(identityTransform, backLogicalVolume,      "LeafBack",      envelopeLogicalVolume, false, 0);
 
   // Setup the optical boundary between the front and sensitive part
   new G4LogicalBorderSurface("Front_Sensitve_Border", frontPhysicalVolume, sensitivePhysicalVolume, sensitiveOpticalSurface);
+  new G4LogicalBorderSurface("Back_Sensitve_Border", backPhysicalVolume, sensitivePhysicalVolume, sensitiveOpticalSurface);
 
   // Clean up the polygon lists to prevent a memory leak.
   clearPolygonList(initialSystemSurface);

@@ -1,6 +1,7 @@
 #include "full/opticalPhysicsList.hpp"
 #include "G4OpAbsorption.hh"
 #include "G4OpBoundaryProcess.hh"
+#include "G4OpRayleigh.hh"
 #include "G4ParticleTypes.hh"
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
@@ -30,8 +31,11 @@ void OpticalPhysicsList::ConstructProcess() {
   G4OpAbsorption* theAbsorptionProcess = new G4OpAbsorption();
   G4bool theBoundaryProcessNeverUsed = true;
   G4OpBoundaryProcess* theBoundaryProcess = new G4OpBoundaryProcess();
+  G4bool theRayleighProcessNeverUsed = true;
+  G4OpRayleigh* rayleighScatteringProcess = new G4OpRayleigh();
   theAbsorptionProcess->SetVerboseLevel(m_verbosityLevel);
   theBoundaryProcess->SetVerboseLevel(m_verbosityLevel);
+  rayleighScatteringProcess->SetVerboseLevel(m_verbosityLevel);
 
   theParticleIterator->reset();
   while( (*(theParticleIterator))() )
@@ -42,13 +46,16 @@ void OpticalPhysicsList::ConstructProcess() {
       
       if (particleName == "opticalphoton") {
 	pmanager->AddDiscreteProcess(theAbsorptionProcess);
+	pmanager->AddDiscreteProcess(theBoundaryProcess);
+	pmanager->AddDiscreteProcess(rayleighScatteringProcess);
 	theAbsorptionProcessNeverUsed = false;
 	theBoundaryProcessNeverUsed = false;
-	pmanager->AddDiscreteProcess(theBoundaryProcess);
+	theRayleighProcessNeverUsed = false;
       }
     }
     if ( theBoundaryProcessNeverUsed ) delete theBoundaryProcess;
     if ( theAbsorptionProcessNeverUsed ) delete theAbsorptionProcess;
+    if ( theRayleighProcessNeverUsed ) delete rayleighScatteringProcess;
 }
 
 void OpticalPhysicsList::AddTransportation() {
@@ -58,7 +65,9 @@ void OpticalPhysicsList::AddTransportation() {
 }
 
 void OpticalPhysicsList::SetCuts() {
-
+  //  " G4VUserPhysicsList::SetCutsWithDefault" method sets
+  //   the default cut value for all particle types
+  SetCutsWithDefault();
 }
 
 

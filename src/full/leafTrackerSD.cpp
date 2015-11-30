@@ -12,6 +12,7 @@ LeafTrackerSD::~LeafTrackerSD() {}
 void   LeafTrackerSD::Initialize(G4HCofThisEvent* eventHitCollection) {
 
   //Create a collection to store the hits
+  if (m_hitsCollection) m_hitsCollection = 0;
   m_hitsCollection = new LeafTrackerHitsCollection(SensitiveDetectorName, collectionName[0]);
 
   //Add collection to the event hit collection
@@ -26,6 +27,8 @@ G4bool LeafTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/)
   G4double energyDeposit = step->GetTrack()->GetWeight();
 
   if (energyDeposit == 0.0) return false;
+
+  step->GetTrack()->SetWeight(0.0); // into absorber - gone.
 
   //Create a hit object storing all the information
   LeafTrackerHit* hit = new LeafTrackerHit();
@@ -44,11 +47,11 @@ G4bool LeafTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/)
 void   LeafTrackerSD::EndOfEvent(G4HCofThisEvent* /*eventHitCollection*/) {
 
   if ( verboseLevel>1 ) { 
-     G4int numberOfHits = m_hitsCollection->entries();
-     G4cout << G4endl
-            << "-------->Hits Collection: in this event they are " << numberOfHits
-            << " hits in the tracker chambers: " << G4endl;
-     for ( G4int i=0; i<numberOfHits; i++ ) (*m_hitsCollection)[i]->Print();
+    G4int numberOfHits = m_hitsCollection->entries();
+    G4cout << G4endl
+	   << "-------->Hits Collection: in this event they are " << numberOfHits
+	   << " hits in the tracker chambers: " << G4endl;
+    for ( G4int i=0; i<numberOfHits; i++ ) (*m_hitsCollection)[i]->Print();
   }
 
 }
