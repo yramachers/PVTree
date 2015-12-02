@@ -10,7 +10,7 @@
 #include "G4LogicalVolume.hh"
 #include "G4Orb.hh"
 
-#include "TRandom.h"
+//#include "TRandom.h"
 #include "Randomize.hh"
 #include "solarSimulation/sun.hpp"
 #include <iostream>
@@ -40,8 +40,8 @@ void PrimaryGeneratorAction::SetPhotonNumber(unsigned int photonNumber) {
 
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
 
-  TRandom rnd;
-  double ret_x, ret_y;
+  //  TRandom rnd;
+  //  double ret_x, ret_y;
   //Now need to translate the start position based upon the current light vector of the sun
   TVector3 currentLightVector = m_sun->getLightVector();
 
@@ -61,7 +61,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     //However only create photons within a restricted disk
     G4double worldSurfaceRadius = worldOrb->GetRadius();
     G4double generationRadius = worldSurfaceRadius*(1.0/std::sqrt(3.0));
-    double eps_r = 0.001 * generationRadius; // small spray radius
+    //    double eps_r = 0.001 * generationRadius; // small spray radius
     
     /*! \todo Need to set ROOT random number generator seed here for repeatability 
      *        as the spectrum uses TH1D to generate a random energy photon.
@@ -87,16 +87,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       }
       
       TVector3 candidatePoint = TVector3(orthogonalVector1)*candidateX + TVector3(orthogonalVector2)*candidateY;
-      rnd.Circle(ret_x, ret_y, eps_r); // random tiny rad vector
-      TVector3 EpsVector = TVector3(orthogonalVector1)*ret_x + TVector3(orthogonalVector2)*ret_y;
-      TVector3 sprayVector = currentLightVector + EpsVector;
+      //      rnd.Circle(ret_x, ret_y, eps_r); // random tiny rad vector
+      //      TVector3 EpsVector = TVector3(orthogonalVector1)*ret_x + TVector3(orthogonalVector2)*ret_y;
+      //      TVector3 sprayVector = currentLightVector;
       // Set the direction of the photon
-      m_particleGun->SetParticleMomentumDirection(G4ThreeVector(sprayVector.X(),
-								sprayVector.Y(),
-								sprayVector.Z()));
-      //      m_particleGun->SetParticleMomentumDirection(G4ThreeVector(currentLightVector.X(),
-      //								currentLightVector.Y(),
-      //								currentLightVector.Z()));
+//       m_particleGun->SetParticleMomentumDirection(G4ThreeVector(sprayVector.X(),
+// 								sprayVector.Y(),
+// 								sprayVector.Z()));
+      m_particleGun->SetParticleMomentumDirection(G4ThreeVector(currentLightVector.X(),
+								currentLightVector.Y(),
+								currentLightVector.Z()));
 
       //Then change the starting position of the photons in the opposite direction
       TVector3 toStartingPoint = (-1.0 * generationRadius) * currentLightVector;
@@ -119,7 +119,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       m_particleGun->SetParticleEnergy(photonEnergy*eV);
       m_particleGun->GenerateWeightedPrimaryVertex(event, photonWeight);
     }
-    //    std::cout << "Weight: " << photonWeight << std::endl;
+    std::cout << "Weight: " << photonWeight << std::endl;
   }
   else {
     G4cerr << "Orb world volume not found." << G4endl;

@@ -279,7 +279,7 @@ int main(int argc, char** argv) {
     // Don't need to keep old records after analysis performed.
     recorder.reset();    
 
-//     std::cout << "Scored Energy " << totalEnergyDeposited << std::endl;
+    std::cout << "Scored Energy " << totalEnergyDeposited << std::endl;
 //     std::cout << "on Area " << sensitiveArea << std::endl;
 
     // Clone the settings/results before moving onto next tree so that they can be saved at the end.

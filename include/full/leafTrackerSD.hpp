@@ -24,6 +24,7 @@ public:
   virtual void   Initialize(G4HCofThisEvent* hitCollection);
   virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history);
   virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
+  G4bool ProcessHits_user(const G4Step* step, G4TouchableHistory* history);
 
 private:
   LeafTrackerHitsCollection* m_hitsCollection;

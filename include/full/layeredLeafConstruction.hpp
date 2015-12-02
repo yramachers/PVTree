@@ -84,7 +84,7 @@ private:
   /*! \brief Construct leaf logical volume using current settings
    *         for initial turtle and Lindenmeyer system.
    */
-  G4LogicalVolume* constructLeafLogicialVolume();
+  G4LogicalVolume* constructLeafLogicalVolume();
 
   /*! \brief Remove degenerate vertices without destroying the polygons. 
    *

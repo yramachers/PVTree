@@ -32,6 +32,6 @@ void WeightedParticleGun::GenerateWeightedPrimaryVertex(G4Event* evt, double wei
     vertex->SetPrimary( particle );
 
   }
-
   evt->AddPrimaryVertex( vertex );
+
 }

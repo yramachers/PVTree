@@ -22,5 +22,5 @@ void ActionInitialization::Build() const{
   SetUserAction( m_primaryGenerator() );
   SetUserAction(new RunAction(m_recorder));
   SetUserAction(new EventAction(m_recorder));
-  //SetUserAction(new SteppingAction());
+  SetUserAction(new SteppingAction());
 }

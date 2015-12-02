@@ -108,6 +108,7 @@ double DetectorConstruction::getZSize() {
 
 G4VPhysicalVolume* DetectorConstruction::Construct() {
 
+  //  std::cout << "SIM: in Detector Construct()" << std::endl;
   // Check if already constructed
   if (m_constructed) {
     return m_worldPhysicalVolume;
@@ -441,6 +442,7 @@ void DetectorConstruction::candidateLeafBuild() {
   // Leaf already positioned within world with initial turtle
   G4Transform3D identityTransform; 
 
+  //  std::cout << "SIM: N candidate leaves = " << m_candidateLeaves.size() << std::endl;
   for (auto& candidateLeafInfo : m_candidateLeaves) {
 
     G4LogicalVolume* leafLogicalVolume = candidateLeafInfo.first;
@@ -453,7 +455,7 @@ void DetectorConstruction::candidateLeafBuild() {
       // If not overlapping then place the leaf
       /*G4VPhysicalVolume* leafPhysicalVolume =*/ new G4PVPlacement(identityTransform, 
 								    leafLogicalVolume, 
-								    "Leaf", 
+								    "LeafEnvelope", 
 								    trunkPhysicalVolume->GetMotherLogical(), 
 								    false, 
 								    0);
@@ -462,6 +464,8 @@ void DetectorConstruction::candidateLeafBuild() {
       // detector. (in units of meter squared)
       m_sensitiveSurfaceArea += m_leafConstructor.getSensitiveSurfaceArea();
       m_leafNumber += 1u;
+      //      std::cout << "SIM: non-overlapping - PIECE sensitive area = " << m_leafConstructor.getSensitiveSurfaceArea() << std::endl;
+      //      std::cout << "SIM: non-overlapping - sensitive area = " << m_sensitiveSurfaceArea << std::endl;
     } else {
 
       // Always reject overlapping leaves.
@@ -470,6 +474,7 @@ void DetectorConstruction::candidateLeafBuild() {
       m_rejectedLeafNumber += 1u;
     }
   }
+  //  std::cout << "SIM: Leaf Build - sensitive area = " << m_sensitiveSurfaceArea << std::endl;
 
   m_candidateLeaves.clear();
 }

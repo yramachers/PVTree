@@ -1,4 +1,5 @@
 #include "full/steppingAction.hpp"
+#include "full/leafTrackerSD.hpp"
 
 #include "G4Step.hh"
 #include "G4Track.hh"
@@ -6,6 +7,7 @@
 #include "G4VPhysicalVolume.hh"
 #include "G4ProcessManager.hh"
 #include "G4ParticleDefinition.hh"
+#include "G4SDManager.hh"
 
 SteppingAction::SteppingAction() : m_oneStepPrimaries(false) {
 
@@ -26,8 +28,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
 
   if ( theTrack->GetCurrentStepNumber() == 1 ) m_expectedNextStatus = Undefined;
 
-  G4StepPoint* thePrePoint = step->GetPreStepPoint();
-  /*G4VPhysicalVolume* thePrePV =*/ thePrePoint->GetPhysicalVolume();
+  //  G4StepPoint* thePrePoint = step->GetPreStepPoint();
+  //  /*G4VPhysicalVolume* thePrePV =*/ thePrePoint->GetPhysicalVolume();
 
   G4StepPoint* thePostPoint = step->GetPostStepPoint();
   G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();
@@ -51,7 +53,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
 
   //Ignore photons that have left the world volume
   if(!thePostPV){
-    G4cout << "Leaving the world..." << G4endl;
+//     G4cout << "Leaving the world..." << G4endl;
     m_expectedNextStatus=Undefined;
     return;
   }
@@ -62,9 +64,9 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
     //Optical photon only
 
     //Was the photon absorbed by the absorption process
-    if(thePostPoint->GetProcessDefinedStep()->GetProcessName() == "OpAbsorption"){
+//     if(thePostPoint->GetProcessDefinedStep()->GetProcessName() == "OpAbsorption"){
       
-    }
+//     }
 
     boundaryStatus=boundary->GetStatus();
 
@@ -93,23 +95,32 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
 
       switch(boundaryStatus){
       case Absorption:
-	G4cout << "Absorption by " << thePostPV->GetName() << G4endl;
+// 	G4cout << "Absorption by " << thePostPV->GetName() << G4endl;
 	break;
       case Detection:
-	G4cout << "Detection by " << thePostPV->GetName() << G4endl;
-	break;
+	{
+// 	  G4cout << "Detection by " << thePostPV->GetName() << G4endl;
+	  if (thePostPV->GetName() == "LeafSensitive") {
+	    G4SDManager* SDman = G4SDManager::GetSDMpointer();
+	    G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
+	    bool showSearchWarning = false;
+	    LeafTrackerSD* trackerSD = static_cast<LeafTrackerSD*>( SDman->FindSensitiveDetector(photovoltaicCellsName, showSearchWarning) );
+	    if(trackerSD)trackerSD->ProcessHits_user(step,NULL);
+	  }
+	  break;
+	}
       case BackScattering:
-	G4cout << "Back scattering by " << thePostPV->GetName() << G4endl;
-	m_expectedNextStatus = StepTooSmall;
+// 	G4cout << "Back scattering by " << thePostPV->GetName() << G4endl;
+// 	m_expectedNextStatus = StepTooSmall;
 	break;
       case Transmission:
-	G4cout << "Transmission by " << thePostPV->GetName() << G4endl;
+// 	G4cout << "Transmission by " << thePostPV->GetName() << G4endl;
 	break;
       case Undefined:
-	G4cout << "Undefined by " << thePostPV->GetName() << G4endl;
+// 	G4cout << "Undefined by " << thePostPV->GetName() << G4endl;
 	break;
       default:
-	G4cout << "Something else by " << thePostPV->GetName() << G4endl;
+// 	G4cout << "Something else by " << thePostPV->GetName() << G4endl;
 	break;
       }
 

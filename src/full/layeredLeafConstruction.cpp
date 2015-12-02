@@ -88,7 +88,7 @@ double LayeredLeafConstruction::getSensitiveSurfaceArea() {
 G4VPhysicalVolume* LayeredLeafConstruction::Construct() {
 
   // Get the leaf logical geometry from current settings
-  G4LogicalVolume* leafEnvelope = constructLeafLogicialVolume();
+  G4LogicalVolume* leafEnvelope = constructLeafLogicalVolume();
 
   // Use the leaf envelope solid to get the max and min extents so that
   // the world volume can be defined to be a reasonable size.
@@ -150,7 +150,7 @@ G4LogicalVolume* LayeredLeafConstruction::constructForTree(std::shared_ptr<LeafC
   m_initialTurtle = initialTurtle;
   
   // Get the leaf logical geometry from current settings
-  G4LogicalVolume* leafEnvelope = constructLeafLogicialVolume();
+  G4LogicalVolume* leafEnvelope = constructLeafLogicalVolume();
 
   return leafEnvelope;
 }
@@ -262,7 +262,7 @@ std::vector<Polygon*> LayeredLeafConstruction::generateSurface() {
   return surfacePolygons;
 }
 
-G4LogicalVolume* LayeredLeafConstruction::constructLeafLogicialVolume() {
+G4LogicalVolume* LayeredLeafConstruction::constructLeafLogicalVolume() {
 
   // Check all necessary inputs have been provided
   if (m_leafSystem == nullptr || m_initialTurtle == nullptr) {

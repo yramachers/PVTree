@@ -20,7 +20,13 @@ void   LeafTrackerSD::Initialize(G4HCofThisEvent* eventHitCollection) {
   eventHitCollection->AddHitsCollection( hitCollectionID, m_hitsCollection);
 }
 
-G4bool LeafTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/) { 
+
+G4bool LeafTrackerSD::ProcessHits(G4Step* /*step*/, G4TouchableHistory* /*history*/) { 
+  return false;
+}
+
+
+G4bool LeafTrackerSD::ProcessHits_user(const G4Step* step, G4TouchableHistory* /*history*/) { 
 
   // Assume the weight contains all the energy the
   // 'photon' is representing.
@@ -28,7 +34,7 @@ G4bool LeafTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/)
 
   if (energyDeposit == 0.0) return false;
 
-  step->GetTrack()->SetWeight(0.0); // into absorber - gone.
+  //  step->GetTrack()->SetWeight(0.0); // into absorber - gone.
 
   //Create a hit object storing all the information
   LeafTrackerHit* hit = new LeafTrackerHit();
@@ -46,13 +52,13 @@ G4bool LeafTrackerSD::ProcessHits(G4Step* step, G4TouchableHistory* /*history*/)
 
 void   LeafTrackerSD::EndOfEvent(G4HCofThisEvent* /*eventHitCollection*/) {
 
-  if ( verboseLevel>1 ) { 
+  //  if ( verboseLevel>1 ) { 
     G4int numberOfHits = m_hitsCollection->entries();
     G4cout << G4endl
-	   << "-------->Hits Collection: in this event they are " << numberOfHits
+	   << "-------->Hits Collection: in this event there are " << numberOfHits
 	   << " hits in the tracker chambers: " << G4endl;
     for ( G4int i=0; i<numberOfHits; i++ ) (*m_hitsCollection)[i]->Print();
-  }
+    //  }
 
 }
 
