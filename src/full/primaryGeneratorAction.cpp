@@ -119,7 +119,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
       m_particleGun->SetParticleEnergy(photonEnergy*eV);
       m_particleGun->GenerateWeightedPrimaryVertex(event, photonWeight);
     }
-    std::cout << "Weight: " << photonWeight << std::endl;
+    //    std::cout << "Weight: " << photonWeight << std::endl;
   }
   else {
     G4cerr << "Orb world volume not found." << G4endl;

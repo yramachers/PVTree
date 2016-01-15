@@ -68,7 +68,7 @@ void showHelp() {
   std::cout << "\t --startDate <INTEGER> :\t default 1/1/2014" << std::endl;
   std::cout << "\t --endDate <INTEGER> :\t default 1/1/2015" << std::endl;
   std::cout << "\t --yearSegments <INTEGER> :\t default 10" << std::endl;
-  std::cout << "\t --minimumSensitveArea <DOUBLE> [m^2] :\t default 0.0" << std::endl;
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0" << std::endl;
   std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'yearlyTreeScan.results.root'" << std::endl;
 }
 
@@ -389,10 +389,12 @@ int main(int argc, char** argv) {
       }
 
       dayEnergySums.push_back(totalEnergy);
+      std::cout << "Scored Energy " << totalEnergy << std::endl;
 
       // Don't need to keep old records after analysis performed.
       recorder.reset();
     }
+    std::cout << "Total evaluated Energy " << totalEvaluatedEnergy << std::endl;
 
     // Get the total surface area which is "sensitive" from current tested detector.
     double sensitiveArea = detector->getSensitiveSurfaceArea();

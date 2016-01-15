@@ -52,13 +52,13 @@ G4bool LeafTrackerSD::ProcessHits_user(const G4Step* step, G4TouchableHistory* /
 
 void   LeafTrackerSD::EndOfEvent(G4HCofThisEvent* /*eventHitCollection*/) {
 
-  //  if ( verboseLevel>1 ) { 
+  if ( verboseLevel>1 ) { 
     G4int numberOfHits = m_hitsCollection->entries();
     G4cout << G4endl
 	   << "-------->Hits Collection: in this event there are " << numberOfHits
 	   << " hits in the tracker chambers: " << G4endl;
     for ( G4int i=0; i<numberOfHits; i++ ) (*m_hitsCollection)[i]->Print();
-    //  }
+  }
 
 }
 
