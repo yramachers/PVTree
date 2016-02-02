@@ -3,7 +3,7 @@
 set(exampleTargets initialTest basicVisualize leafVisualize leafCheck basicSimulate 
   randomVisualize treeScan benchmark convergence persistenceCheck dailyEnergyPlotter
   yearlyEnergyPlotter bestyearlyEnergyPlotter smartsIntegrationTesting configurationTesting leafSimulate 
-  yearlyTreeScan converter convertYearly bestTreeVisualizer efficiencyCorrelationPlotter ntupleCombiner 
+  yearlyTreeScan converter convertYearly bestTreeVisualizer treeVisualizer efficiencyCorrelationPlotter ntupleCombiner 
   convergenceCombiner materialConfigurationTest particleSwarmTesting climateDataTesting 
   smartsClimateAffect lightfieldTest yearlyLightfieldScan lightfieldCombiner lightfieldTreeScan 
   basicLightfieldSimulate visualiseBestYearly yearlyDiffuseLightfieldScan)

@@ -62,6 +62,8 @@ void showHelp() {
   std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
   std::cout << "\t --parameterSeedOffset <INTEGER>" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME>" << std::endl;
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0" << std::endl;
+  std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
 }
 
 /*! \brief Efficient tree search main test. 
@@ -87,6 +89,8 @@ int main(int argc, char** argv) {
   int parameterSeedOffset;
   std::string inputTreeFileName;
   bool singleTreeRunning = false;
+  double minimumSensitiveArea;
+  unsigned int maximumTreeTrials;
 
   GetOpt::GetOpt_pp ops(argc, argv);
 
@@ -104,6 +108,8 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeedOffset", parameterSeedOffset, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
+  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.0);
+  ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
 
   // Report input parameters
   if (inputTreeFileName != "") {
@@ -224,21 +230,30 @@ int main(int argc, char** argv) {
 
 
   // Repeat for a number of trees
-  for (unsigned int x=0; x<treeNumber; x++){
+  unsigned int currentTreeNumber = 0u;
+  unsigned int treeTrialNumber = 0u;
+  while( currentTreeNumber < treeNumber && treeTrialNumber < maximumTreeTrials) {
+    treeTrialNumber++;
+    //  for (unsigned int x=0; x<treeNumber; x++){
     
     if (!singleTreeRunning){
       // Allow the geometry to be rebuilt with new settings
-      tree->randomizeParameters(x + parameterSeedOffset);
-      leaf->randomizeParameters(x + parameterSeedOffset);
+      tree->randomizeParameters(treeTrialNumber + parameterSeedOffset);
+      leaf->randomizeParameters(treeTrialNumber + parameterSeedOffset);
 
       detector->resetGeometry(tree, leaf);
       runManager->ReinitializeGeometry(true, false); // clean up
       runManager->DefineWorldVolume(detector->Construct()); // reconstruction
 
+      // Lets not bother with small surface areas!
+      if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
+	continue;
+      }
+
     }
 
-    if ( x % 50 == 0 ){
-	std::cout << "Considering tree " << x << std::endl;
+    if ( currentTreeNumber % 50 == 0 ){
+	std::cout << "Considering tree " << currentTreeNumber << std::endl;
 	tree->print();
 	leaf->print();
     }
@@ -283,7 +298,7 @@ int main(int argc, char** argv) {
 //     std::cout << "on Area " << sensitiveArea << std::endl;
 
     // Clone the settings/results before moving onto next tree so that they can be saved at the end.
-    std::string treeName = "tree" + std::to_string(x+parameterSeedOffset);
+    std::string treeName = "tree" + std::to_string(currentTreeNumber+parameterSeedOffset);
     TreeConstructionInterface* clonedTree = (TreeConstructionInterface*)tree->Clone(treeName.c_str());
     
     // Store additional information in the cloned tree for later analysis
@@ -295,7 +310,7 @@ int main(int argc, char** argv) {
     clonedTree->setParameter("structureZSize",     structureZSize);
     clonedTree->setParameter("totalEnergy"   ,     totalEnergyDeposited);
 
-    std::string leafName = "leaf" + std::to_string(x+parameterSeedOffset);
+    std::string leafName = "leaf" + std::to_string(currentTreeNumber+parameterSeedOffset);
     LeafConstructionInterface* clonedLeaf = (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
 
     // Add to the list that will be exported
@@ -305,6 +320,8 @@ int main(int argc, char** argv) {
     result->setLeaf(clonedLeaf);
     exportList.Add(result);
 
+    // Move onto next tree
+    currentTreeNumber++;
     // Add to the list that will be exported
 //     treeExportList.Add(clonedTree);
 //     leafExportList.Add(clonedLeaf);
