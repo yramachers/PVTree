@@ -178,6 +178,7 @@ int main(int argc, char** argv) {
 
   // The object to fill
   Plenoptic3D lightfield;
+  resultsFile.Add(&lightfield);
   lightfield.setBinning(Plenoptic3D::AZIMUTH, 60, 0.0, 2.0*M_PI);
   lightfield.setBinning(Plenoptic3D::ELEVATION, 60, 0.0, M_PI/2.0);
   // Maximal range allowed by smarts is ~0.31 -> 4.43 eV
@@ -244,6 +245,7 @@ int main(int argc, char** argv) {
   }
   
   // Write results out to the root file
+  resultsFile.cd();
   lightfield.Write("lightfield");
 
   // Also save the projected histogram separately as well

@@ -277,6 +277,7 @@ int main(int argc, char** argv) {
 
   // Make a TList to store some analysis results
   TList exportList;
+  resultsFile.Add(&exportList);
 
   // Setup a signal handler to catch batch job + user terminations 
   // so that we can still try to output some of the results.
@@ -286,6 +287,7 @@ int main(int argc, char** argv) {
       printf("Caught a signal %d\n",signum);
 
       // Write results out to the root file
+      resultsFile.cd();
       exportList.Write("testedStructures",  TObject::kSingleKey);
 
       // Close the root file
@@ -453,6 +455,7 @@ int main(int argc, char** argv) {
   delete runManager;
 
   // Write results out to the root file
+  resultsFile.cd();
   exportList.Write("testedStructures",  TObject::kSingleKey);
 
   // Close the root file

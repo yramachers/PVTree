@@ -231,6 +231,7 @@ TVector3 Sun::getLightVector() {
   return sunVector;
 }
 
+
 double Sun::getIrradiance() {
   if (this->m_recalculateEnvironment){
     updateEnvironment();

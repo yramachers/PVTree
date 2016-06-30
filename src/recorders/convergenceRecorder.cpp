@@ -50,8 +50,8 @@ void ConvergenceRecorder::recordEndOfEvent(const G4Event* event) {
     LeafTrackerHit* hit = static_cast<LeafTrackerHit*>(hitCollection->GetHit(h));
     energyDeposited += hit->getEnergyDeposited();
   }
-  
-  // The units of energy deposited is [W]
+
+    // The units of energy deposited is [W]
   m_summedHitEnergies.back().push_back( energyDeposited );
 }
 

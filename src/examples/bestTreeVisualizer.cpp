@@ -86,6 +86,8 @@ int main(int argc, char** argv) {
   // Identify the optimal tree
   double highestEfficiency   = 0.0;
   double eff;
+  double area, energy, sx, sy, lai;
+  int id = 0;
 
   std::shared_ptr<TreeConstructionInterface> bestTree;
   std::shared_ptr<LeafConstructionInterface> bestLeaf;
@@ -97,31 +99,20 @@ int main(int argc, char** argv) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
     LeafConstructionInterface* clonedL = currentStructure->getLeaf();;
 
-    eff = clonedT->getDoubleParameter("totalEnergy")/clonedT->getDoubleParameter("sensitiveArea");
+    area = clonedT->getDoubleParameter("sensitiveArea");
+    energy = clonedT->getDoubleParameter("totalEnergy");
+    sx = clonedT->getDoubleParameter("structureXSize");
+    sy = clonedT->getDoubleParameter("structureYSize");
+    lai = area / (sx * sy);
+
+    eff = energy * lai;
     if (eff > highestEfficiency) { // book best tree
       bestTree          = std::shared_ptr<TreeConstructionInterface>( clonedT);
       bestLeaf          = std::shared_ptr<LeafConstructionInterface>( clonedL);
       highestEfficiency = eff;
       foundATree = true;
     }
-
-//   for (int i=0; i<structureList->GetSize(); i++){
-//     YearlyResult* currentStructure = (YearlyResult*)structureListIterator();
-//     TreeConstructionInterface* currentTree = currentStructure->getTree();
-//     LeafConstructionInterface* currentLeaf = currentStructure->getLeaf();
-//     double currentEfficiency = currentTree->getDoubleParameter("totalEnergy")/currentTree->getDoubleParameter("sensitiveArea");
-
-//     // Only consider trees which have produced a minimum ammount of energy
-//     if (currentTree->getDoubleParameter("totalEnergy") < minimumTotalEnergy){
-//       continue;
-//     }
-
-//     if (currentEfficiency > highestEfficiency) {
-//       highestEfficiency = currentEfficiency;
-//       bestTree          = std::shared_ptr<TreeConstructionInterface>( currentTree );
-//       bestLeaf          = std::shared_ptr<LeafConstructionInterface>( currentLeaf );
-//       foundATree = true;
-//     }
+    id++;
   }
 
   if (foundATree == false) {
@@ -132,7 +123,7 @@ int main(int argc, char** argv) {
   // Print out the best parameters
   bestTree->print();
   bestLeaf->print();
-
+  std::cout << "Tree ID: "<< id << "; Best efficiency = " << highestEfficiency << std::endl;
   // If an output file is specified save the chosen tree there
 //   if (outputRootFile != "") {
 //     TFile outputFile(outputRootFile.c_str(), "RECREATE");

@@ -5,7 +5,8 @@ root_generate_dictionary(solarDictionary
   LINKDEF solarSimulation/Linkdef.h
   OPTIONS -rmf solarDictionary.rootmap -rml libsolarSimulation.so)
 
-add_library(solarSimulation SHARED spectrum.cpp sun.cpp smarts295.f spectrumFactory.cpp 
+add_library(solarSimulation SHARED spectrum.cpp sun.cpp smarts295.f
+HosekSkyModel.cpp spectrumFactory.cpp 
 solarDictionary.cxx plenoptic1D.cpp plenoptic3D.cpp)
 
 add_dependencies(solarSimulation ${ROOT_LIBRARIES} solpos)

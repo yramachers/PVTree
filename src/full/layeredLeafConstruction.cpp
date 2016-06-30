@@ -30,10 +30,10 @@ LayeredLeafConstruction::LayeredLeafConstruction(std::shared_ptr<LeafConstructio
     m_worldLogicalVolume(nullptr),
     m_trackerSD(nullptr),
     m_airMaterialName("pv-air"),
-//     m_frontMaterialName("pv-glass"),
     m_frontMaterialName("pv-glass"),
     m_sensitiveMaterialName("pv-silicon"),
     m_backMaterialName("pv-glass"),
+    //    m_backMaterialName("pv-aluminium"),
     m_constructedSensitiveDetectors(false),
     m_sensitiveArea(0.0) {
 

@@ -161,7 +161,8 @@ int main(int argc, char** argv) {
   // Define the sun setting, just an arbitrary date for now
   // Perform the simulation between the sunrise and sunset.
   Sun sun(deviceLocation);
-  sun.setDate(190, 2014);
+  //  sun.setDate(190, 2014); // summer
+  sun.setDate(19, 2014); // winter
   int simulationStartingTime = sun.getSunriseTime()*60; //s
   int simulationEndingTime   = sun.getSunsetTime()*60; //s, 
   int simulationStepTime     = (double)(simulationEndingTime-simulationStartingTime)/simulationTimeSegments;
@@ -204,6 +205,8 @@ int main(int argc, char** argv) {
 
   // Make a TList to store some trees
   TList exportList;
+  resultsFile.Add(&exportList);
+
 //   TList treeExportList;
 //   TList leafExportList;
 
@@ -215,6 +218,7 @@ int main(int argc, char** argv) {
       printf("Caught a signal %d\n",signum);
 
       // Write results out to the root file
+      resultsFile.cd();
       exportList.Write("testedStructures",  TObject::kSingleKey);
 //       treeExportList.Write("testedTrees",  TObject::kSingleKey);
 //       leafExportList.Write("testedLeaves", TObject::kSingleKey);
@@ -232,6 +236,9 @@ int main(int argc, char** argv) {
   // Repeat for a number of trees
   unsigned int currentTreeNumber = 0u;
   unsigned int treeTrialNumber = 0u;
+  double totalNormal;
+  double totalDiffuse;
+  double totalInitial = 0.0;
   while( currentTreeNumber < treeNumber && treeTrialNumber < maximumTreeTrials) {
     treeTrialNumber++;
     //  for (unsigned int x=0; x<treeNumber; x++){
@@ -259,6 +266,7 @@ int main(int argc, char** argv) {
     }
 
     //Simulate at all time points with the same number of events...
+    totalInitial = 0.0;
     for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
       
       //Set the time to the mid-point of the time segment
@@ -267,6 +275,12 @@ int main(int argc, char** argv) {
       //Run simulation with a single event per time point
       G4int eventNumber = 1;
       runManager->BeamOn(eventNumber);
+
+      auto normalIrradianceHistogram = sun.getSpectrum()->getHistogram("Direct_normal_irradiance");
+      auto diffuseIrradianceHistogram = sun.getSpectrum()->getHistogram("Difuse_horizn_irradiance");
+      totalNormal = normalIrradianceHistogram->Integral("width"); // [W/m^2]
+      totalDiffuse = diffuseIrradianceHistogram->Integral("width"); // [W/m^2]
+      totalInitial += (totalNormal + totalDiffuse)/1000.0  * (simulationStepTime/3600.0); // sum over all time slices
     }
 
     // Get the total surface area which is "sensitive" from current tested detector.
@@ -294,8 +308,9 @@ int main(int argc, char** argv) {
     // Don't need to keep old records after analysis performed.
     recorder.reset();    
 
-    std::cout << "Scored Energy " << totalEnergyDeposited << std::endl;
-//     std::cout << "on Area " << sensitiveArea << std::endl;
+    std::cout << "Scored Energy [kWh] " << totalEnergyDeposited << std::endl;
+    //    std::cout << "from Initial [kWh/m^2] " << totalInitial << std::endl;
+//     std::cout << "on Area [m^2] " << sensitiveArea << std::endl;
 
     // Clone the settings/results before moving onto next tree so that they can be saved at the end.
     std::string treeName = "tree" + std::to_string(currentTreeNumber+parameterSeedOffset);
@@ -308,6 +323,7 @@ int main(int argc, char** argv) {
     clonedTree->setParameter("structureXSize",     structureXSize);
     clonedTree->setParameter("structureYSize",     structureYSize);
     clonedTree->setParameter("structureZSize",     structureZSize);
+    clonedTree->setParameter("totalInitial"  ,     totalInitial);
     clonedTree->setParameter("totalEnergy"   ,     totalEnergyDeposited);
 
     std::string leafName = "leaf" + std::to_string(currentTreeNumber+parameterSeedOffset);
@@ -331,6 +347,7 @@ int main(int argc, char** argv) {
   delete runManager;
 
   // Write results out to the root file
+  resultsFile.cd();
   exportList.Write("testedStructures",  TObject::kSingleKey);
 //   treeExportList.Write("testedTrees",  TObject::kSingleKey);
 //   leafExportList.Write("testedLeaves", TObject::kSingleKey);

@@ -161,7 +161,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   // Applying a temporary scale to the world box size whilst I wait for better construction code to evaluate the
   // true bounding box.
-  double fudgeScaleFactor = 1.1;
+  double fudgeScaleFactor = 10.1;
   maximumBoundingBoxX *= fudgeScaleFactor;
   maximumBoundingBoxY *= fudgeScaleFactor;
   maximumBoundingBoxZ *= fudgeScaleFactor;
@@ -169,6 +169,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   double boundingRadius = std::sqrt( std::pow(maximumBoundingBoxX,2.0) + std::pow(maximumBoundingBoxY,2.0) + std::pow(maximumBoundingBoxZ,2.0) );
 
   //Create the 'World' (which has to be centred at coordinates 0.0, 0.0, 0.0)
+  // Large enough for the sun disk to appear more point-like and hit regardless
   //Using a sphere so that the photon field is always disk shaped
   //G4Orb (const G4String &pName, G4double pRmax)
   //Multiply by root3 to account for the fact that the photons have to originate outside the 'snug' bounding volume
