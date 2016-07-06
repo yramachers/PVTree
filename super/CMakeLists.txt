@@ -127,10 +127,10 @@ ExternalProject_Add(SuperEO
 
 # Attempt to install ecCodes for climate data access
 ExternalProject_Add(SuperECCodes
-  URL https://software.ecmwf.int/wiki/download/attachments/45757960/eccodes-0.11.0-Source.tar.gz
-  URL_HASH MD5=7350ceb7b0bfe478a8e9983c46b314a5
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ECCODES-v0-11-00
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/ECCODES-v0-11-00
+  URL https://software.ecmwf.int/wiki/download/attachments/45757960/eccodes-0.16.0-Source.tar.gz
+  URL_HASH MD5=1e9bae48e3cd20de4735f439876dbf12
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ECCODES-v0-16-00
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/ECCODES-v0-16-00
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
@@ -138,10 +138,10 @@ ExternalProject_Add(SuperECCodes
 # Attempt to install cppcheck for static analysis
 # See https://github.com/danmar/cppcheck/releases/ for latest versions
 ExternalProject_Add(SuperCPPCheck
-  URL https://github.com/danmar/cppcheck/archive/1.69.tar.gz
-  URL_HASH MD5=9bc7532d9371f506bc4547a05a1fdebf
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/CPPCHECK-01-69
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/CPPCHECK-01-69
+  URL https://sourceforge.net/projects/cppcheck/files/cppcheck/1.74/cppcheck-1.74.tar.gz
+  URL_HASH MD5=0e288a1f5dee5856f2caf522c8abf656
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/CPPCHECK-01-74
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/CPPCHECK-01-74
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
   -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -158,9 +158,9 @@ ExternalProject_Add(SuperPVTree
   -DROOT_DIR=${CMAKE_INSTALL_PREFIX}/external/ROOT-v6-02-05/
   -DLIBCONFIG_DIR=${CMAKE_INSTALL_PREFIX}/external/LIBCONFIG-v1-05-00/
   -DEvolutionaryObjects_DIR=${CMAKE_INSTALL_PREFIX}/external/EO-1.3.1/
-  -DECCODES_DIR=${CMAKE_INSTALL_PREFIX}/external/ECCODES-v0-11-00/
+  -DECCODES_DIR=${CMAKE_INSTALL_PREFIX}/external/ECCODES-v0-16-00/
   -DCLIMATE_DATA_PATH=${PVTREE_CLIMATE_DATA_PATH} 
-  -DCPPCheck_DIR=${CMAKE_INSTALL_PREFIX}/external/CPPCHECK-01-69
+  -DCPPCheck_DIR=${CMAKE_INSTALL_PREFIX}/external/CPPCHECK-01-74
   )
 
 
