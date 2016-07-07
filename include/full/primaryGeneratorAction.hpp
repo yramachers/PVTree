@@ -10,6 +10,7 @@
  */
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "TVector3.h"
 
 class G4Event;
 class WeightedParticleGun;
@@ -49,6 +50,9 @@ private:
    */
   void setRandomPhotonPolarisation();
 
+  /*! \brief source geometry as disk of world radius/sqrt(3)
+   */
+  TVector3 directSun(double genrad, TVector3 v1, TVector3 v2, TVector3 lv);
 };
 
 

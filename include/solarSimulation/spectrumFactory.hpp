@@ -182,13 +182,17 @@ private:
    *
    * Defaults are : -
    *
+   *   Extraterrestrial spectrum (1) [Wm^-2]
+   *
    *   Direct normal irradiance (2) [Wm^-2]
+   *
+   *   Diffuse horizontal irradiance (3) [Wm^-2]
    *
    *   Spectral photonic energy (39) [eV]
    *
    *   Direct normal photon flux per eV (41) [cm^-2 s^-1 eV^-1]
    */
-  std::vector<int>          m_outputVariablesSelected = {2, 39, 41};
+  std::vector<int>          m_outputVariablesSelected = {1, 2, 3, 39, 41};
 
   /*! \brief Convert c-strings to Fortran strings which are space padded and
    *         not null terminated.
