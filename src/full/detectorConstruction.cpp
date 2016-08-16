@@ -369,6 +369,8 @@ void DetectorConstruction::recursiveTreeBuild(Turtle* turtle,
   // assume that Geant4 is not additive.
   G4double  pRmin1, pRmax1, pRmin2, pRmax2, pDz, pSPhi, pDPhi;
   G4Cons* trunkSolid;
+  double widthCriteria = 0.04;
+  double pi = 3.141592654;
 
   if (turtle->children.size() == 0){
 
@@ -435,7 +437,101 @@ void DetectorConstruction::recursiveTreeBuild(Turtle* turtle,
     // So just storing the leaf logical volume and branch physical volume for later!
     G4LogicalVolume* leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
     m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+
+	int iterationNumber = m_treeSystem->getIntegerParameter("iterationNumber");
+
+	//KIERAN - add two leaves at the base of the end pieve of branch
+ 	if (iterationNumber != 0) {
+    	 // Store the initial conditions of the turtle before making adjustments to place leaf
+    	 double storeLength = turtle->length;
+    	 double storePhi = turtle->orientation.Phi();
+   	 double storeLVectorPhi = turtle->lVector.Phi();
+   	 // move the turtle to a point at the base of the branch, perpendicular to it
+   	 turtle->orientation.SetPhi(turtle->orientation.Phi()-(pi/2));
+   	 turtle->lVector.SetPhi(turtle->lVector.Phi()-(pi/2));
+   	 turtle->length = turtle->width/2;
+   	 // add it to the leaf list
+    	 leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+   	 m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+   	 // restore turtle to its original position
+   	 turtle->length = storeLength;
+   	 turtle->orientation.SetPhi(storePhi);
+   	 turtle->lVector.SetPhi(storeLVectorPhi);
+    	 // move the turtle to a point on the other side of the branch, at the base
+    	 turtle->orientation.SetPhi(turtle->orientation.Phi()+(pi/2));   
+   	 turtle->lVector.SetPhi(turtle->lVector.Phi()+(pi/2));
+   	 turtle->length = turtle->width/2;
+    	 // add leaf to the list
+    	 leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+   	 m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+   	 // restore turtle conditions
+   	 turtle->length = storeLength;
+   	 turtle->orientation.SetPhi(storePhi);
+    	 turtle->lVector.SetPhi(storeLVectorPhi);
+ 	}    
   }
+// KIERAN - if the branch is sufficiently thin (arbitrarily chosen thickness) then place two leaves at the base of that segment
+  else if (turtle->children.size() != 0 && (turtle->width/2) < widthCriteria) {
+	// if we are dealing with a cylindrical piece of branch
+  	 if (pRmax1 == pRmax2) {
+            // Store the initial conditions of the turtle before making adjustments to place leaf
+            double storeLength = turtle->length;
+            double storePhi = turtle->orientation.Phi();
+            double storeLVectorPhi = turtle->lVector.Phi();
+            // move the turtle to a point at the base of the branch, perpendicular to it
+            turtle->orientation.SetPhi(turtle->orientation.Phi()-(pi/2));
+            turtle->lVector.SetPhi(turtle->lVector.Phi()-(pi/2));
+            turtle->length = turtle->width/2;
+            // add it to the leaf list
+            G4LogicalVolume* leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+            m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+            // restore turtle to its original position
+            turtle->length = storeLength;
+            turtle->orientation.SetPhi(storePhi);
+            turtle->lVector.SetPhi(storeLVectorPhi);
+            // move the turtle to a point on the other side of the branch, at the base
+            turtle->orientation.SetPhi(turtle->orientation.Phi()+(pi/2));   
+            turtle->lVector.SetPhi(turtle->lVector.Phi()+(pi/2));
+            turtle->length = turtle->width/2;
+            // add leaf to the list
+            leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+            m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+            // restore turtle conditions
+            turtle->length = storeLength;
+            turtle->orientation.SetPhi(storePhi);
+            turtle->lVector.SetPhi(storeLVectorPhi);
+	 }
+         else { // add leaves to the base of sufficiently thin cones
+            // Store the initial conditions of the turtle before making adjustments to place leaf
+            double storeLength = turtle->length;
+            double storePhi = turtle->orientation.Phi();
+            double storeLVectorPhi = turtle->lVector.Phi();
+            double inclination = (pi/2) - atan(pDz/(pRmax1-pRmax2));
+            // move the turtle to a point at the base of the branch, perpendicular to it
+            turtle->orientation.SetPhi(turtle->orientation.Phi()-(pi/2)-inclination);
+            turtle->lVector.SetPhi(turtle->lVector.Phi()-(pi/2));
+            turtle->length = (turtle->width/2)*cos(inclination);
+            // add it to the leaf list
+            G4LogicalVolume* leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+            m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+            // restore turtle to its original position
+            turtle->length = storeLength;
+            turtle->orientation.SetPhi(storePhi);
+            turtle->lVector.SetPhi(storeLVectorPhi);
+            // move the turtle to a point on the other side of the branch, at the base
+            turtle->orientation.SetPhi(turtle->orientation.Phi()+(pi/2)-inclination);   
+            turtle->lVector.SetPhi(turtle->lVector.Phi()+(pi/2));
+            turtle->length = (turtle->width/2)*cos(inclination);
+            // add leaf to the list
+            leafLogicalVolume = m_leafConstructor.constructForTree(m_leafSystem, turtle);
+            m_candidateLeaves.push_back( std::pair<G4LogicalVolume*, G4VPhysicalVolume*>(leafLogicalVolume, trunkPhysicalVolume) );
+            // restore turtle conditions
+            turtle->length = storeLength;
+            turtle->orientation.SetPhi(storePhi);
+            turtle->lVector.SetPhi(storeLVectorPhi);
+         }
+  }
+ 
 }
 
 void DetectorConstruction::candidateLeafBuild() {
