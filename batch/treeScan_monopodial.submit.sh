@@ -2,17 +2,17 @@
 
 #Always run this script from the batch directory otherwise pathing goes awry
 #Now have a floor!
-jobName=Scan_MonopodialCordate_Spectrum_V3
-jobNumber=200
+jobName=Scan_MonopodialCordate_YR_VMLeaf
+jobNumber=100
 simultaneousJobNumber=$jobNumber
-OutputFileDirectory=/data/atlas/$USER/PVTree/AnalysisResults/$jobName
-OutputLogDirectory=/data/atlas/$USER/PVTree/AnalysisLogs/$jobName
+OutputFileDirectory=/data/detdev/$USER/PVTree/AnalysisResults/$jobName
+OutputLogDirectory=/data/detdev/$USER/PVTree/AnalysisLogs/$jobName
 
-geant4SeedOffset=1
-parameterSeedOffset=1
-treesPerJob=200 
-timeSegments=25
-photonsPerTimeSegment=10000 
+geant4SeedOffset=400
+parameterSeedOffset=400
+treesPerJob=50 
+timeSegments=12
+photonsPerTimeSegment=100000 
 treeType=monopodial
 leafType=cordate
 

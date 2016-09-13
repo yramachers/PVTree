@@ -2,17 +2,17 @@
 
 #Always run this script from the batch directory otherwise pathing goes awry
 #Now have a floor!
-jobName=Scan_StumpPlanar_Spectrum_V3
-jobNumber=100
+jobName=Scan_StumpPlanar_YR_VSkyInfo
+jobNumber=50
 simultaneousJobNumber=$jobNumber
-OutputFileDirectory=/data/atlas/$USER/PVTree/AnalysisResults/$jobName
-OutputLogDirectory=/data/atlas/$USER/PVTree/AnalysisLogs/$jobName
+OutputFileDirectory=/data/detdev/$USER/PVTree/AnalysisResults/$jobName
+OutputLogDirectory=/data/detdev/$USER/PVTree/AnalysisLogs/$jobName
 
 geant4SeedOffset=400
 parameterSeedOffset=400
-treesPerJob=500
-timeSegments=50
-photonsPerTimeSegment=10000
+treesPerJob=100
+timeSegments=24
+photonsPerTimeSegment=100000
 treeType=stump
 leafType=planar
 

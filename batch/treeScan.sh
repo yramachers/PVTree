@@ -18,12 +18,12 @@ jobCounter=$LSB_JOBINDEX
 echo "Sub-Job number ${jobCounter}"
 
 #Make a working directory under tmp
-workingDir=/tmp/phslag/${jobName}/${jobCounter}/
+workingDir=/tmp/phsdaq/${jobName}/${jobCounter}/
 mkdir -p ${workingDir}
 cd ${workingDir}
 
 #Copy important files
-cp -v ${startDirectory}/../../bin/treeScan .
+cp -v ${startDirectory}/../../Install/bin/treeScan .
 
 #Is everything here?
 ls -la
