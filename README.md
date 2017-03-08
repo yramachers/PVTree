@@ -20,7 +20,7 @@ compiler used during the build. Currently GCC 4.9.X+ is required.
 tree. This will also include the installation of a number of external
 packages called Geant4, ROOT, libconfig and Evolutionary Objects. 
 
-> cmake -DCMAKE_INSTALL_PREFIX=${PWD}/../Install/ -DPVTREE_SOURCE_DIRECTORY=../ -DPVTREE_CLIMATE_DATA_PATH=/storage/epp2/phslag/PVTree/ClimateData/ ../super/
+> cmake -DCMAKE_INSTALL_PREFIX=${PWD}/../Install/ -DPVTREE_SOURCE_DIRECTORY=../ -DPVTREE_CLIMATE_DATA_PATH=/my/data/storage/location/ClimateData/ ../super/
 
 You should check there are no error messages during this step. Recent versions
 of ROOT require python installations of version 2.7 and greater. Will need
