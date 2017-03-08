@@ -1,3 +1,17 @@
+=======================
+PVTree simulation code
+=======================
+
+Authors:  Graham Jones, Yorck Ramachers
+Contributor: Kieran Uzzell
+
+
+Licensing
+---------
+Please study the file ``LICENSE.txt`` for the distribution terms and
+conditions of use of PVTree.
+
+
 Quick Start-up 
 =============
 
