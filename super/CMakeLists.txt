@@ -55,10 +55,10 @@ include(ExternalProject)
 
 #Attempt to download and install ROOT
 ExternalProject_Add(SuperROOT
-  URL https://root.cern.ch/download/root_v6.02.05.source.tar.gz
-  URL_HASH MD5=75d1f2c07960c599ababb6249ad57b4e
-  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ROOT-v6-02-05
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/ROOT-v6-02-05
+  URL https://root.cern.ch/download/root_v6.08.06.source.tar.gz
+  URL_HASH MD5=5a1cc1a21f6067e5ec1971542422be35
+  PREFIX ${CMAKE_CURRENT_BINARY_DIR}/ROOT-v6-08-06
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/ROOT-v6-08-06
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
   -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
