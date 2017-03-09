@@ -15,7 +15,7 @@ Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/license
 
 External dependencies
 =====================
-C++11 compatible compiler
+C++11 compatible compiler (gcc 4.9.x is the default at the moment)
 Cmake 2.8 or higher
 Built in superbuild:
 - ROOT 6.xx
