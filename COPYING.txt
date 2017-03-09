@@ -1,4 +1,4 @@
-Copyright (C) 2016 Graham Jones <>, Yorck Ramachers <>
+Copyright (C) 2016 Graham Jones <graham.j@gmail.com>, Yorck Ramachers <y.a.ramachers@warwick.ac.uk>
 Copyright (C) 2016 University of Warwick
 
 This file is part of the PVTree software package.

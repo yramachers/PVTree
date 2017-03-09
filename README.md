@@ -10,6 +10,7 @@ Licensing
 ---------
 Please study the file ``LICENSE.txt`` for the distribution terms and
 conditions of use of PVTree.
+Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/licenses/by-nc-nd/4.0/
 
 
 Quick Start-up 
