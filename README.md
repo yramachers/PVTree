@@ -13,8 +13,21 @@ conditions of use of PVTree.
 Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/licenses/by-nc-nd/4.0/
 
 
+External dependencies
+=====================
+C++11 compatible compiler
+Cmake 2.8 or higher
+Built in superbuild:
+- ROOT 6.xx
+- Geant4 10.xx (optional with QT4 installed for graphics display)
+- LibConfig
+- ECCodes (for reading climate data files)
+- EO (for future optimisation, not currently used)
+- CPPCheck
+
+
 Quick Start-up 
-=============
+==============
 
 Installation Instructions
 -------------------------------
