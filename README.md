@@ -16,17 +16,19 @@ Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/license
 External dependencies
 =====================
 C++11 compatible compiler (gcc 4.9.x is the default at the moment)
+Fortran compiler (for solar models)
 Cmake 3.4.3 or higher
 Built in superbuild:
-- ROOT 6.xx
-- Geant4 10.xx (optional with QT4 installed for graphics display)
-- LibConfig
-- ECCodes (for reading climate data files)
-- EO (for future optimisation, not currently used)
-- CPPCheck
+- [ROOT](https://root.cern.ch) 6.xx
+- [Geant4](https://geant4.cern.ch) 10.xx
+  - Optional: Qt4/5 for visualization with Geant4
+- [LibConfig](http://www.hyperrealm.com/libconfig/)
+- [ECCodes](https://software.ecmwf.int/wiki/display/ECC/ecCodes+Home) (for reading climate data files)
+- [EO](https://sourceforge.net/projects/eodev/) (for future optimisation, not currently used)
+- [CPPCheck](https://sourceforge.net/projects/cppcheck/)
 
 
-Quick Start-up 
+Quick Start-up
 ==============
 
 Installation Instructions
@@ -36,7 +38,7 @@ Installation Instructions
 
 > source setupEnvironment.sh
 
-which will set the environment variables controlling the choice of 
+which will set the environment variables controlling the choice of
 compiler used during the build. Currently GCC 4.9.X+ is required.
 
 2. Create a new build and install directory
@@ -44,16 +46,16 @@ compiler used during the build. Currently GCC 4.9.X+ is required.
 > mkdir Build
 > mkdir Install
 
-3. From the build directory use cmake to configure the PVTree source 
+3. From the build directory use cmake to configure the PVTree source
 tree. This will also include the installation of a number of external
-packages called Geant4, ROOT, libconfig and Evolutionary Objects. 
+packages called Geant4, ROOT, libconfig and Evolutionary Objects.
 
 > cmake -DCMAKE_INSTALL_PREFIX=${PWD}/../Install/ -DPVTREE_SOURCE_DIRECTORY=../ -DPVTREE_CLIMATE_DATA_PATH=/my/data/storage/location/ClimateData/ ../super/
 
 You should check there are no error messages during this step. Recent versions
 of ROOT require python installations of version 2.7 and greater. Will need
 to specify a python exe by hand if the default version does not meet the criteria.
-Newer versions of ROOT might be better as python is supposidly disabled for the 
+Newer versions of ROOT might be better as python is supposidly disabled for the
 ROOT super-build (a requirement that doesn't seem to work at the moment.).
 
 If the climate data path no longer exists you will have download the files again
@@ -63,7 +65,7 @@ will have to download in smaller time periods and then merge the files (can do a
 simple cat with grib files).
 
 4. Compile all the code using make. This may take a long time (about one
-hour when compiling with four cores) when first compiling as the external 
+hour when compiling with four cores) when first compiling as the external
 packages Geant4 and ROOT are both quite large.
 
 > nice make -j4
@@ -77,9 +79,9 @@ spurious errors can be found (but it does not prevent compilation).
 Alternatively a debug build can be created using the additional cmake option
 -DCMAKE_BUILD_TYPE=DEBUG. This will turn off compiler optimization and
 it will enable code coverage to be run (with 'make test_coverage'). When running
-the executables produced by the debug build the allowed virtual memory usage 
+the executables produced by the debug build the allowed virtual memory usage
 must be increased (by tools like ulimit) because of the undefined behaviour and
-address sanitizers. The debug build requires both lcov and gcov to be present in 
+address sanitizers. The debug build requires both lcov and gcov to be present in
 the path (gcov needs to be from the same compiler suit).
 
 
@@ -97,20 +99,20 @@ also the PVTree code.
 
 > basicSimulate
 
-3. Look at the output! 
+3. Look at the output!
 
 
 Compiling DOxygen Documentation
 -------------------------------
 
-Documentation of the code can be automatically generated from the build 
-directory of the PVTree software by running. 
+Documentation of the code can be automatically generated from the build
+directory of the PVTree software by running.
 
 > cd Build/PVTree/src/SuperPVTree-build/
 > make doc
 > make install
 
-To browse the generated documentation point your browser at the html file 
+To browse the generated documentation point your browser at the html file
 within your install path  Install/share/doc/html/index.html
 
 
