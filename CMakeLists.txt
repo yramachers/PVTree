@@ -64,8 +64,6 @@ find_package(Geant4 REQUIRED ui_all vis_all)
 # LibConfig's cmake support files are broken, so
 # should always trey and use our own Find module
 find_package(Libconfig REQUIRED)
-#FIND_LIBRARY(LIBCONFIG_LIBRARY NAMES config++ PATHS ${LIBCONFIG_DIR}/lib /usr/lib usr/local/lib)
-#FIND_PATH(LIBCONFIG_INCLUDE_DIR libconfig.h++ ${LIBCONFIG_DIR}/include /usr/include /usr/local/include)
 
 # ecCodes for climate data file reading
 # eccodes provides a suitable CMake config mode file, but needs
@@ -80,15 +78,6 @@ set_property(TARGET eccodes
 #include(CppcheckTargets)
 function(add_cppcheck)
 endfunction()
-
-# Evolutionary Objects (Not yet used)
-#find_package(EvolutionaryObjects)
-#set(EvolutionaryObjects_LIBRARY_DIR ${EvolutionaryObjects_DIR}/lib)
-#set(EvolutionaryObjects_INCLUDE_DIR ${EvolutionaryObjects_DIR}/include/eo)
-#set(EvolutionaryObjects_LIBS "-L${EvolutionaryObjects_LIBRARY_DIR} -lcma  -leo  -leoserial  -leoutils  -les  -lga")
-#Also include evolutionary computing library
-#include_directories(BEFORE ${EvolutionaryObjects_INCLUDE_DIR})
-#set(LIBS ${LIBS} ${EvolutionaryObjects_LIBS})
 
 # - Set up testing
 enable_testing(true)
