@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "TVector3.h"
-#include "leaf.hpp"
+#include "pvtree/rootBasedSimulation/leaf.hpp"
 
 //Forward declare
 class TGeoManager;
@@ -43,7 +43,7 @@ public:
 
   void setBoundingBoxVisibility(bool isVisible) { this->boundingBoxesVisible = isVisible; }
   bool getBoundingBoxVisibility() { return this->boundingBoxesVisible; }
-  
+
   TGeoManager*       getManager();
   std::vector<Leaf>& getLeaves();
 

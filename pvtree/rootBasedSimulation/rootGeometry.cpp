@@ -1,27 +1,27 @@
-#include "rootBasedSimulation/rootGeometry.hpp"
-#include "geometry/turtle.hpp"
+#include "pvtree/rootBasedSimulation/rootGeometry.hpp"
+#include "pvtree/geometry/turtle.hpp"
 #include "TGeoManager.h"
 #include "TGeoMaterial.h"
 #include "TGeoMedium.h"
 #include "TGeoVolume.h"
 #include "TLorentzRotation.h"
 #include <iostream>
-#include "solarSimulation/sun.hpp"
+#include "pvtree/solarSimulation/sun.hpp"
 #include "TH1D.h"
 
-ROOTGeometry::ROOTGeometry(TGeoManager* manager) : m_manager(manager), 
+ROOTGeometry::ROOTGeometry(TGeoManager* manager) : m_manager(manager),
 						   top(nullptr),
-						   volumeCount(0), 
-						   boundingBoxesVisible(false), 
+						   volumeCount(0),
+						   boundingBoxesVisible(false),
 						   depthStepNumber(8) {
 
   //Build some mediums -- if not used these will be a memory leak....?
   TGeoMaterial* vacuumMaterial = new TGeoMaterial("Vacuum", 0, 0, 0);
-  this->vacuumMedium           = new TGeoMedium("Vacuum", 1, vacuumMaterial);  
+  this->vacuumMedium           = new TGeoMedium("Vacuum", 1, vacuumMaterial);
   TGeoMaterial* branchMaterial = new TGeoMaterial("Branch", 0, 0, 0);
-  this->branchMedium           = new TGeoMedium("Branch", 2, branchMaterial);  
+  this->branchMedium           = new TGeoMedium("Branch", 2, branchMaterial);
   TGeoMaterial* leafMaterial   = new TGeoMaterial("Leaf", 0, 0, 0);
-  this->leafMedium             = new TGeoMedium("Leaf", 3, leafMaterial);  
+  this->leafMedium             = new TGeoMedium("Leaf", 3, leafMaterial);
 
 }
 
@@ -70,7 +70,7 @@ void ROOTGeometry::normalizeTurtlesHeight(std::vector<Turtle*> turtles, double h
 }
 
 void ROOTGeometry::buildLists(Turtle* turtle, std::vector<Turtle*>& toDraw, std::vector<Turtle*>& toSeed, int depthCount){
-  
+
   if (depthCount <= 0){
     //Just add to seeds
     toSeed.push_back(turtle);
@@ -78,7 +78,7 @@ void ROOTGeometry::buildLists(Turtle* turtle, std::vector<Turtle*>& toDraw, std:
   }
 
   toDraw.push_back(turtle);
-  
+
   depthCount--;
   for (Turtle* child : turtle->children){
     buildLists(child, toDraw, toSeed, depthCount);
@@ -93,29 +93,29 @@ void ROOTGeometry::constructLeaf(const Turtle* endTurtle, TGeoVolume* parentVolu
   double coneHeight = endTurtle->length/15.0;
 
   //Quick initial representation as a cone (like the branches)
-  TGeoVolume* leaf = this->m_manager->MakeCone("Leaf", this->leafMedium, 
-					     coneHeight, 
-					     0.0, 
-					     coneRadius, 
-					     0.0, 
+  TGeoVolume* leaf = this->m_manager->MakeCone("Leaf", this->leafMedium,
+					     coneHeight,
+					     0.0,
+					     coneRadius,
+					     0.0,
 					     coneRadius);
 
   leaf->SetFillColor(kGreen-2);
   leaf->SetLineColor(kGreen-2);
 
-  TGeoRotation rotationMatrix("rotate", 
-			      TMath::RadToDeg()*endTurtle->orientation.Phi()+90.0, 
+  TGeoRotation rotationMatrix("rotate",
+			      TMath::RadToDeg()*endTurtle->orientation.Phi()+90.0,
 			      TMath::RadToDeg()*endTurtle->orientation.Theta(),
 			      0);
 
   TVector3 centralPosition(endTurtle->position);
   centralPosition = centralPosition + (endTurtle->orientation*(endTurtle->length+coneHeight/2.0)) - parentPosition;
-  TGeoTranslation translationMatrix(centralPosition.X(), 
+  TGeoTranslation translationMatrix(centralPosition.X(),
 				    centralPosition.Y(),
 				    centralPosition.Z());
-  
+
   TGeoCombiTrans* combinedMatrix = new TGeoCombiTrans(translationMatrix, rotationMatrix); //this is deleted automatically
-  
+
   this->volumeCount++;
   parentVolume->AddNodeOverlap(leaf, this->volumeCount, combinedMatrix );
 
@@ -133,22 +133,22 @@ void ROOTGeometry::constructLeaf(const Turtle* endTurtle, TGeoVolume* parentVolu
 }
 
 void ROOTGeometry::recursiveTreeBuild(Turtle* startTurtle, int depthStep, TGeoVolume* parentVolume, TVector3 parentPosition){
-  
+
   //First construct the bounding box
   TVector3 maximums(startTurtle->position);
   TVector3 minimums(startTurtle->position);
 
   getTurtleTreeExtent(startTurtle, minimums, maximums);
 
-  TGeoVolume* boundingBox = this->m_manager->MakeBox("BoundingBox",this->vacuumMedium, 
-						   (maximums.X()-minimums.X())/2.0, 
-						   (maximums.Y()-minimums.Y())/2.0, 
+  TGeoVolume* boundingBox = this->m_manager->MakeBox("BoundingBox",this->vacuumMedium,
+						   (maximums.X()-minimums.X())/2.0,
+						   (maximums.Y()-minimums.Y())/2.0,
 						   (maximums.Z()-minimums.Z())/2.0 );
 
   boundingBox->SetInvisible(); //never draw these bounding boxes
 
-  TVector3 boundingBoxPosition( (maximums.X()-minimums.X())/2.0 + minimums.X(), 
-				(maximums.Y()-minimums.Y())/2.0 + minimums.Y(), 
+  TVector3 boundingBoxPosition( (maximums.X()-minimums.X())/2.0 + minimums.X(),
+				(maximums.Y()-minimums.Y())/2.0 + minimums.Y(),
 				(maximums.Z()-minimums.Z())/2.0 + minimums.Z());
   TVector3 boundingBoxPositionToParent = boundingBoxPosition - parentPosition;
 
@@ -160,9 +160,9 @@ void ROOTGeometry::recursiveTreeBuild(Turtle* startTurtle, int depthStep, TGeoVo
   //In case the user wants to visualize the bounding boxes.
   if (this->boundingBoxesVisible){
     this->volumeCount++;
-    TGeoVolume* drawboundingBox = this->m_manager->MakeBox("BoundingBox",this->vacuumMedium, 
-							 (maximums.X()-minimums.X())/2.0, 
-							 (maximums.Y()-minimums.Y())/2.0, 
+    TGeoVolume* drawboundingBox = this->m_manager->MakeBox("BoundingBox",this->vacuumMedium,
+							 (maximums.X()-minimums.X())/2.0,
+							 (maximums.Y()-minimums.Y())/2.0,
 							 (maximums.Z()-minimums.Z())/2.0 );
     drawboundingBox->SetLineColor(kRed-2);
 
@@ -185,32 +185,32 @@ void ROOTGeometry::recursiveTreeBuild(Turtle* startTurtle, int depthStep, TGeoVo
 
     if (turtle->children.size() == 0){
       //No children, assume at the end of the branch
-      turtleBox = this->m_manager->MakeCone("Turtle", this->branchMedium, 
-					  turtle->length/2.0, 
-					  0.0, 
-					  turtle->width/2.0, 
-					  0.0, 
+      turtleBox = this->m_manager->MakeCone("Turtle", this->branchMedium,
+					  turtle->length/2.0,
+					  0.0,
+					  turtle->width/2.0,
+					  0.0,
 					  turtle->width/2.0);
     }else{
       //If we have children end the cone on the child width! -- assume all children the same
-      turtleBox = this->m_manager->MakeCone("Turtle", this->branchMedium, 
-					  turtle->length/2.0, 
-					  0.0, 
-					  turtle->width/2.0, 
-					  0.0, 
+      turtleBox = this->m_manager->MakeCone("Turtle", this->branchMedium,
+					  turtle->length/2.0,
+					  0.0,
+					  turtle->width/2.0,
+					  0.0,
 					  turtle->children[0]->width/2.0);
     }
     turtleBox->SetFillColor(kOrange-2);
     turtleBox->SetLineColor(kOrange-2);
-  
-    TGeoRotation rotationMatrix("rotate", 
-				TMath::RadToDeg()*turtle->orientation.Phi()+90.0, 
+
+    TGeoRotation rotationMatrix("rotate",
+				TMath::RadToDeg()*turtle->orientation.Phi()+90.0,
 				TMath::RadToDeg()*turtle->orientation.Theta(),
 				0);
 
     TVector3 centralPosition(turtle->position);
     centralPosition = centralPosition + (turtle->orientation*(turtle->length/2.0)) - boundingBoxPosition;
-    TGeoTranslation translationMatrix(centralPosition.X(), 
+    TGeoTranslation translationMatrix(centralPosition.X(),
 				      centralPosition.Y(),
 				      centralPosition.Z());
 
@@ -223,7 +223,7 @@ void ROOTGeometry::recursiveTreeBuild(Turtle* startTurtle, int depthStep, TGeoVo
     if (turtle->children.size() ==0){
       constructLeaf(turtle, boundingBox, boundingBoxPosition);
     }
-    
+
   }
 
 
@@ -244,10 +244,10 @@ void ROOTGeometry::constructTreeFromTurtles(std::vector<Turtle*> turtles, double
   TVector3 totalMinimums(turtles[0]->position);
 
   getTurtleTreeExtent(turtles[0], totalMinimums, totalMaximums);
-  
-  this->top = this->m_manager->MakeBox("Top", this->vacuumMedium, 
-				     totalMaximums.X()-totalMinimums.X(), 
-				     totalMaximums.Y()-totalMinimums.Y(), 
+
+  this->top = this->m_manager->MakeBox("Top", this->vacuumMedium,
+				     totalMaximums.X()-totalMinimums.X(),
+				     totalMaximums.Y()-totalMinimums.Y(),
 				     totalMaximums.Z()-totalMinimums.Z() );
 
   //Start recursive geometry building

@@ -1,4 +1,4 @@
-#include "rootBasedSimulation/leaf.hpp"
+#include "pvtree/rootBasedSimulation/leaf.hpp"
 
 Leaf::Leaf(TVector3 position, TVector3 normal, double area, int volumeNumber) : m_position(position), m_normal(normal), m_area(area),  m_volumeName("Leaf"), m_volumeNumber(volumeNumber), m_energy(0.0), m_lastEnergy(0.0) {}
 
