@@ -1,4 +1,4 @@
-#include "geometry/turtle.hpp"
+#include "pvtree/geometry/turtle.hpp"
 #include "TVector3.h"
 #include <algorithm>
 #include <vector>
@@ -51,7 +51,7 @@ Turtle::~Turtle(){
   //whilst trying to maintain inheritence.
   std::vector<Turtle* >::iterator  it;
   if (this->parent != 0){
-    it = std::find(this->parent->children.begin(), this->parent->children.end(), this); 
+    it = std::find(this->parent->children.begin(), this->parent->children.end(), this);
 
     if (it != this->parent->children.end()){
       this->parent->children.erase(it);

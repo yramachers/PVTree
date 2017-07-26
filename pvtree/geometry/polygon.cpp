@@ -1,5 +1,5 @@
-#include "geometry/polygon.hpp"
-#include "geometry/vertex.hpp"
+#include "pvtree/geometry/polygon.hpp"
+#include "pvtree/geometry/vertex.hpp"
 #include <stdexcept>
 #include <algorithm>
 #include <iostream>
@@ -37,12 +37,12 @@ void Polygon::addVertex(TVector3 vertexPosition) {
 std::shared_ptr<Vertex> Polygon::getVertex(unsigned int index) {
   if (index >= this->size()){
     throw std::out_of_range("Not enough vertices pushed into the polygon.");
-  } 
+  }
 
   return m_vertices[index];
 }
 
-void Polygon::replaceVertex(std::shared_ptr<Vertex> originalVertex, 
+void Polygon::replaceVertex(std::shared_ptr<Vertex> originalVertex,
 			    std::shared_ptr<Vertex> replacementVertex){
 
   //ensure the vertices know what is up
@@ -63,12 +63,12 @@ TVector3 Polygon::getNormal() {
   TVector3 cb = m_vertices[2]->getPosition() - m_vertices[1]->getPosition();
 
   TVector3 normal = cb.Cross(ab);
-  
+
   return normal.Unit();
 }
 
 void Polygon::invertNormal() {
-  
+
   //Switch the order of the last two vertices
   //so that the normal will be evaluated differently.
   if (this->size() != 3) {

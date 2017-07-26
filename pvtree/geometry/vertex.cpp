@@ -1,5 +1,5 @@
-#include "geometry/vertex.hpp"
-#include "geometry/polygon.hpp"
+#include "pvtree/geometry/vertex.hpp"
+#include "pvtree/geometry/polygon.hpp"
 #include <stdexcept>
 #include <algorithm>
 
@@ -23,7 +23,7 @@ TVector3 Vertex::getNormal() {
   //Get the normal of each face containing the vertex then take the average
   TVector3 faceNormalAverage(0.0, 0.0, 0.0);
 
-  for (unsigned int f=0; f<m_containingFaces.size(); f++){ 
+  for (unsigned int f=0; f<m_containingFaces.size(); f++){
     TVector3 faceNormal = m_containingFaces[f]->getNormal();
 
     faceNormalAverage += faceNormal;
@@ -39,7 +39,7 @@ TVector3 Vertex::getEdgeNormal(std::shared_ptr<Vertex> otherVertex) {
   bool foundCommonFace = false;
   Polygon* commonFace = 0;
   for (Polygon* testFace : m_containingFaces) {
-    
+
     auto otherVertexFace = std::find(otherVertex->m_containingFaces.begin(), otherVertex->m_containingFaces.end(), testFace);
 
     if (otherVertexFace != otherVertex->m_containingFaces.end()) {
@@ -67,7 +67,7 @@ TVector3 Vertex::getEdgeNormal(std::shared_ptr<Vertex> otherVertex) {
   //Check candidate direction is pointing in the right direction (i.e. not towards the centre of the face!)
   //Need to use the edge vector to the other unused vertex in the face
   for (unsigned int v=0; v<commonFace->size(); v++) {
-    
+
     std::shared_ptr<Vertex> vertex = commonFace->getVertex(v);
 
     if (vertex != otherVertex && vertex.get() != this) {
