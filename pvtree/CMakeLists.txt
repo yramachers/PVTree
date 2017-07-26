@@ -23,6 +23,7 @@ configure_file(${version_in} ${version_out} @ONLY)
 
 include_directories(BEFORE ${PROJECT_SOURCE_DIR})
 add_subdirectory(utils)
+add_subdirectory(location)
 
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
 #        DESTINATION include/)

@@ -1,4 +1,4 @@
-#include "location/locationDetails.hpp"
+#include "pvtree/location/locationDetails.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -23,19 +23,19 @@ LocationDetails::LocationDetails(std::string inputFilePath) {
     localTest.close();
 
     // If found use the local file
-    extractFile( inputFilePath ); 
+    extractFile( inputFilePath );
     return;
   }
 
   // Not a local file so look in the installed share directory
   const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
-  
+
   if ( environmentVariableContents != 0 ) {
 
     //Environment variable set so give it a try
     std::string   shareFilePath(std::string(environmentVariableContents) + "/config/" + inputFilePath);
     std::ifstream shareTest(shareFilePath.c_str());
-      
+
     if ( shareTest.is_open() ) {
       shareTest.close();
 
@@ -45,14 +45,14 @@ LocationDetails::LocationDetails(std::string inputFilePath) {
   }
 
   // If reaching here then unable to extract a file's contents!
-  std::cerr << "LocationDetails::LocationDetails - Unable to find the specified input file " << inputFilePath 
+  std::cerr << "LocationDetails::LocationDetails - Unable to find the specified input file " << inputFilePath
 	    << std::endl;
   throw std::invalid_argument("Can't find location configuration file.");
 
 }
 
 LocationDetails::LocationDetails(double longitude, double latitude, double altitude) {
-  
+
   m_longitude = longitude;
   m_latitude  = latitude;
   m_altitude  = altitude;
@@ -60,7 +60,7 @@ LocationDetails::LocationDetails(double longitude, double latitude, double altit
 }
 
 LocationDetails::LocationDetails(const LocationDetails& original) {
-  
+
   m_longitude = original.m_longitude;
   m_latitude  = original.m_latitude;
   m_altitude  = original.m_altitude;
@@ -97,7 +97,7 @@ void LocationDetails::extractFile(std::string configFilePath) {
 	      << " - " << pex.getError() << std::endl;
     throw;
   }
-  
+
   // Make sure everything is filled
   int readCount = 0;
 
