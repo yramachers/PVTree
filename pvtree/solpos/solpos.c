@@ -81,14 +81,14 @@
 *    27 April 1999 REVISION:  Corrected leap year in S_date.
 *    13 January 2000 REVISION:  SMW converted to structure posdata parameter
 *                               and subdivided into functions.
-*    01 February 2001 REVISION: SMW corrected ecobli calculation 
+*    01 February 2001 REVISION: SMW corrected ecobli calculation
 *                               (changed sign). Error is small (max 0.015 deg
 *                               in calculation of declination angle)
 *----------------------------------------------------------------------------*/
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include "solpos/solpos00.h"
+#include "pvtree/solpos/solpos00.h"
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 *
