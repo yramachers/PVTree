@@ -1,9 +1,9 @@
 #ifndef LEAF_SYSTEM_SIMPLE_CONSTRUCTION_HPP
 #define LEAF_SYSTEM_SIMPLE_CONSTRUCTION_HPP
 
-#include "leafSystem/leafConstructionInterface.hpp"
-#include "leafSystem/simple.hpp"
-#include "leafSystem/leafFactory.hpp"
+#include "pvtree/leafSystem/leafConstructionInterface.hpp"
+#include "pvtree/leafSystem/simple.hpp"
+#include "pvtree/leafSystem/leafFactory.hpp"
 
 /*! \brief Class to handle construction of Simple leaf type.
  * 

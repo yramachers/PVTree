@@ -1,9 +1,9 @@
 #ifndef PVTREE_LEAF_SYSTEM_PLANAR_CONSTRUCTION_HPP
 #define PVTREE_LEAF_SYSTEM_PLANAR_CONSTRUCTION_HPP
 
-#include "leafSystem/leafConstructionInterface.hpp"
-#include "leafSystem/planar.hpp"
-#include "leafSystem/leafFactory.hpp"
+#include "pvtree/leafSystem/leafConstructionInterface.hpp"
+#include "pvtree/leafSystem/planar.hpp"
+#include "pvtree/leafSystem/leafFactory.hpp"
 
 /*! \brief Class to handle construction of Planar leaf type.
  * 

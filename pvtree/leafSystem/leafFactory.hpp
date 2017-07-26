@@ -1,7 +1,7 @@
 #ifndef LEAF_SYSTEM_LEAF_FACTORY_HPP
 #define LEAF_SYSTEM_LEAF_FACTORY_HPP
 
-#include "leafSystem/leafConstructionInterface.hpp"
+#include "pvtree/leafSystem/leafConstructionInterface.hpp"
 #include <string>
 #include <map>
 #include <memory>

@@ -26,6 +26,6 @@ add_subdirectory(utils)
 add_subdirectory(location)
 add_subdirectory(geometry)
 add_subdirectory(treeSystem)
-
+add_subdirectory(leafSystem)
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
 #        DESTINATION include/)

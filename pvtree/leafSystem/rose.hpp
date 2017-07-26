@@ -1,7 +1,7 @@
-#ifndef LEAF_SYSTEM_CORDATE
-#define LEAF_SYSTEM_CORDATE
+#ifndef LEAF_SYSTEM_ROSE
+#define LEAF_SYSTEM_ROSE
 
-#include "leafSystem/leafSystemInterface.hpp"
+#include "pvtree/leafSystem/leafSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -14,15 +14,15 @@ class LeafConstructionInterface;
 /*! Fractal leaf generation in a similar fashion to the way the rest of the
 / tree structure is created. Only a leaf surface is actually produced, requires
 / a little extra work to make it solid. */
-namespace Cordate {
+namespace Rose {
 
   /*! Move but don't create any structure by itself */
   class G : public LeafSystemInterface {
   private:
     double m_elongation;
-
+    double m_growthRate;
   public:
-    G(LeafConstructionInterface* constructor, double elongation);
+    G(LeafConstructionInterface* constructor, double elongation, double growthRate);
     std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles,
@@ -159,9 +159,9 @@ namespace Cordate {
   /*! Control the growth */
   class A : public LeafSystemInterface {
   private:
-    double m_directionFactor;
+    double m_timeIndex;
   public:
-    A(LeafConstructionInterface* constructor, double directionFactor);
+    A(LeafConstructionInterface* constructor, double timeIndex);
     std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles,
@@ -172,32 +172,19 @@ namespace Cordate {
   /*! Control the growth */
   class B : public LeafSystemInterface {
   private:
-    double m_directionFactor;
+    double m_timeIndex;
   public:
-    B(LeafConstructionInterface* constructor, double directionFactor);
+    B(LeafConstructionInterface* constructor, double timeIndex);
     std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles,
 			std::vector<Polygon*>& leafSegments);
     void print(std::ostream& os) const;
   };
-
-  /*! Control the growth */
-  class C : public LeafSystemInterface {
-  private:
-  public:
-    explicit C(LeafConstructionInterface* constructor);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
-
 
 }
 
-#endif //LEAF_SYSTEM_CORDATE
+#endif //LEAF_SYSTEM_ROSE
 
 
 

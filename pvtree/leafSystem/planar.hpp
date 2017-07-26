@@ -1,7 +1,7 @@
-#ifndef LEAF_SYSTEM_SIMPLE
-#define LEAF_SYSTEM_SIMPLE
+#ifndef PVTREE_LEAF_SYSTEM_PLANAR_HPP
+#define PVTREE_LEAF_SYSTEM_PLANAR_HPP
 
-#include "leafSystem/leafSystemInterface.hpp"
+#include "pvtree/leafSystem/leafSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -11,10 +11,10 @@ class Turtle;
 class Polygon;
 class LeafConstructionInterface;
 
-/*! Fractal leaf generation in a similar fashion to the way the rest of the
-/ tree structure is created. Only a leaf surface is actually produced, requires
-/ a little extra work to make it solid. */
-namespace Simple {
+/*! Produce a very simple planar leaf according to a few parameters. 
+ *  Only a leaf surface is actually produced, requires a little extra 
+ *  work to make it solid. */
+namespace Planar {
 
   /*! Move but don't create any structure by itself */
   class G : public LeafSystemInterface {
@@ -23,20 +23,6 @@ namespace Simple {
     double m_growthRate;
   public:
     G(LeafConstructionInterface* constructor, double elongation, double growthRate);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
-
-  /*! Move turtle along the down direction */
-  class Down : public LeafSystemInterface {
-  private:
-    double m_distance;
-
-  public:
-    Down(LeafConstructionInterface* constructor, double distance);
     std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles,
@@ -94,31 +80,6 @@ namespace Simple {
     void print(std::ostream& os) const;
   };
 
-  /*! Rotate around vertical vector in the clockwise direction */
-  class Plus : public LeafSystemInterface {
-  private:
-    double m_angle;
-  public:
-    Plus(LeafConstructionInterface* constructor, double angle);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
-
-  /*! Rotate around vertical vector in the anti-clockwise direction */
-  class Minus : public LeafSystemInterface {
-  private:
-    double m_angle;
-  public:
-    Minus(LeafConstructionInterface* constructor, double angle);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
 
   /*! Start a new polygon */
   class CurlyLeft : public LeafSystemInterface {
@@ -156,35 +117,9 @@ namespace Simple {
     void print(std::ostream& os) const;
   };
 
-  /*! Control the growth */
-  class A : public LeafSystemInterface {
-  private:
-    double m_timeIndex;
-  public:
-    A(LeafConstructionInterface* constructor, double timeIndex);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
-
-  /*! Control the growth */
-  class B : public LeafSystemInterface {
-  private:
-    double m_timeIndex;
-  public:
-    B(LeafConstructionInterface* constructor, double timeIndex);
-    std::vector<std::shared_ptr<LeafSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles,
-			std::vector<Polygon*>& leafSegments);
-    void print(std::ostream& os) const;
-  };
-
 }
 
-#endif //LEAF_SYSTEM_SIMPLE
+#endif //PVTREE_LEAF_SYSTEM_PLANAR_HPP
 
 
 

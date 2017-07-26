@@ -1,7 +1,7 @@
-#ifndef LEAF_SYSTEM_ROSE
-#define LEAF_SYSTEM_ROSE
+#ifndef LEAF_SYSTEM_SIMPLE
+#define LEAF_SYSTEM_SIMPLE
 
-#include "leafSystem/leafSystemInterface.hpp"
+#include "pvtree/leafSystem/leafSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -14,7 +14,7 @@ class LeafConstructionInterface;
 /*! Fractal leaf generation in a similar fashion to the way the rest of the
 / tree structure is created. Only a leaf surface is actually produced, requires
 / a little extra work to make it solid. */
-namespace Rose {
+namespace Simple {
 
   /*! Move but don't create any structure by itself */
   class G : public LeafSystemInterface {
@@ -184,7 +184,7 @@ namespace Rose {
 
 }
 
-#endif //LEAF_SYSTEM_ROSE
+#endif //LEAF_SYSTEM_SIMPLE
 
 
 
