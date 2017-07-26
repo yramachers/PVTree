@@ -4,9 +4,9 @@ GetOpt_pp: Yet another C++ version of getopt.
 
     Copyright (C) Daniel Gutson, FuDePAN 2007-2010
     Distributed under the Boost Software License, Version 1.0.
-    (See accompanying file LICENSE_1_0.txt in the root directory or 
+    (See accompanying file LICENSE_1_0.txt in the root directory or
     copy at http://www.boost.org/LICENSE_1_0.txt)
-    
+
     GetOpt_pp IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
@@ -28,7 +28,7 @@ GetOpt_pp: Yet another C++ version of getopt.
 #include <unistd.h>
 #endif
 
-#include "utils/getopt_pp.h"
+#include "pvtree/utils/getopt_pp.h"
 
 namespace GetOpt
 {
