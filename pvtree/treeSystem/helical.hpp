@@ -1,19 +1,17 @@
-#ifndef LSYSTEM_STOCHASTIC
-#define LSYSTEM_STOCHASTIC
+#ifndef LSYSTEM_HELICAL
+#define LSYSTEM_HELICAL
 
-#include "treeSystem/treeSystemInterface.hpp"
+#include "pvtree/treeSystem/treeSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
 #include <cmath>
-#include <random>
 
 class TreeConstructionInterface;
 
-/*! Example using the Ternary L-System defined in Algorithmic botany. 
-/ See chapter 2 figure 2.8 in http://algorithmicbotany.org/papers/abop/abop.pdf 
-/ Extended to include probabilistic branching. */
-namespace StochasticBranching {
+/*! System that can produce helical like structures (and probably many other weird
+/ and wonderful structures). It has optional sympodial like branching. */
+namespace HelicalBranching {
 
   /*! Trunk formation */
   class F : public TreeSystemInterface {
@@ -28,20 +26,48 @@ namespace StochasticBranching {
     void print(std::ostream& os) const;
   };
 
-  /*! Width */
-  class Exclame : public TreeSystemInterface {
+
+  /*! Trunk movement without formation */
+  class f : public TreeSystemInterface {
   private:
-    double m_width;
-    double m_increaseRate;
+    double m_elongation;
 
   public:
-    Exclame(TreeConstructionInterface* constructor, double width, double increaseRate);
+    f(TreeConstructionInterface* constructor, double elongation);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
     void print(std::ostream& os) const;
   };
 
+
+  /*! Width */
+  class Exclame : public TreeSystemInterface {
+  private:
+    double m_width;
+
+  public:
+    Exclame(TreeConstructionInterface* constructor, double width);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+
+  /*! Altering length of current active turtle */
+  class Woosh : public TreeSystemInterface {
+  private:
+    double m_length;
+    double m_elongation;
+
+  public:
+    Woosh(TreeConstructionInterface* constructor, double length, double elongation);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
 
   /*! Store the current state on the stack */
   class LeftBracket : public TreeSystemInterface {
@@ -96,13 +122,14 @@ namespace StochasticBranching {
     void print(std::ostream& os) const;
   };
 
-  /*! Attempt to rotate towards the vertical. */
-  class Verticate : public TreeSystemInterface {
+
+  /*! Rotate around the vertical vector in the clockwise direction */
+  class Plus : public TreeSystemInterface {
   private:
     double m_angle;
 
   public:
-    Verticate(TreeConstructionInterface* constructor, double angle);
+    Plus(TreeConstructionInterface* constructor, double angle);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -110,42 +137,45 @@ namespace StochasticBranching {
   };
 
 
-  /*! Controls the primary growth (Doesn't draw anything!) */
+  /*! Rotate around the vertical vector in the anti-clockwise direction */
+  class Minus : public TreeSystemInterface {
+  private:
+    double m_angle;
+
+  public:
+    Minus(TreeConstructionInterface* constructor, double angle);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+
+  /*! Controls the growth of the trunk */
   class A : public TreeSystemInterface {
   private:
-    double m_branchProbabilityThreshold;
-    int    m_iterationCount;
+    double m_length;
+    double m_width;
+    double m_angle;
+    int    m_count;
 
   public:
-    A(TreeConstructionInterface* constructor, double branchProbabilityThreshold, int iterationCount);
+    A(TreeConstructionInterface* constructor, double length, double width, double angle, int count);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
     void print(std::ostream& os) const;
-
-    static std::default_random_engine randomEngine; // Probably should make this private
   };
 
-  /*! Controls end of branch growth (Doesn't draw anything!) */
+
+  /*! Controls the growth of the leaf points */
   class B : public TreeSystemInterface {
   private:
-    int m_iterationCount;
+    double m_length;
+    double m_width;
 
   public:
-    B(TreeConstructionInterface* constructor, int iterationCount);
-    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles);
-    void print(std::ostream& os) const;
-  };
-
-
-  /*! Prepare the random number generator at the appropriate time */
-  class Rand : public TreeSystemInterface {
-  private:
-
-  public:
-    explicit Rand(TreeConstructionInterface* constructor);
+    B(TreeConstructionInterface* constructor, double length, double width);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -154,7 +184,7 @@ namespace StochasticBranching {
 
 }
 
-#endif //LSYSTEM_STOCHASTIC
+#endif //LSYSTEM_HELICAL
 
 
 

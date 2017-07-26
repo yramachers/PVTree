@@ -1,7 +1,7 @@
 #ifndef PVTREE_TREE_SYSTEM_STUMP_HPP
 #define PVTREE_TREE_SYSTEM_STUMP_HPP
 
-#include "treeSystem/treeSystemInterface.hpp"
+#include "pvtree/treeSystem/treeSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>

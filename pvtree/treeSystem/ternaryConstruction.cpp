@@ -1,4 +1,4 @@
-#include "treeSystem/ternaryConstruction.hpp"
+#include "pvtree/treeSystem/ternaryConstruction.hpp"
 #include <iostream>
 
 ClassImp(TernaryConstruction)

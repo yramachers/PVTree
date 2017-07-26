@@ -1,9 +1,9 @@
 #ifndef TREE_SYSTEMS_TERNARY_CONSTRUCTION_HPP
 #define TREE_SYSTEMS_TERNARY_CONSTRUCTION_HPP
 
-#include "treeSystem/treeConstructionInterface.hpp"
-#include "treeSystem/ternary.hpp"
-#include "treeSystem/treeFactory.hpp"
+#include "pvtree/treeSystem/treeConstructionInterface.hpp"
+#include "pvtree/treeSystem/ternary.hpp"
+#include "pvtree/treeSystem/treeFactory.hpp"
 
 /*! \brief Class to handle construction of Ternary tree type.
  * 

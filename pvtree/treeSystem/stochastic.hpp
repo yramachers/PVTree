@@ -1,17 +1,19 @@
-#ifndef LSYSTEM_ALGO_BOTANY_SYMPODIAL
-#define LSYSTEM_ALGO_BOTANY_SYMPODIAL
+#ifndef LSYSTEM_STOCHASTIC
+#define LSYSTEM_STOCHASTIC
 
-#include "treeSystem/treeSystemInterface.hpp"
+#include "pvtree/treeSystem/treeSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
 #include <cmath>
+#include <random>
 
 class TreeConstructionInterface;
 
-/*! Simple example test using the L-System defined in Algorithmic botany. 
-/ See chapter 2 figure 2.7 in http://algorithmicbotany.org/papers/abop/abop.pdf */
-namespace SympodialBranching {
+/*! Example using the Ternary L-System defined in Algorithmic botany. 
+/ See chapter 2 figure 2.8 in http://algorithmicbotany.org/papers/abop/abop.pdf 
+/ Extended to include probabilistic branching. */
+namespace StochasticBranching {
 
   /*! Trunk formation */
   class F : public TreeSystemInterface {
@@ -30,9 +32,10 @@ namespace SympodialBranching {
   class Exclame : public TreeSystemInterface {
   private:
     double m_width;
+    double m_increaseRate;
 
   public:
-    Exclame(TreeConstructionInterface* constructor, double width);
+    Exclame(TreeConstructionInterface* constructor, double width, double increaseRate);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -93,38 +96,13 @@ namespace SympodialBranching {
     void print(std::ostream& os) const;
   };
 
-  /*! Rotate around vertical vector in clockwise direction. */
-  class Plus : public TreeSystemInterface {
+  /*! Attempt to rotate towards the vertical. */
+  class Verticate : public TreeSystemInterface {
   private:
     double m_angle;
 
   public:
-    Plus(TreeConstructionInterface* constructor, double angle);
-    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles);
-    void print(std::ostream& os) const;
-  };
-
-  /*! Rotate around vertical vector in anti-clockwise direction. */
-  class Minus : public TreeSystemInterface {
-  private:
-    double m_angle;
-
-  public:
-    Minus(TreeConstructionInterface* constructor, double angle);
-    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
-    void processTurtles(std::vector<Turtle*>& turtleStack,
-			std::vector<Turtle*>& retiredTurtles);
-    void print(std::ostream& os) const;
-  };
-
-  /*! Rotate around turtle orientation such that the left vector */
-  class Dollar : public TreeSystemInterface {
-  private:
-
-  public:
-    explicit Dollar(TreeConstructionInterface* constructor);
+    Verticate(TreeConstructionInterface* constructor, double angle);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -132,14 +110,29 @@ namespace SympodialBranching {
   };
 
 
-  /*! Controls the growth (initial growth) */
+  /*! Controls the primary growth (Doesn't draw anything!) */
   class A : public TreeSystemInterface {
   private:
-    double m_length;
-    double m_width;
+    double m_branchProbabilityThreshold;
+    int    m_iterationCount;
 
   public:
-    A(TreeConstructionInterface* constructor, double length, double width);
+    A(TreeConstructionInterface* constructor, double branchProbabilityThreshold, int iterationCount);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+
+    static std::default_random_engine randomEngine; // Probably should make this private
+  };
+
+  /*! Controls end of branch growth (Doesn't draw anything!) */
+  class B : public TreeSystemInterface {
+  private:
+    int m_iterationCount;
+
+  public:
+    B(TreeConstructionInterface* constructor, int iterationCount);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -147,14 +140,12 @@ namespace SympodialBranching {
   };
 
 
-  /*! Controls the growth */
-  class B : public TreeSystemInterface {
+  /*! Prepare the random number generator at the appropriate time */
+  class Rand : public TreeSystemInterface {
   private:
-    double m_length;
-    double m_width;
 
   public:
-    B(TreeConstructionInterface* constructor, double length, double width);
+    explicit Rand(TreeConstructionInterface* constructor);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -163,7 +154,7 @@ namespace SympodialBranching {
 
 }
 
-#endif //LSYSTEM_ALGO_BOTANY_SYMPODIAL
+#endif //LSYSTEM_STOCHASTIC
 
 
 

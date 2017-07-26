@@ -1,7 +1,7 @@
-#ifndef LSYSTEM_ALGO_BOTANY_TERNARY
-#define LSYSTEM_ALGO_BOTANY_TERNARY
+#ifndef LSYSTEM_ALGO_BOTANY_MONOPODIAL
+#define LSYSTEM_ALGO_BOTANY_MONOPODIAL
 
-#include "treeSystem/treeSystemInterface.hpp"
+#include "pvtree/treeSystem/treeSystemInterface.hpp"
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -10,8 +10,8 @@
 class TreeConstructionInterface;
 
 /*! Simple example test using the L-System defined in Algorithmic botany. 
-/ See chapter 2 figure 2.8 in http://algorithmicbotany.org/papers/abop/abop.pdf */
-namespace TernaryBranching {
+/ See chapter 2 figure 2.6 in http://algorithmicbotany.org/papers/abop/abop.pdf */
+namespace MonopodialBranching {
 
   /*! Trunk formation */
   class F : public TreeSystemInterface {
@@ -93,13 +93,83 @@ namespace TernaryBranching {
     void print(std::ostream& os) const;
   };
 
+  /*! Rotate around vertical vector in clockwise direction. */
+  class Plus : public TreeSystemInterface {
+  private:
+    double m_angle;
 
-  /*! Controls the growth (Doesn't draw anything!) */
-  class A : public TreeSystemInterface {
+  public:
+    Plus(TreeConstructionInterface* constructor, double angle);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+  /*! Rotate around vertical vector in anti-clockwise direction. */
+  class Minus : public TreeSystemInterface {
+  private:
+    double m_angle;
+
+  public:
+    Minus(TreeConstructionInterface* constructor, double angle);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+  /*! Rotate around turtle orientation such that the left vector */
+  class Dollar : public TreeSystemInterface {
   private:
 
   public:
-    explicit A(TreeConstructionInterface* constructor);
+    explicit Dollar(TreeConstructionInterface* constructor);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+
+  /*! Controls the growth (initial growth) */
+  class A : public TreeSystemInterface {
+  private:
+    double m_length;
+    double m_width;
+
+  public:
+    A(TreeConstructionInterface* constructor, double length, double width);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+
+  /*! Controls the growth */
+  class B : public TreeSystemInterface {
+  private:
+    double m_length;
+    double m_width;
+
+  public:
+    B(TreeConstructionInterface* constructor, double length, double width);
+    std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
+    void processTurtles(std::vector<Turtle*>& turtleStack,
+			std::vector<Turtle*>& retiredTurtles);
+    void print(std::ostream& os) const;
+  };
+
+
+  /*! Controls the growth */
+  class C : public TreeSystemInterface {
+  private:
+    double m_length;
+    double m_width;
+
+  public:
+    C(TreeConstructionInterface* constructor, double length, double width);
     std::vector<std::shared_ptr<TreeSystemInterface>> applyRule();
     void processTurtles(std::vector<Turtle*>& turtleStack,
 			std::vector<Turtle*>& retiredTurtles);
@@ -108,7 +178,7 @@ namespace TernaryBranching {
 
 }
 
-#endif //LSYSTEM_ALGO_BOTANY_TERNARY
+#endif //LSYSTEM_ALGO_BOTANY_MONOPODIAL
 
 
 

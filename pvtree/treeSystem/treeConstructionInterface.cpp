@@ -1,5 +1,5 @@
-#include "treeSystem/treeConstructionInterface.hpp"
-#include "utils/equality.hpp"
+#include "pvtree/treeSystem/treeConstructionInterface.hpp"
+#include "pvtree/utils/equality.hpp"
 #include <stdexcept>
 #include <random>
 #include <iostream>

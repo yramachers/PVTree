@@ -1,7 +1,7 @@
 #ifndef TREE_SYSTEM_TREE_FACTORY_HPP
 #define TREE_SYSTEM_TREE_FACTORY_HPP
 
-#include "treeSystem/treeConstructionInterface.hpp"
+#include "pvtree/treeSystem/treeConstructionInterface.hpp"
 #include <string>
 #include <map>
 #include <memory>

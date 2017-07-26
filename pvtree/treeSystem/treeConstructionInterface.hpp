@@ -1,7 +1,7 @@
 #ifndef TREE_SYSTEMS_TREE_CONSTRUCTION_INTERFACE_HPP
 #define TREE_SYSTEMS_TREE_CONSTRUCTION_INTERFACE_HPP
 
-#include "treeSystem/treeSystemInterface.hpp"
+#include "pvtree/treeSystem/treeSystemInterface.hpp"
 #include <vector>
 #include <string>
 #include <map>

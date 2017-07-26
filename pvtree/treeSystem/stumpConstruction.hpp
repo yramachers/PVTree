@@ -1,9 +1,9 @@
 #ifndef PVTREE_TREE_SYSTEM_STUMP_CONSTRUCTION_HPP
 #define PVTREE_TREE_SYSTEM_STUMP_CONSTRUCTION_HPP
 
-#include "treeSystem/treeConstructionInterface.hpp"
-#include "treeSystem/stump.hpp"
-#include "treeSystem/treeFactory.hpp"
+#include "pvtree/treeSystem/treeConstructionInterface.hpp"
+#include "pvtree/treeSystem/stump.hpp"
+#include "pvtree/treeSystem/treeFactory.hpp"
 
 /*! \brief Class to handle construction of Ternary tree type.
  * 
