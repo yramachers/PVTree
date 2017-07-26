@@ -54,7 +54,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #-----------------------------------------------------------------------
 # - Find Required External Packages
 # CERN ROOT for I/O, Math, Analysis
-find_package(ROOT REQUIRED)
+find_package(ROOT REQUIRED MathMore)
 include(${ROOT_DIR}/modules/RootNewMacros.cmake)
 
 # Geant4 for particle transport simulation

@@ -14,8 +14,8 @@
 #include <time.h>
 #include "eccodes.h"
 
-#include "climate/climateData.hpp"
-#include "location/locationDetails.hpp"
+#include "pvtree/climate/climateData.hpp"
+#include "pvtree/location/locationDetails.hpp"
 
 #include <Math/Interpolator.h>
 
@@ -26,11 +26,11 @@ namespace libconfig{
 /*! \brief Wrapper for the purpose of accessing the various
  *         climate properties stored in GRIB (Gridded binary)
  *         format.
- * 
+ *
  */
 class Climate {
 private:
-  
+
   // GRIB file name which contains climate variables
   std::string               m_gribFileName;
 
@@ -41,7 +41,7 @@ private:
   // Allow the name to parameter ID map to be shared
   std::shared_ptr<std::map<std::string,int>> m_nameToParameterID;
 
-  // Store maximums and minimums of values 
+  // Store maximums and minimums of values
   // mainly to avoid issuses in interpolation
   std::map<int, double> m_parameterIDMaxValueAllowed;
   std::map<int, double> m_parameterIDMinValueAllowed;
@@ -50,7 +50,7 @@ private:
   std::vector<std::shared_ptr<ClimateData>> m_climateData;
 
   /*! \brief Number of interpolation data points to use
-   *         in both the forward and backward directions. 
+   *         in both the forward and backward directions.
    *
    * The default number used is five.
    */
@@ -76,7 +76,7 @@ private:
    *
    * \returns True if configuration file opened.
    */
-  bool openConfiguration(std::string configPath);  
+  bool openConfiguration(std::string configPath);
 
   /*! \brief Actual reading of the configuration file with
    *         some standard parse checking applied by libconfig.
@@ -86,9 +86,9 @@ private:
    *
    * \returns True if configuraiton has been parsed.
    */
-  bool parseConfiguration(std::string fileName, libconfig::Config* cfg);  
+  bool parseConfiguration(std::string fileName, libconfig::Config* cfg);
 
-  /*! \brief Attempt to find a GRIB file from which to import the 
+  /*! \brief Attempt to find a GRIB file from which to import the
    *         climate variables.
    *
    * \returns True if the GRIB file has been found.
@@ -114,7 +114,7 @@ public:
   /*! \brief Construct climate object with configuration specified
    *         in a file.
    *
-   * @param[in] configurationFileName The name of the configuration file 
+   * @param[in] configurationFileName The name of the configuration file
    *                                  describing the data to load.
    * @param[in] deviceLocation Location of the device for which the climate
    *                           should be evaluated.
@@ -135,8 +135,8 @@ public:
    *
    * \returns The interpolated value.
    */
-  double getInterpolatedValue(std::string valueName, 
-			      time_t time, 
+  double getInterpolatedValue(std::string valueName,
+			      time_t time,
 			      ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
 
   /*! \brief Access interpolated value using ID of value.
@@ -148,22 +148,22 @@ public:
    *
    * \returns The interpolated value.
    */
-  double getInterpolatedValue(int valueID, 
-			      time_t time, 
+  double getInterpolatedValue(int valueID,
+			      time_t time,
 			      ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
 
   /*! \brief Find out how many data points are used in interpolation.
    *
    * \returns The number of data points used around the time point specified to
-   *          carry out interpolation (effectively doubled as both forward and 
+   *          carry out interpolation (effectively doubled as both forward and
    *          backward in time).
    */
   int getInterpolationPointNumber() const;
 
   /*! \brief Set how many data points are used in interpolation.
    *
-   * @param[in] interpolationPointNumber The number of data points used around the 
-   *            time point specified to carry out interpolation (effectively doubled 
+   * @param[in] interpolationPointNumber The number of data points used around the
+   *            time point specified to carry out interpolation (effectively doubled
    *            as both forward and backward in time).
    */
   void setInterpolationPointNumber(int interpolationPointNumber);
@@ -185,10 +185,10 @@ public:
    * \returns The units of the parameter in string format.
    */
   std::string getParameterUnits(int parameterID) const;
-  
+
   /*! \brief Raw data access.
    *
-   * \returns All the data extracted from the GRIB file for the 
+   * \returns All the data extracted from the GRIB file for the
    *          specified location. No modification is allowed.
    */
   std::vector<std::shared_ptr<const ClimateData>> getData() const;

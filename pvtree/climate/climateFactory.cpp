@@ -1,11 +1,11 @@
-#include "climate/climateFactory.hpp"
-#include "climate/climate.hpp"
+#include "pvtree/climate/climateFactory.hpp"
+#include "pvtree/climate/climate.hpp"
 
 #include <iostream>
 
 
-ClimateFactory::ClimateFactory() : m_climateConfiguration(""), 
-				   m_climate(nullptr), 
+ClimateFactory::ClimateFactory() : m_climateConfiguration(""),
+				   m_climate(nullptr),
 				   m_climateConfigurationChanged(true),
 				   m_deviceLocation("location.cfg") {}
 
@@ -34,31 +34,31 @@ void ClimateFactory::setConfigurationFile(std::string configurationFileName) {
   if (configurationFileName != m_climateConfiguration){
     // If changed then prepare for climate creation
     m_climateConfiguration = configurationFileName;
-    m_climateConfigurationChanged = true;  
+    m_climateConfigurationChanged = true;
   }
 
 }
 
 void ClimateFactory::setDeviceLocation(LocationDetails deviceLocation) {
-  
+
   m_deviceLocation = deviceLocation;
   m_climateConfigurationChanged = true;
 
 }
 
 const Climate* ClimateFactory::getClimate() {
-  
+
   // May need to obtain a new climate
   if (m_climateConfigurationChanged) {
 
     if (m_climateConfiguration != "") {
-   
+
       // Delete the old climate if necessary
       if (m_climate != nullptr) {
 	delete m_climate;
 	m_climate = nullptr;
       }
-      
+
       m_climate = new Climate(m_climateConfiguration, m_deviceLocation);
       m_climateConfigurationChanged = false;
     } else {

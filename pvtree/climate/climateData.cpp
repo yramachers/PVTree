@@ -1,4 +1,4 @@
-#include "climate/climateData.hpp"
+#include "pvtree/climate/climateData.hpp"
 #include <iostream>
 
 ClimateData::ClimateData(std::shared_ptr<std::map<std::string,int>> nameToParameterID, time_t time) : m_time(time), m_nameToParameterID(nameToParameterID) {}
@@ -52,7 +52,7 @@ bool ClimateData::hasValue(std::string parameterName) const {
     return hasValue(mapping->second);
   }
 
-  std::cerr << "For this Climate Data could not find parameter with name: " 
+  std::cerr << "For this Climate Data could not find parameter with name: "
 	    << parameterName << std::endl;
   throw;
 }

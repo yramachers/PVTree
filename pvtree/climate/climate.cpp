@@ -1,4 +1,4 @@
-#include "climate/climate.hpp"
+#include "pvtree/climate/climate.hpp"
 
 #include <libconfig.h++>
 
@@ -22,7 +22,7 @@ Climate::Climate(std::string configurationFileName,
   // Now extract relevant information from the GRIB file.
   if (!findGRIB())  throw;
   if (!parseGRIB()) throw;
-  
+
 }
 
 Climate::~Climate() {}
@@ -68,7 +68,7 @@ bool Climate::openConfiguration(std::string configPath){
       } else {
 
 	// Not in either place so give up!
-	std::cerr << "Unable to locate file " << configPath << " locally or in the shared config." 
+	std::cerr << "Unable to locate file " << configPath << " locally or in the shared config."
 		  << std::endl;
 	delete cfg;
 	return false;
@@ -76,7 +76,7 @@ bool Climate::openConfiguration(std::string configPath){
     } else {
 
       // Not in either place so give up!
-      std::cerr << "Unable to locate file " << configPath << " locally or in the shared config." 
+      std::cerr << "Unable to locate file " << configPath << " locally or in the shared config."
 		<< std::endl;
       delete cfg;
       return false;
@@ -127,7 +127,7 @@ bool Climate::parseConfiguration(std::string fileName, libconfig::Config* cfg) {
       if (parameterList[s].exists("maximumValue")) {
 	double maximumValue;
 	parameterList[s].lookupValue("maximumValue", maximumValue);
-	m_parameterIDMaxValueAllowed[parameterIndex] = maximumValue;	
+	m_parameterIDMaxValueAllowed[parameterIndex] = maximumValue;
       }
     }
   }
@@ -138,7 +138,7 @@ bool Climate::parseConfiguration(std::string fileName, libconfig::Config* cfg) {
 bool Climate::findGRIB() {
 
   if ( !fileExists(m_gribFileName) ) {
-    
+
     // Try under the data directory instead
     const char* environmentVariableContents = std::getenv("PVTREE_CLIMATE_DATA_PATH");
 
@@ -155,7 +155,7 @@ bool Climate::findGRIB() {
       }
     } else {
       // Can't find the file
-      std::cerr << "Unable to locate the grib file " << m_gribFileName << " and no climate data path specified." 
+      std::cerr << "Unable to locate the grib file " << m_gribFileName << " and no climate data path specified."
 		<< std::endl;
       return false;
     }
@@ -186,10 +186,10 @@ time_t Climate::getTimeFromMessage(codes_handle* handle) {
 
   // Need to be careful about the different conventions here :)
   calendarTime.tm_sec=second;
-  calendarTime.tm_min=minute; 
-  calendarTime.tm_hour=hour; 
-  calendarTime.tm_mday=day; 
-  calendarTime.tm_mon=month - 1; 
+  calendarTime.tm_min=minute;
+  calendarTime.tm_hour=hour;
+  calendarTime.tm_mday=day;
+  calendarTime.tm_mon=month - 1;
   calendarTime.tm_year=year - 1900;
 
   //! \todo need to actually get the correct time for the data.
@@ -210,7 +210,7 @@ bool Climate::parseGRIB() {
   int errorValue = 0;
   char* orderBy = (char*)"dataDate,dataTime";
   codes_fieldset* set = codes_fieldset_new_from_files(0, fileNames, numberOfFiles, 0, 0, 0, orderBy, &errorValue);
-  
+
   CODES_CHECK(errorValue, 0);
 
   // Save to a vector
@@ -221,13 +221,13 @@ bool Climate::parseGRIB() {
 
   // For distance check assume all grids are the same! (cache for speed)
   int mode = CODES_NEAREST_SAME_GRID | CODES_NEAREST_SAME_POINT;
-  
+
   codes_nearest* nearest = NULL;
   codes_handle* handle = NULL;
 
   // Iterate over all messages in file(s)
   while (( handle = codes_fieldset_next_handle(set, &errorValue)) != NULL){
-    
+
     CODES_CHECK(errorValue, 0);
 
     // Get the time and convert to time_t
@@ -285,27 +285,27 @@ bool Climate::parseGRIB() {
     // Watch out for 'large' and negative distances (units are in km)
     double maximumAllowedDistance = 500.0;//km
     if ( closestDistance > maximumAllowedDistance ) {
-      std::cerr << "Warning closest grid point for climate variable access is " << closestDistance 
+      std::cerr << "Warning closest grid point for climate variable access is " << closestDistance
 		<< "km away." << std::endl;
     }
     if ( closestDistance < 0.0 ) {
-      std::cerr << "Error closest grid point for climate variable access is " << closestDistance 
+      std::cerr << "Error closest grid point for climate variable access is " << closestDistance
 		<< "km away, it should not be negative!" << std::endl;
       throw;
     }
 
     // Check what parameter the message refers to
     long parameterIdentification;
-    CODES_CHECK(codes_get_long(handle, "paramId", &parameterIdentification), 0); 
+    CODES_CHECK(codes_get_long(handle, "paramId", &parameterIdentification), 0);
 
     // Check if we need to get and store the variable name
     if ( m_parameterIDToName.find( (int)parameterIdentification ) == m_parameterIDToName.end() ){
-      
+
       // Get the variable name and units
       size_t maximumLength = 255;
       char variableName[255];
       CODES_CHECK(grib_get_string (handle, "name",  variableName,  &maximumLength), 0);
-      
+
       maximumLength = 255;
       char variableUnits[255];
       CODES_CHECK(grib_get_string (handle, "units", variableUnits, &maximumLength), 0);
@@ -322,7 +322,7 @@ bool Climate::parseGRIB() {
     double currentValue = closestValues[closestIndex];
 
     currentData->setValue(parameterIdentification, currentValue);
-    
+
     codes_handle_delete(handle);
   }
   CODES_CHECK(errorValue, 0);
@@ -351,7 +351,7 @@ double Climate::getInterpolatedValue(std::string valueName, time_t time, ROOT::M
 
 double Climate::getInterpolatedValue(int valueID, time_t time, ROOT::Math::Interpolation::Type interpolationType /*= ROOT::Math::Interpolation::kCSPLINE*/) const{
 
-  // First check the value ID actually exists 
+  // First check the value ID actually exists
   // Only checks if there was at least one GRIB message with this parameter
   if ( m_parameterIDToName.find(valueID) == m_parameterIDToName.end() ) {
     throw std::string("Unable to find value with ID " + std::to_string(valueID));
@@ -359,7 +359,7 @@ double Climate::getInterpolatedValue(int valueID, time_t time, ROOT::Math::Inter
 
   // Search for ClimateData instance in the vector which is the
   // first ClimateData to have a time greater than passed 'time'
-  auto nextClimateData = std::lower_bound(begin(m_climateData), end(m_climateData), time, 
+  auto nextClimateData = std::lower_bound(begin(m_climateData), end(m_climateData), time,
 					  [] (const std::shared_ptr<ClimateData> &c, const double &t) {return c->getTime() < t;});
   auto previousClimateData = nextClimateData;
 
@@ -391,7 +391,7 @@ double Climate::getInterpolatedValue(int valueID, time_t time, ROOT::Math::Inter
   // where missing values are skipped!
   int previousFoundValues = 0;
   while (previousFoundValues < m_interpolationPointNumber) {
-    
+
     // Check if at the begining of data
     // if so can't go further back!
     if ( previousClimateData == m_climateData.begin() ) {
@@ -411,7 +411,7 @@ double Climate::getInterpolatedValue(int valueID, time_t time, ROOT::Math::Inter
   if (nextFoundValues == 0) {
     // Currently just report a problem
     std::cerr << "WARNING: Interpolation not valid at this time point, using last available data point." << std::endl;
-    
+
     if (previousFoundValues > 0){
       // Then return the last recorded value
       return yValues.back();
@@ -437,10 +437,10 @@ double Climate::getInterpolatedValue(int valueID, time_t time, ROOT::Math::Inter
   // Copy into vectors
   std::vector<double> xValueVector;
   std::vector<double> yValueVector;
-  
+
   std::copy(begin(xValues), end(xValues), std::back_inserter(xValueVector));
   std::copy(begin(yValues), end(yValues), std::back_inserter(yValueVector));
-  
+
   // Build an interpolator
   ROOT::Math::Interpolator interpolator(xValueVector, yValueVector, interpolationType);
 
@@ -488,7 +488,7 @@ std::string Climate::getParameterUnits(std::string parameterName) const {
 
 std::string Climate::getParameterUnits(int parameterID) const {
 
-  // First check the value ID actually exists 
+  // First check the value ID actually exists
   // Only checks if there was at least one GRIB message with this parameter
   if ( m_parameterIDToUnits.find(parameterID) == m_parameterIDToUnits.end() ) {
     throw std::string("Unable to find value with ID " + std::to_string(parameterID));

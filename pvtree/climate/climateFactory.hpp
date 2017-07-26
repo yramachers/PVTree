@@ -2,11 +2,11 @@
 #define PVTREE_CLIMATE_CLIMATE_FACTORY_HPP
 
 /* @file
- * \brief Factory which will provide access to the 
+ * \brief Factory which will provide access to the
  *        atmospheric conditions stored in GRIB
  *        files.
  */
-#include "location/locationDetails.hpp"
+#include "pvtree/location/locationDetails.hpp"
 #include <string>
 #include <map>
 #include <memory>
@@ -14,7 +14,7 @@
 
 class Climate;
 
-/*! \brief Factory which will provide access to the 
+/*! \brief Factory which will provide access to the
  *        atmospheric conditions stored in GRIB
  *        files.
  *
@@ -28,7 +28,7 @@ private:
   /*! \brief Name of configuration file describing climate.
    */
   std::string     m_climateConfiguration;
-  
+
   /*! \brief Instance of climate. Deletion of this object is
    *         handled by the climate factory.
    */
@@ -37,7 +37,7 @@ private:
   /*! \brief Monitor climate configuration name
    */
   bool            m_climateConfigurationChanged;
-  
+
   /*! \brief Device location information
    */
   LocationDetails m_deviceLocation;
@@ -62,7 +62,7 @@ public:
   /*! \brief Retrieve the singleton reference to this factory.
    */
   static ClimateFactory* instance();
-  
+
   /*! \brief Set the configuration file describing the climate.
    */
   void setConfigurationFile(std::string configurationFileName);
@@ -74,7 +74,7 @@ public:
   void setDeviceLocation(LocationDetails deviceLocation);
 
   /*! \brief Retrieve the instance of the climate construted.
-   *         
+   *
    * Will lazily construct the climate when first requested.
    */
   const Climate* getClimate();
