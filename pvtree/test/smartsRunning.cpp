@@ -1,6 +1,6 @@
-#include "testing/catch.hpp"
-#include "solarSimulation/spectrumFactory.hpp"
-#include "location/locationDetails.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/full/solarSimulation/spectrumFactory.hpp"
+#include "pvtree/location/locationDetails.hpp"
 
 TEST_CASE( "solarSimulation/spectrumFactory", "[sun]" ) {
 

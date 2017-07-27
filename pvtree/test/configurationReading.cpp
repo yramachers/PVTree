@@ -1,4 +1,4 @@
-#include "testing/catch.hpp"
+#include "pvtree/test/catch.hpp"
 #include <libconfig.h++>
 #include <iostream>
 #include <vector>
@@ -49,7 +49,7 @@ TEST_CASE( "libconfig", "[config]" ) {
   // Check value extraction of various types
   try {
     const auto& root = cfg.getRoot();
-    
+
     double piValue = 0.0;
     root["application"]["misc"].lookupValue("pi", piValue);
     REQUIRE( piValue == 3.141592654 );
@@ -60,7 +60,7 @@ TEST_CASE( "libconfig", "[config]" ) {
 
     int columnNumber = root["application"]["misc"]["columns"].getLength();
     REQUIRE( columnNumber == 3 );
-    
+
     std::vector<std::string> columnValues = {"Last Name", "First Name", "MI"};
     for (int c=0; c<columnNumber; c++) {
       std::string element = root["application"]["misc"]["columns"][c];
@@ -89,7 +89,7 @@ TEST_CASE( "libconfig", "[config]" ) {
     REQUIRE(typeTest["test4"].getType() == libconfig::Setting::TypeFloat );
 
     REQUIRE(typeTest["test5"].getType() == libconfig::Setting::TypeInt64 );
-    
+
   } catch(const libconfig::SettingNotFoundException &nfex) {
     std::cerr << "Type test has a problem." << std::endl;
   }

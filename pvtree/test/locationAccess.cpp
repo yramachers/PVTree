@@ -1,6 +1,6 @@
-#include "testing/catch.hpp"
-#include "utils/equality.hpp"
-#include "location/locationDetails.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/utils/equality.hpp"
+#include "pvtree/location/locationDetails.hpp"
 #include <time.h>
 
 TEST_CASE( "location/locationDetails", "[location]" ) {

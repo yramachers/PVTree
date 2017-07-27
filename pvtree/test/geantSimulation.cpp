@@ -1,19 +1,19 @@
-#include "testing/catch.hpp"
-#include "climate/climateFactory.hpp"
-#include "climate/climate.hpp"
-#include "treeSystem/treeFactory.hpp"
-#include "leafSystem/leafFactory.hpp"
-#include "utils/equality.hpp"
-#include "full/detectorConstruction.hpp"
-#include "full/layeredLeafConstruction.hpp"
-#include "full/leafConstruction.hpp"
-#include "full/actionInitialization.hpp"
-#include "full/primaryGeneratorAction.hpp"
-#include "full/opticalPhysicsList.hpp"
-#include "recorders/convergenceRecorder.hpp"
-#include "recorders/dummyRecorder.hpp"
-#include "solarSimulation/sun.hpp"
-#include "material/materialFactory.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/climate/climateFactory.hpp"
+#include "pvtree/climate/climate.hpp"
+#include "pvtree/treeSystem/treeFactory.hpp"
+#include "pvtree/leafSystem/leafFactory.hpp"
+#include "pvtree/utils/equality.hpp"
+#include "pvtree/full/detectorConstruction.hpp"
+#include "pvtree/full/layeredLeafConstruction.hpp"
+#include "pvtree/full/leafConstruction.hpp"
+#include "pvtree/full/actionInitialization.hpp"
+#include "pvtree/full/primaryGeneratorAction.hpp"
+#include "pvtree/full/opticalPhysicsList.hpp"
+#include "pvtree/full/recorders/convergenceRecorder.hpp"
+#include "pvtree/full/recorders/dummyRecorder.hpp"
+#include "pvtree/full/solarSimulation/sun.hpp"
+#include "pvtree/full/material/materialFactory.hpp"
 #include <time.h>
 
 #include <iostream>
@@ -22,7 +22,17 @@
 #include "G4RunManager.hh"
 #include "Randomize.hh"
 
-time_t getTestTime();
+time_t getTestTime() {
+  struct tm calendarTime;
+  calendarTime.tm_sec =0;
+  calendarTime.tm_min =0;
+  calendarTime.tm_hour=12;
+  calendarTime.tm_mday=12;
+  calendarTime.tm_mon =3;
+  calendarTime.tm_year=114;
+  calendarTime.tm_isdst=1;
+  return mktime(&calendarTime);
+}
 
 TEST_CASE( "simulation/geant", "[simulation]" ) {
 
@@ -56,7 +66,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
 
   G4RunManager* runManager = new G4RunManager;
 
-  // Set mandatory initialization classes  
+  // Set mandatory initialization classes
   DetectorConstruction* detector = new DetectorConstruction(tree, leaf);
   runManager->SetUserInitialization(detector);
 
@@ -67,8 +77,8 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
   runManager->SetUserInitialization(physicsList);
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&recorder, 
-   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* { 
+  runManager->SetUserInitialization(new ActionInitialization(&recorder,
+   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* {
 							       return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }) );
 
   // Initialize G4 kernel
@@ -82,7 +92,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
   // Re-initialize the detector geometry
   G4bool destroyFirst;
   runManager->ReinitializeGeometry(destroyFirst = true);
-  
+
   // Set the time
   sun.setDate( getTestTime() );
   sun.setTime(12, 0, 0);
@@ -108,7 +118,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
   double structureXSize = detector->getXSize();
   double structureYSize = detector->getYSize();
   double structureZSize = detector->getZSize();
-  
+
   CHECK( almost_equal( (float)structureXSize, 0.5467519042f, checkPrecision) );
   CHECK( almost_equal( (float)structureYSize, 0.7683677904f, checkPrecision) );
   CHECK( almost_equal( (float)structureZSize, 1.9940984162f, checkPrecision) );
@@ -158,7 +168,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
     leaf->randomizeParameters(lSystemSeed+treeTrialNumber);
 
     detector->resetGeometry(tree, leaf);
-    
+
     // Re-initialize the detector geometry
     runManager->ReinitializeGeometry(destroyFirst = true);
 
@@ -172,7 +182,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
     if ( detector->getNumberOfRejectedLeaves() > detector->getNumberOfLeaves() ) {
       continue;
     }
-    
+
     passingTrees++;
   }
 
@@ -200,7 +210,7 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
 
   // Check that single leaves can be simulated
   std::vector<std::string > availableLeafTypes = {"simple", "cordate", "rose", "planar"};
-  
+
   //Default turtle at origin
   Turtle* initialTurtle = new Turtle();
 
@@ -244,8 +254,8 @@ TEST_CASE( "simulation/geant", "[simulation]" ) {
   // Running again but now with a dummy recorder.
   DummyRecorder dummyRecorder;
 
-  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder, 
-   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* { 
+  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder,
+   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* {
 							       return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }) );
 
   // Run with a single event

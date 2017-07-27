@@ -1,8 +1,8 @@
-#include "testing/catch.hpp"
-#include "treeSystem/treeFactory.hpp"
-#include "leafSystem/leafFactory.hpp"
-#include "analysis/yearlyResult.hpp"
-#include "utils/equality.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/treeSystem/treeFactory.hpp"
+#include "pvtree/leafSystem/leafFactory.hpp"
+#include "pvtree/analysis/yearlyResult.hpp"
+#include "pvtree/utils/equality.hpp"
 
 #include <stdexcept>
 #include <cstdio>
@@ -36,7 +36,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
 
   bool cloningSuccessful = true;
   for (int t=0; t<trialNumber; t++){
-    
+
     tree->randomizeParameters(seed+t);
     leaf->randomizeParameters(seed+t);
 
@@ -55,10 +55,10 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
 
     std::string leafName = "leaf" + std::to_string(t) + "_Seed" + std::to_string(seed);
     LeafConstructionInterface* clonedLeaf = static_cast<LeafConstructionInterface*>(leaf->Clone(leafName.c_str()));
-    
+
     if ( *clonedTree != *tree || *clonedLeaf != *leaf ){
       cloningSuccessful = false;
-    } 
+    }
 
 
     // Add to the list that will be exported
@@ -67,7 +67,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
     result->setLeaf(clonedLeaf);
     result->setDayTimes(dayTimes);
     result->setEnergyDeposited(energies);
-    
+
     exportList.Add(result);
   }
 
@@ -77,7 +77,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
   // Test that the analysis results can be stored correctly
   std::string persistFileName = "/tmp/unit-analysisPersistence-temp.root";
   TFile exportFile(persistFileName.c_str(), "RECREATE");
-  
+
   exportList.Write("testedStructures", TObject::kSingleKey);
 
   exportFile.Close();
@@ -91,7 +91,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
 
   TIter importIterator(importList);
   TIter exportIterator(&exportList);
-  
+
   bool treesIdentical = true;
   bool leavesIdentical = true;
   bool daysIdentical = true;
@@ -112,7 +112,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
     if ( importedResult->getDayTimes() != exportedResult->getDayTimes() ){
       daysIdentical = false;
     }
-    
+
     std::vector<double> importedEnergies = importedResult->getEnergyDeposited();
     std::vector<double> exportedEnergies = exportedResult->getEnergyDeposited();
 

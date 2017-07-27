@@ -1,8 +1,8 @@
-#include "testing/catch.hpp"
-#include "climate/climateFactory.hpp"
-#include "climate/climate.hpp"
-#include "utils/equality.hpp"
-#include "location/locationDetails.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/climate/climateFactory.hpp"
+#include "pvtree/climate/climate.hpp"
+#include "pvtree/utils/equality.hpp"
+#include "pvtree/location/locationDetails.hpp"
 #include <time.h>
 
 #include <iostream>
@@ -11,10 +11,10 @@
 time_t getTestTime() {
   struct tm calendarTime;
   calendarTime.tm_sec =0;
-  calendarTime.tm_min =0; 
-  calendarTime.tm_hour=12; 
-  calendarTime.tm_mday=12; 
-  calendarTime.tm_mon =3; 
+  calendarTime.tm_min =0;
+  calendarTime.tm_hour=12;
+  calendarTime.tm_mday=12;
+  calendarTime.tm_mon =3;
   calendarTime.tm_year=114;
   calendarTime.tm_isdst=1;
   return mktime(&calendarTime);
@@ -26,7 +26,7 @@ TEST_CASE( "climate/climateFactory", "[climate]" ) {
    *        opened twice. It seems to be an issue on ecCodes side, perhaps
    *        a future update will fix this. Currently uses climate factory
    *        configured elsewhere.
-   */ 
+   */
 
   // Get the device location details
   //LocationDetails deviceLocation("location.cfg");
@@ -52,7 +52,7 @@ TEST_CASE( "climate/climateFactory", "[climate]" ) {
   } catch (const std::string&) {
     threwException = true;
   }
-  
+
   CHECK( threwException );
 
   threwException = false;
@@ -90,10 +90,10 @@ TEST_CASE( "climate/climateFactory", "[climate]" ) {
   CHECK( directClimateData[0]->hasValue("Surface pressure") );
   CHECK( directClimateData[0]->hasValue("Total cloud cover") );
   CHECK( directClimateData[0]->hasValue("Total column ozone") );
-  
+
   // Check it cant find missing variables
   CHECK( ! directClimateData[0]->hasValue(-1) );
-  
+
   // Check more direct value access
   CHECK( almost_equal( (float)directClimateData[0]->getValue("2 metre temperature"), 279.6376953125f, checkPrecision) );
 

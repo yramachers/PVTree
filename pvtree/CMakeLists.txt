@@ -32,5 +32,11 @@ add_subdirectory(solpos)
 add_subdirectory(full)
 add_subdirectory(rootBasedSimulation)
 add_subdirectory(analysis)
+
+# Test when requested
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
+
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp
 #        DESTINATION include/)

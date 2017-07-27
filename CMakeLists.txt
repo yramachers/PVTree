@@ -80,7 +80,7 @@ function(add_cppcheck)
 endfunction()
 
 # - Set up testing
-enable_testing(true)
+include(CTest)
 
 # - Build subcomponents
 add_subdirectory(pvtree)

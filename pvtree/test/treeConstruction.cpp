@@ -1,5 +1,5 @@
-#include "testing/catch.hpp"
-#include "treeSystem/treeFactory.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/treeSystem/treeFactory.hpp"
 #include <stdexcept>
 #include <cstdio>
 #include <sstream>
@@ -53,7 +53,7 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
   }
   REQUIRE( nonExistantParameterRetrieved == false );
 
-  
+
   // Test that a non-existant parameter can not be randomized
   bool nonExistantParameterRandomized = true;
   try{
@@ -67,7 +67,7 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
   // Test that you can have a double and integer parameter with the same name (maybe shouldn't)
   helicalTree->setParameter("branchingAngle", 7.5);
   helicalTree->setParameter("branchingAngle", 4);
-  
+
   bool bothParametersRetrievedCorrectly = helicalTree->getDoubleParameter("branchingAngle") == 7.5 &&
     helicalTree->getIntegerParameter("branchingAngle") == 4;
   REQUIRE( bothParametersRetrievedCorrectly == true  );
@@ -86,7 +86,7 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
   REQUIRE( *importTree == *helicalTree );
 
   // If I randomize parameters it should no longer be equal
-  seed++; 
+  seed++;
   helicalTree->randomizeParameters(seed);
 
   REQUIRE( *importTree != *helicalTree );

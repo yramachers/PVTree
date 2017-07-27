@@ -60,12 +60,17 @@ add_library(pvtree-fullsim SHARED
   solarSimulation/sun.hpp
   pvtree-fullsimDictionary.cxx
   )
+target_include_directories(pvtree-fullsim
+  PUBLIC
+    ${Geant4_INCLUDE_DIRS}
+    ${ROOT_INCLUDE_DIRS}
+  )
 target_link_libraries(pvtree-fullsim
   PUBLIC
     ${Geant4_LIBRARIES}
     ${ROOT_Hist_LIBRARY}
     ${ROOT_Tree_LIBRARY}
-    pvtree-geometry pvtree-treeSystems pvtree-climate pvtree-solpos
+    pvtree-geometry pvtree-treeSystems pvtree-leafSystems pvtree-climate pvtree-solpos
   )
 
 add_cppcheck(pvtree-fullsim)

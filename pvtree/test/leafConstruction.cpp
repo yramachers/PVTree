@@ -1,5 +1,5 @@
-#include "testing/catch.hpp"
-#include "leafSystem/leafFactory.hpp"
+#include "pvtree/test/catch.hpp"
+#include "pvtree/leafSystem/leafFactory.hpp"
 #include <stdexcept>
 #include <cstdio>
 #include <sstream>
@@ -53,7 +53,7 @@ TEST_CASE( "leafSystem/leafFactory", "[leaf]" ) {
   }
   REQUIRE( nonExistantParameterRetrieved == false );
 
-  
+
   // Test that a non-existant parameter can not be randomized
   bool nonExistantParameterRandomized = true;
   try{
@@ -67,7 +67,7 @@ TEST_CASE( "leafSystem/leafFactory", "[leaf]" ) {
   // Test that you can have a double and integer parameter with the same name (maybe shouldn't)
   cordateLeaf->setParameter("divergenceAngle", 7.5);
   cordateLeaf->setParameter("divergenceAngle", 4);
-  
+
   bool bothParametersRetrievedCorrectly = cordateLeaf->getDoubleParameter("divergenceAngle") == 7.5 &&
     cordateLeaf->getIntegerParameter("divergenceAngle") == 4;
   REQUIRE( bothParametersRetrievedCorrectly == true  );
@@ -86,7 +86,7 @@ TEST_CASE( "leafSystem/leafFactory", "[leaf]" ) {
   REQUIRE( *importLeaf == *cordateLeaf );
 
   // If I randomize parameters it should no longer be equal
-  seed++; 
+  seed++;
   cordateLeaf->randomizeParameters(seed);
 
   REQUIRE( *importLeaf != *cordateLeaf );
