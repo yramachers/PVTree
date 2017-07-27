@@ -3,26 +3,26 @@
 
 #include <vector>
 #include "TObject.h"
-#include "treeSystem/treeConstructionInterface.hpp"
-#include "leafSystem/leafConstructionInterface.hpp"
+#include "pvtree/treeSystem/treeConstructionInterface.hpp"
+#include "pvtree/leafSystem/leafConstructionInterface.hpp"
 
 #include <Math/Interpolator.h>
 
 /*! \brief Class to hold analysis results for yearly job.
- * 
+ *
  */
 class YearlyResult : public TObject {
 private:
 
   // Store the unix time stamp for each day (the start of)
   std::vector<double> m_dayTimes;
-  
+
   // Store each simulated day's energy
   std::vector<double> m_energyDeposited;
-  
+
   // Store the tree and leaf used.
-  TreeConstructionInterface* m_tree; 
-  LeafConstructionInterface* m_leaf; 
+  TreeConstructionInterface* m_tree;
+  LeafConstructionInterface* m_leaf;
 
   // Store the number of interpolation points to use
   int m_interpolationPointNumber = 5;
@@ -31,7 +31,7 @@ private:
    *
    *  1/1/1970 (unix timestamp)
    *
-   * \returns The reference time which everything is 
+   * \returns The reference time which everything is
    *          relative to.
    */
   time_t getReferenceTime() const;
@@ -70,7 +70,7 @@ public:
 
   /* \brief Set the energy deposited for each of the days.
    *
-   * @param[in] energyDeposited A vector of energies deposited 
+   * @param[in] energyDeposited A vector of energies deposited
    *            in kWh on each day.
    */
   void setEnergyDeposited(std::vector<double> energyDeposited);
@@ -114,7 +114,7 @@ public:
    *
    * \returns The energy deposited in kWh on this day only.
    */
-  double getEnergyDeposited(time_t time, 
+  double getEnergyDeposited(time_t time,
 			    ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
 
   /* \brief Get the energy integral between two days

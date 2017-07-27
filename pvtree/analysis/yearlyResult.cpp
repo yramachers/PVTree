@@ -1,4 +1,4 @@
-#include "analysis/yearlyResult.hpp"
+#include "pvtree/analysis/yearlyResult.hpp"
 
 #include <list>
 #include <algorithm>
@@ -11,17 +11,17 @@ time_t YearlyResult::getReferenceTime() const {
   // Store the time w.r.t. 1/1/1970 (unix timestamp)
   struct tm calendarTime;
   calendarTime.tm_sec=0;
-  calendarTime.tm_min=0; 
-  calendarTime.tm_hour=1; 
-  calendarTime.tm_mday=1; 
-  calendarTime.tm_mon=0; 
+  calendarTime.tm_min=0;
+  calendarTime.tm_hour=1;
+  calendarTime.tm_mday=1;
+  calendarTime.tm_mon=0;
   calendarTime.tm_year=70;
   calendarTime.tm_isdst=1;
   return mktime(&calendarTime);
 }
 
 time_t YearlyResult::getReducedGranularityTime(time_t time) const {
-  
+
   // Convert to calendar time
   struct tm* calendarTime = gmtime(&time);
 
@@ -62,7 +62,7 @@ void YearlyResult::setEnergyDeposited(std::vector<double> energyDeposited) {
 void YearlyResult::setDayTimes(std::vector<time_t> dayTimes) {
 
   m_dayTimes.clear();
-  
+
   time_t referenceTime = getReferenceTime();
 
   // Translate day times into something portable
@@ -86,11 +86,11 @@ std::vector<double> YearlyResult::getEnergyDeposited() const {
   return m_energyDeposited;
 }
 
-double YearlyResult::getEnergyDeposited(time_t time, 
+double YearlyResult::getEnergyDeposited(time_t time,
 					ROOT::Math::Interpolation::Type interpolationType/* = ROOT::Math::Interpolation::kCSPLINE */) const {
 
   // Set all the time parameters below day granularity to default values
-  // for consistancy 
+  // for consistancy
   time = getReducedGranularityTime(time);
 
   // Check if time is valid
@@ -105,7 +105,7 @@ double YearlyResult::getEnergyDeposited(time_t time,
   int nextTimeIndex = nextTimeIterator - dayTimes.begin();
   int previousTimeIndex = nextTimeIndex;
 
-  // Build interpolation vectors 
+  // Build interpolation vectors
   std::list<double> xValues; // time
   std::list<double> yValues; // energy value
 
@@ -145,7 +145,7 @@ double YearlyResult::getEnergyDeposited(time_t time,
   if (nextFoundValues == 0) {
     // Currently just report a problem
     std::cerr << "WARNING: Interpolation not valid at this time point, using last available data point." << std::endl;
-    
+
     if (previousFoundValues > 0){
       // Then return the last recorded value
       return yValues.back();
@@ -172,10 +172,10 @@ double YearlyResult::getEnergyDeposited(time_t time,
   // Copy into vectors
   std::vector<double> xValueVector;
   std::vector<double> yValueVector;
-  
+
   std::copy(begin(xValues), end(xValues), std::back_inserter(xValueVector));
   std::copy(begin(yValues), end(yValues), std::back_inserter(yValueVector));
-  
+
   // Build an interpolator
   ROOT::Math::Interpolator interpolator(xValueVector, yValueVector, interpolationType);
 
@@ -190,12 +190,12 @@ double YearlyResult::getEnergyDeposited(time_t time,
   return candidateValue;
 }
 
-double YearlyResult::getEnergyIntegral(time_t startTime, 
+double YearlyResult::getEnergyIntegral(time_t startTime,
 				       time_t endTime,
 				       ROOT::Math::Interpolation::Type interpolationType/* = ROOT::Math::Interpolation::kCSPLINE */) const {
 
   // Set all the time parameters below day granularity to default values
-  // for consistancy 
+  // for consistancy
   startTime = getReducedGranularityTime(startTime);
   endTime = getReducedGranularityTime(endTime);
 
@@ -209,7 +209,7 @@ double YearlyResult::getEnergyIntegral(time_t startTime,
   time_t currentTime = startTime;
   double energySum = 0.0;
 
-  // When doing the comparison add on a minute to avoid double 
+  // When doing the comparison add on a minute to avoid double
   // comparison woes.
   while ( currentTime+60.0 < endTime ) {
     //! \todo Check this stepping actually works.
