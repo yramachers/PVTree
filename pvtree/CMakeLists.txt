@@ -29,6 +29,7 @@ add_subdirectory(treeSystem)
 add_subdirectory(leafSystem)
 add_subdirectory(climate)
 add_subdirectory(solpos)
+add_subdirectory(full)
 add_subdirectory(rootBasedSimulation)
 add_subdirectory(analysis)
 #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/version.hpp

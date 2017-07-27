@@ -6,7 +6,7 @@
 #include "TGeoVolume.h"
 #include "TLorentzRotation.h"
 #include <iostream>
-#include "pvtree/solarSimulation/sun.hpp"
+#include "pvtree/full/solarSimulation/sun.hpp"
 #include "TH1D.h"
 
 ROOTGeometry::ROOTGeometry(TGeoManager* manager) : m_manager(manager),
