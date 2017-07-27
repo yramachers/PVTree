@@ -18,6 +18,6 @@ add_cppcheck(pvtree-climate)
 
 #Install results into respective directories
 install(TARGETS pvtree-climate
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )

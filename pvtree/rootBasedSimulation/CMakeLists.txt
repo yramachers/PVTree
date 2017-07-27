@@ -17,6 +17,6 @@ add_cppcheck(pvtree-rootBasedSimulation)
 
 #Install results into respective directories
 install(TARGETS pvtree-rootBasedSimulation
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )

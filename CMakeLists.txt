@@ -51,6 +51,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
   #  add_dependencies(test_coverage unittest)
   #endif()
 
+# - Standard POSIX/GNU style install
+include(GNUInstallDirs)
+
 #-----------------------------------------------------------------------
 # - Find Required External Packages
 # CERN ROOT for I/O, Math, Analysis

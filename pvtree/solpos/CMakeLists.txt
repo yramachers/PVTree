@@ -7,6 +7,6 @@ add_cppcheck(pvtree-solpos)
 
 #Install results into respective directories
 install(TARGETS pvtree-solpos
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )

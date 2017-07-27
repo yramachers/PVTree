@@ -1,14 +1,15 @@
 #For persistence with ROOT need to create dictionaries for leaf constructors.
-root_generate_dictionary(pvtree-leafSystemDictionary
-  leafConstructionInterface.hpp
-  cordateConstruction.hpp
-  roseConstruction.hpp
-  simpleConstruction.hpp
-  planarConstruction.hpp
+root_generate_dictionary(pvtree-leafSystem_dict
+  pvtree/leafSystem/leafConstructionInterface.hpp
+  pvtree/leafSystem/cordateConstruction.hpp
+  pvtree/leafSystem/roseConstruction.hpp
+  pvtree/leafSystem/simpleConstruction.hpp
+  pvtree/leafSystem/planarConstruction.hpp
+  MODULE pvtree-leafSystems
   LINKDEF Linkdef.h
-  OPTIONS -rmf pvtree-leafSystemDictionary.rootmap -rml pvtree-libleafSystems.so
-  -I${CMAKE_CURRENT_SOURCE_DIR}
-  -I${Libconfig_INCLUDE_DIR}
+  OPTIONS
+    -noIncludePaths
+    -I${Libconfig_INCLUDE_DIR}
   )
 
 add_library(pvtree-leafSystems SHARED
@@ -33,7 +34,7 @@ add_library(pvtree-leafSystems SHARED
   simple.hpp
   simpleConstruction.cpp
   simpleConstruction.hpp
-  pvtree-leafSystemDictionary.cxx
+  pvtree-leafSystem_dict.cxx
   )
 
 target_include_directories(pvtree-leafSystems
@@ -48,11 +49,12 @@ add_cppcheck(pvtree-leafSystems)
 
 #Install results into respective directories
 install(TARGETS pvtree-leafSystems
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
 
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-leafSystemDictionary_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-leafSystemDictionary.rootmap
-  DESTINATION lib/)
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-leafSystems_rdict.pcm
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-leafSystems.rootmap
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )

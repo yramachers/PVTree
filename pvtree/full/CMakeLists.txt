@@ -1,10 +1,11 @@
 include(${Geant4_USE_FILE})
 
-root_generate_dictionary(pvtree-fullsimDictionary
+root_generate_dictionary(pvtree-fullsim_dict
   pvtree/full/solarSimulation/plenoptic1D.hpp
   pvtree/full/solarSimulation/plenoptic3D.hpp
+  MODULE pvtree-fullsim
   LINKDEF solarSimulation/Linkdef.h
-  OPTIONS -rmf pvtree-fullsimDictionary.rootmap -rml libpvtree-fullsim.so
+  OPTIONS -noIncludePaths
   )
 
 add_library(pvtree-fullsim SHARED
@@ -58,7 +59,7 @@ add_library(pvtree-fullsim SHARED
   solarSimulation/spectrumFactory.hpp
   solarSimulation/sun.cpp
   solarSimulation/sun.hpp
-  pvtree-fullsimDictionary.cxx
+  pvtree-fullsim_dict.cxx
   )
 target_include_directories(pvtree-fullsim
   PUBLIC
@@ -78,6 +79,12 @@ add_cppcheck(pvtree-fullsim)
 
 #Install results into respective directories
 install(TARGETS pvtree-fullsim
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-fullsim_rdict.pcm
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-fullsim.rootmap
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+

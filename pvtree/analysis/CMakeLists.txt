@@ -1,10 +1,11 @@
 #For persistence with ROOT need to create dictionaries for analysis objects.
-root_generate_dictionary(pvtree-analysisDictionary
-  yearlyResult.hpp
+root_generate_dictionary(pvtree-analysis_dict
+  pvtree/analysis/yearlyResult.hpp
+  MODULE pvtree-analysis
   LINKDEF Linkdef.h
-  OPTIONS -rmf pvtree-analysisDictionary.rootmap -rml libpvtree-analysis.so
-  -I${CMAKE_CURRENT_SOURCE_DIR}
-  -I${Libconfig_INCLUDE_DIR} # Needed because we depend on pvtree-treeSystems, which depends on...
+  OPTIONS
+    -noIncludePaths
+    -I${Libconfig_INCLUDE_DIR} # Needed because we depend on pvtree-treeSystems, which depends on...
   )
 
 add_library(pvtree-analysis SHARED
@@ -12,7 +13,7 @@ add_library(pvtree-analysis SHARED
   rootStyles.hpp
   yearlyResult.cpp
   yearlyResult.hpp
-  pvtree-analysisDictionary.cxx
+  pvtree-analysis_dict.cxx
   )
 target_include_directories(pvtree-analysis
   PUBLIC ${ROOT_INCLUDE_DIRS}
@@ -26,12 +27,12 @@ add_cppcheck(pvtree-analysis)
 
 #Install results into respective directories
 install(TARGETS pvtree-analysis
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
-
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-analysisDictionary_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-analysisDictionary.rootmap
-  DESTINATION lib/)
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis_rdict.pcm
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis.rootmap
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
 

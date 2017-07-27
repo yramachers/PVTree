@@ -1,16 +1,17 @@
 #For persistence with ROOT need to create dictionaries for tree constructors.
-root_generate_dictionary(pvtree-treeSystemDictionary
-  treeConstructionInterface.hpp
-  helicalConstruction.hpp
-  monopodialConstruction.hpp
-  stochasticConstruction.hpp
-  sympodialConstruction.hpp
-  ternaryConstruction.hpp
-  stumpConstruction.hpp
+root_generate_dictionary(pvtree-treeSystem_dict
+  pvtree/treeSystem/treeConstructionInterface.hpp
+  pvtree/treeSystem/helicalConstruction.hpp
+  pvtree/treeSystem/monopodialConstruction.hpp
+  pvtree/treeSystem/stochasticConstruction.hpp
+  pvtree/treeSystem/sympodialConstruction.hpp
+  pvtree/treeSystem/ternaryConstruction.hpp
+  pvtree/treeSystem/stumpConstruction.hpp
+  MODULE pvtree-treeSystems
   LINKDEF Linkdef.h
-  OPTIONS -rmf pvtree-treeSystemDictionary.rootmap -rml pvtree-libtreeSystems.so
-  -I${CMAKE_CURRENT_SOURCE_DIR}
-  -I${Libconfig_INCLUDE_DIRS}
+  OPTIONS
+    -noIncludePaths
+    -I${Libconfig_INCLUDE_DIRS}
   )
 
 add_library(pvtree-treeSystems SHARED
@@ -43,7 +44,7 @@ add_library(pvtree-treeSystems SHARED
   treeFactory.cpp
   treeFactory.hpp
   treeSystemInterface.hpp
-  pvtree-treeSystemDictionary.cxx
+  pvtree-treeSystem_dict.cxx
   )
 
 target_include_directories(pvtree-treeSystems
@@ -60,11 +61,11 @@ add_cppcheck(pvtree-treeSystems)
 
 #Install results into respective directories
 install(TARGETS pvtree-treeSystems
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
-
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
 install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-treeSystemDictionary_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/pvtree-treeSystemDictionary.rootmap
-  DESTINATION lib/)
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-treeSystems_rdict.pcm
+  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-treeSystems.rootmap
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )

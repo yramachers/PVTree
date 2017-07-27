@@ -16,6 +16,6 @@ target_link_libraries(pvtree-geometry PUBLIC
 add_cppcheck(pvtree-geometry)
 
 install(TARGETS pvtree-geometry
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
