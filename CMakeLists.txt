@@ -82,11 +82,11 @@ endfunction()
 # - Set up testing
 include(CTest)
 
-# - Build subcomponents
+# - Build component libraries
 add_subdirectory(pvtree)
 
-#Directory containing all of our code to be compiled
-#add_subdirectory(src)
+# - Build user applications
+add_subdirectory(programs)
 
 # - Build docs
 add_subdirectory(doc)

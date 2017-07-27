@@ -70,6 +70,7 @@ target_link_libraries(pvtree-fullsim
     ${Geant4_LIBRARIES}
     ${ROOT_Hist_LIBRARY}
     ${ROOT_Tree_LIBRARY}
+    ${ROOT_RIO_LIBRARY}
     pvtree-geometry pvtree-treeSystems pvtree-leafSystems pvtree-climate pvtree-solpos
   )
 
