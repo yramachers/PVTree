@@ -94,18 +94,6 @@ add_subdirectory(programs)
 # - Build docs
 add_subdirectory(doc)
 
-#Directory containing scripts to be generated
-#add_subdirectory(scripts)
-
-#Example batch scripts are also useful
-#add_subdirectory(batch)
-
-#Directory containing validation spectra
-#add_subdirectory(spectra)
-
-#For SMARTS integration need to install additional files.
-#add_subdirectory(smarts)
-
-# Add directory containing configuration files
-#add_subdirectory(config)
+# - Build standard config files
+add_subdirectory(share)
 
