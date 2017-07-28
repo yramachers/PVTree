@@ -65,8 +65,19 @@ foreach(_pv_program ${PVTREE_PROGRAMS})
     ${ROOT_Graf_LIBRARY}
     )
 
+  # Configure install-time RPATH to builtin libraries
+  if(UNIX AND NOT APPLE)
+    set_target_properties(pvtree-${_pv_program}
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}"
+      )
+  elseif(APPLE)
+    set_target_properties(pvtree-${_pv_program}
+      PROPERTIES INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}"
+      )
+  endif()
+
   # Run static check of source code
   add_cppcheck(pvtree-${_pv_program})
-  install(TARGETS pvtree-${_pv_program} DESTINATION bin)
+  install(TARGETS pvtree-${_pv_program} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
 

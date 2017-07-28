@@ -28,11 +28,11 @@ add_cppcheck(pvtree-analysis)
 #Install results into respective directories
 install(TARGETS pvtree-analysis
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
   )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis_rdict.pcm
   ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis.rootmap
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
   )
 

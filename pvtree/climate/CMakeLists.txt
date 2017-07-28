@@ -19,5 +19,5 @@ add_cppcheck(pvtree-climate)
 #Install results into respective directories
 install(TARGETS pvtree-climate
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
   )

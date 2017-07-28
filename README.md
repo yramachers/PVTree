@@ -67,7 +67,8 @@ hierarchy:
    +- bin/
    |  +- pvtree-*
    +- lib/
-   |  +- libpvtree-*
+   |  +- PVTree/
+   |     +- libpvtree-*
    +- share/
       +- doc/
       |  +- PVtree/
