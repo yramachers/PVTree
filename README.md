@@ -1,4 +1,3 @@
-=======================
 PVTree simulation code
 =======================
 
@@ -6,75 +5,89 @@ Authors:  Graham Jones, Yorck Ramachers
 Contributor: Kieran Uzzell
 
 
-Licensing
----------
-Please study the file ``LICENSE.txt`` for the distribution terms and
-conditions of use of PVTree.
-Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/licenses/by-nc-nd/4.0/
-
-
 External dependencies
 =====================
-C++11 compatible compiler (gcc 4.9.x is the default at the moment)
-Fortran compiler (for solar models)
-Cmake 3.4.3 or higher
-Built in superbuild:
-- [ROOT](https://root.cern.ch) 6.xx
-- [Geant4](https://geant4.cern.ch) 10.xx
-  - Optional: Qt4/5 for visualization with Geant4
-- [LibConfig](http://www.hyperrealm.com/libconfig/)
-- [ECCodes](https://software.ecmwf.int/wiki/display/ECC/ecCodes+Home) (for reading climate data files)
-- [EO](https://sourceforge.net/projects/eodev/) (for future optimisation, not currently used)
-- [CPPCheck](https://sourceforge.net/projects/cppcheck/)
+- *Required*
+  - C++11 compatible compiler (GCC >= 4.9, Clang >= 3.5)
+  - Fortran compiler
+  - [CMake](https://cmake.org) >= 3.5
+  - [ROOT](https://root.cern.ch) >= 6.8
+    - With Python and GSL (MathMore) support
+  - [Geant4](https://geant4.cern.ch) >= 10.3
+    - Requires support for Qt4/5 if PVTree visualization is required
+  - [Libconfig](http://www.hyperrealm.com/libconfig/)
+  - [ECCodes](https://software.ecmwf.int/wiki/display/ECC/ecCodes+Home) (for reading climate data files)
+- *Optional*
+  - [Doxygen](http://doxygen.org) for building documentation
+  - [CPPCheck](https://sourceforge.net/projects/cppcheck/) for static analysis during development
+  - [EO](https://sourceforge.net/projects/eodev/) for future optimisation, not currently used
+
+ROOT, Geant4, Libconfig, together with all of their C++ dependencies must be compiled
+against the C++11 standard to ensure binary compatibility and correct genreration
+of ROOT dictionaries.
+
+It is expected that PVTree can be compiled and run on all platforms where the above
+dependencies can be installed, which are primarily Linux and macOS.
 
 
 Quick Start-up
 ==============
+Ensure all the dependencies listed above are available, and available in the session `PATH`
 
-Installation Instructions
--------------------------------
+``` console
+$ git clone <url> pvtree.git
+$ mkdir build
+$ cd build
+$ cmake -DCMAKE_INSTALL_PREFIX=<installpath> ../pvtree.git
+...
+-- Configuring done
+-- Generating done
+-- Build files have been writen to: /.../build
+```
 
-1. Start by sourcing the environment setup script within this directory
+The `<installpath>` should be a directory to which you have write permissions. If you
+do not set it, it defaults to `/usr/local`. If all of the dependencies are in paths known
+to CMake, they should be found automatically. Should any errors occur when running `cmake`
+due to unfound packages, you may need to add their install locations to `CMAKE_PREFIX_PATH`
+either in the environment or via `cmake -DCMAKE_PREFIX_PATH="path1;path2;...;pathN" <args>`.
 
-> source setupEnvironment.sh
+Once configuration has run successfully, PVTree can be built and installed via:
 
-which will set the environment variables controlling the choice of
-compiler used during the build. Currently GCC 4.9.X+ is required.
+``` console
+$ make -j4
+$ make install
+```
 
-2. Create a new build and install directory
+Adjust the numeric argument to `make` as appropriate for the cores on your
+build machine. All PVTree resources are installed into a standard filesystem
+hierarchy:
 
-> mkdir Build
-> mkdir Install
+```
++- CMAKE_INSTALL_PREFIX/
+   +- bin/
+   |  +- pvtree-*
+   +- lib/
+   |  +- libpvtree-*
+   +- share/
+      +- doc/
+      |  +- PVtree/
+      +- PVTree/
+         +- config/
+         +- smarts/
+         +- spectra/
+```
 
-3. From the build directory use cmake to configure the PVTree source
-tree. This will also include the installation of a number of external
-packages called Geant4, ROOT, libconfig and Evolutionary Objects.
+To get started with using PVTree programs, open the file `share/doc/PVTree/html/index.html`
+in your preferred browser.
 
-> cmake -DCMAKE_INSTALL_PREFIX=${PWD}/../Install/ -DPVTREE_SOURCE_DIRECTORY=../ -DPVTREE_CLIMATE_DATA_PATH=/my/data/storage/location/ClimateData/ ../super/
 
-You should check there are no error messages during this step. Recent versions
-of ROOT require python installations of version 2.7 and greater. Will need
-to specify a python exe by hand if the default version does not meet the criteria.
-Newer versions of ROOT might be better as python is supposidly disabled for the
-ROOT super-build (a requirement that doesn't seem to work at the moment.).
-
+Obtaining Climate Data
+======================
 If the climate data path no longer exists you will have download the files again
 from the ECMWF website. The query specifications are listed in the configuration
 files config/climate/*.cfg. Grib files get big and the website has a limit so you
 will have to download in smaller time periods and then merge the files (can do a
 simple cat with grib files).
-
-4. Compile all the code using make. This may take a long time (about one
-hour when compiling with four cores) when first compiling as the external
-packages Geant4 and ROOT are both quite large.
-
-> nice make -j4
-
-where `-j4' indicates that up to four cores can be simultaneously used
-in the compilation. You should change this number depending exactly on
-what computer you are running on. During the compilation of the PVTree
-library CPPCheck will apply static analysis to the code, where occasionally
-spurious errors can be found (but it does not prevent compilation).
 
 Alternatively a debug build can be created using the additional cmake option
 -DCMAKE_BUILD_TYPE=DEBUG. This will turn off compiler optimization and
@@ -102,18 +115,12 @@ also the PVTree code.
 3. Look at the output!
 
 
-Compiling DOxygen Documentation
--------------------------------
 
-Documentation of the code can be automatically generated from the build
-directory of the PVTree software by running.
+Licensing
+=========
+Please study the file ``LICENSE.txt`` for the distribution terms and
+conditions of use of PVTree.
 
-> cd Build/PVTree/src/SuperPVTree-build/
-> make doc
-> make install
-
-To browse the generated documentation point your browser at the html file
-within your install path  Install/share/doc/html/index.html
-
+Climate data from ECMW under CC BY-NC-ND 4.0, http://creativecommons.org/licenses/by-nc-nd/4.0/
 
 
