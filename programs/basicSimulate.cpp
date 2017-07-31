@@ -1,10 +1,10 @@
 /*!
- * @file 
+ * @file
  * \brief Application to test the visualization of the simulation,
  *        where a small number of optical photons are generated and
  *        fired at a default Ternary+Cordate leaf structure.
  *
- * The visualization shows the world bounding box, photon tracks, hits 
+ * The visualization shows the world bounding box, photon tracks, hits
  * and the complete detector geometry.
  */
 
@@ -39,7 +39,7 @@
 #include "pvtree/full/solarSimulation/spectrumFactory.hpp"
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -59,7 +59,6 @@ void showHelp() {
 
 /*! Test program for the simulation step. */
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int photonNumberPerEvent;
   std::string inputTreeFileName;
@@ -68,7 +67,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -77,7 +76,7 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "simple");
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("photonNumber", photonNumberPerEvent, 10u);
-  
+
   // Also do not run if other arguments are present
   if (ops.options_remain()) {
     std::cerr << "Oops! Unexpected options." << std::endl;
@@ -87,7 +86,8 @@ int main(int argc, char** argv) {
 
   // Report input parameters
   if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName << std::endl;
+    std::cout << "Just using selected tree from " << inputTreeFileName
+              << std::endl;
     singleTreeRunning = true;
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
@@ -104,8 +104,12 @@ int main(int argc, char** argv) {
     leaf = LeafFactory::instance()->getLeaf(leafType);
   } else {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    tree = std::shared_ptr<TreeConstructionInterface>(
+        (TreeConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedTree"));
+    leaf = std::shared_ptr<LeafConstructionInterface>(
+        (LeafConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedLeaf"));
     inputTreeFile.Close();
   }
 
@@ -119,7 +123,7 @@ int main(int argc, char** argv) {
   ClimateFactory::instance()->setConfigurationFile("default.cfg");
   ClimateFactory::instance()->setDeviceLocation(deviceLocation);
 
-  //Define the sun setting, just an arbitrary time and date for now
+  // Define the sun setting, just an arbitrary time and date for now
   Sun sun(deviceLocation);
   sun.setDate(190, 2014);
   sun.setTime(12, 30, 30);
@@ -142,14 +146,15 @@ int main(int argc, char** argv) {
   runManager->SetUserInitialization(new DetectorConstruction(tree, leaf));
   OpticalPhysicsList* physicsList = new OpticalPhysicsList;
   runManager->SetUserInitialization(physicsList);
- 
+
   // Set user action classes
   DummyRecorder dummyRecorder;
-  
+
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder, 
-   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* { 
-							       return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &dummyRecorder,
+      [&photonNumberPerEvent, &sun ]() -> G4VUserPrimaryGeneratorAction *
+      { return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }));
 
   // Initialize visualization
   //
@@ -161,10 +166,9 @@ int main(int argc, char** argv) {
 
   // Process macro or start UI session
   //
-  if ( ! ui ) { 
+  if (!ui) {
     // Only implementing interactive mode!
-  }
-  else { 
+  } else {
     // interactive mode
     UImanager->ApplyCommand("/run/verbose 2");
     UImanager->ApplyCommand("/run/initialize");
@@ -173,7 +177,7 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/open OGLSQt");
     UImanager->ApplyCommand("/vis/scene/create");
     UImanager->ApplyCommand("/vis/scene/add/userAction");
-    
+
     // Draw geometry
     UImanager->ApplyCommand("/vis/drawVolume");
 
@@ -183,17 +187,22 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/viewer/set/projection p 45 deg");
     UImanager->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 90.0 90.0 deg");
     UImanager->ApplyCommand("/vis/viewer/set/rotationStyle freeRotation");
-    UImanager->ApplyCommand("/vis/viewer/set/style s"); // solid (display faces of geometry)
+    UImanager->ApplyCommand(
+        "/vis/viewer/set/style s");  // solid (display faces of geometry)
     UImanager->ApplyCommand("/vis/viewer/set/background 1 1 1 1");
 
-    // Disable auto refresh and quieten vis messages whilst scene and trajectories are established
+    // Disable auto refresh and quieten vis messages whilst scene and
+    // trajectories are established
     UImanager->ApplyCommand("/vis/viewer/set/autoRefresh false");
 
     // Draw the trajectories
     UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts "
+        "true");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
 
     // Draw the hits
     UImanager->ApplyCommand("/vis/scene/add/hits");
@@ -218,9 +227,3 @@ int main(int argc, char** argv) {
   delete visManager;
   delete runManager;
 }
-
-
-
-
-
-

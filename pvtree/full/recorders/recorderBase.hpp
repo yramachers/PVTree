@@ -21,19 +21,16 @@ class G4Track;
 class G4Step;
 
 class RecorderBase {
-public:
+ public:
+  virtual ~RecorderBase(){};
 
-  virtual ~RecorderBase() {};
-  
   virtual void recordBeginOfRun(const G4Run*) = 0;
   virtual void recordEndOfRun(const G4Run*) = 0;
-  
-  
-  virtual void recordBeginOfEvent(const G4Event*) {};
-  virtual void recordEndOfEvent(const G4Event*) {};
-  virtual void recordTrack(const G4Track*) {};
-  virtual void recordStep(const G4Step*) {};
+
+  virtual void recordBeginOfEvent(const G4Event*){};
+  virtual void recordEndOfEvent(const G4Event*){};
+  virtual void recordTrack(const G4Track*){};
+  virtual void recordStep(const G4Step*){};
 };
 
-
-#endif //RECORDERS_RECORDER_BASE_HPP
+#endif  // RECORDERS_RECORDER_BASE_HPP

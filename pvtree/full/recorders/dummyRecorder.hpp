@@ -10,16 +10,13 @@
 
 #include "pvtree/full/recorders/recorderBase.hpp"
 
-class DummyRecorder :  public RecorderBase {
-
-public:
-
+class DummyRecorder : public RecorderBase {
+ public:
   DummyRecorder();
   ~DummyRecorder();
-  
+
   void recordBeginOfRun(const G4Run* run);
   void recordEndOfRun(const G4Run* run);
 };
 
-
-#endif //RECORDERS_DUMMY_RECORDER_HPP
+#endif  // RECORDERS_DUMMY_RECORDER_HPP

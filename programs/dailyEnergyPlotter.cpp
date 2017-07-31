@@ -54,8 +54,10 @@
 
 void showHelp() {
   std::cout << "dailyEnergyPlotter help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'"
+            << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'"
+            << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 3" << std::endl;
   std::cout << "\t --timeSegments <INTEGER> :\t default 25" << std::endl;
   std::cout << "\t --photonNumber <INTEGER> :\t default 100000" << std::endl;
@@ -63,15 +65,14 @@ void showHelp() {
   std::cout << "\t --parameterSeedOffset <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME> :\t default ''" << std::endl;
   std::cout << "\t --day <INTEGER> :\t default 190" << std::endl;
-  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'dailyEnergyPlotter.results.root'" << std::endl;
+  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default "
+               "'dailyEnergyPlotter.results.root'" << std::endl;
 }
 
-void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
-			  std::string canvasName,
-			  std::string xAxisTitle,
-			  std::string yAxisTitle) {
-
-  if (graphs.size() < 1){
+void createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
+                         std::string canvasName, std::string xAxisTitle,
+                         std::string yAxisTitle) {
+  if (graphs.size() < 1) {
     // Don't do anything.
     return;
   }
@@ -88,14 +89,13 @@ void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
   graphs[0].GetXaxis()->SetTimeFormat("%H:%M");
 
   // Repeat for other graphs
-  for (unsigned int g = 1; g < graphs.size(); g++){
+  for (unsigned int g = 1; g < graphs.size(); g++) {
     graphs[g].Draw("SAMEL");
   }
 
   // Save to disk
   canvas.Update();
   canvas.Write();
-
 }
 
 /*! \brief Time binned energy plotter main.
@@ -104,11 +104,11 @@ void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
  * being the energy as a function of time over the period of a day.
  *
  * @param[in] argc Number of command line arguments.
- * @param[in] argv See dailyEnergyPlotter --help (showHelp) for available arguments.
+ * @param[in] argv See dailyEnergyPlotter --help (showHelp) for available
+ *arguments.
  *
  */
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int treeNumber;
   unsigned int simulationTimeSegments;
@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -137,7 +137,8 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("parameterSeedOffset", parameterSeedOffset, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("day", dayNumber, 190u);
-  ops >> GetOpt::Option("outputFileName", outputFileName,"dailyEnergyPlotter.results.root");
+  ops >> GetOpt::Option("outputFileName", outputFileName,
+                        "dailyEnergyPlotter.results.root");
 
   // Report input parameters
   if (inputTreeFileName != "") {
@@ -146,13 +147,17 @@ int main(int argc, char** argv) {
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
     std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Using the parameter random number seed offset = " << parameterSeedOffset << std::endl;
-    std::cout << "Generating "    << treeNumber << " trees." << std::endl;
+    std::cout << "Using the parameter random number seed offset = "
+              << parameterSeedOffset << std::endl;
+    std::cout << "Generating " << treeNumber << " trees." << std::endl;
     singleTreeRunning = false;
   }
-  std::cout << "Using the Geant4 random number seed = "           << geant4Seed << std::endl;
-  std::cout << "Simulating in " << simulationTimeSegments << " time segments." << std::endl;
-  std::cout << "Considering "   << photonNumberPerTimeSegment << " photons per time segments." << std::endl;
+  std::cout << "Using the Geant4 random number seed = " << geant4Seed
+            << std::endl;
+  std::cout << "Simulating in " << simulationTimeSegments << " time segments."
+            << std::endl;
+  std::cout << "Considering " << photonNumberPerTimeSegment
+            << " photons per time segments." << std::endl;
   std::cout << "Recording results in " << outputFileName << std::endl;
 
   // Also do not run if other arguments are present
@@ -165,8 +170,8 @@ int main(int argc, char** argv) {
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
   std::shared_ptr<LeafConstructionInterface> leaf;
-  TreeConstructionInterface* bestT {nullptr};
-  LeafConstructionInterface* bestL {nullptr} ;
+  TreeConstructionInterface* bestT{nullptr};
+  LeafConstructionInterface* bestL{nullptr};
 
   if (!singleTreeRunning) {
     tree = TreeFactory::instance()->getTree(treeType);
@@ -176,7 +181,7 @@ int main(int argc, char** argv) {
     TList* structureList = (TList*)inputTreeFile.Get("testedStructures");
     TIter structureListIterator(structureList);
 
-    if ( structureList->GetSize() == 0 ){
+    if (structureList->GetSize() == 0) {
       std::cout << "There are no trees to consider." << std::endl;
       return 1;
     }
@@ -184,23 +189,30 @@ int main(int argc, char** argv) {
     double energy;
     double eff;
     double besteff = 0.0;
-    while (YearlyResult* currentStructure = (YearlyResult*)structureListIterator()) {
+    while (YearlyResult* currentStructure =
+               (YearlyResult*)structureListIterator()) {
       TreeConstructionInterface* clonedT = currentStructure->getTree();
-      LeafConstructionInterface* clonedL = currentStructure->getLeaf();;
+      LeafConstructionInterface* clonedL = currentStructure->getLeaf();
+      ;
       area = clonedT->getDoubleParameter("sensitiveArea");
       energy = clonedT->getDoubleParameter("totalEnergy");
       eff = energy / area;
-      if (eff > besteff) { // book best tree
-	bestT = clonedT;
-	bestL = clonedL;
-	besteff = eff;
-	std::cout << "RETRIEVE: got total energy = " << energy << " eff: " << eff << std::endl;
+      if (eff > besteff) {  // book best tree
+        bestT = clonedT;
+        bestL = clonedL;
+        besteff = eff;
+        std::cout << "RETRIEVE: got total energy = " << energy
+                  << " eff: " << eff << std::endl;
       }
     }
-//     tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-//     leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
-    tree = std::shared_ptr<TreeConstructionInterface>( bestT);
-    leaf = std::shared_ptr<LeafConstructionInterface>( bestL);
+    //     tree = std::shared_ptr<TreeConstructionInterface>(
+    //     (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree")
+    //     );
+    //     leaf = std::shared_ptr<LeafConstructionInterface>(
+    //     (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf")
+    //     );
+    tree = std::shared_ptr<TreeConstructionInterface>(bestT);
+    leaf = std::shared_ptr<LeafConstructionInterface>(bestL);
 
     inputTreeFile.Close();
   }
@@ -219,15 +231,14 @@ int main(int argc, char** argv) {
   // Perform the simulation between the sunrise and sunset.
   Sun sun(deviceLocation);
   sun.setDate(dayNumber, 2014);
-  int simulationStartingTime = sun.getSunriseTime()*60; //s
-  int simulationEndingTime   = sun.getSunsetTime()*60; //s,
-  int simulationStepTime     = (double)(simulationEndingTime-simulationStartingTime)/simulationTimeSegments;
+  int simulationStartingTime = sun.getSunriseTime() * 60;  // s
+  int simulationEndingTime = sun.getSunsetTime() * 60;  // s,
+  int simulationStepTime =
+      (double)(simulationEndingTime - simulationStartingTime) /
+      simulationTimeSegments;
 
-  std::cout << "Simulation time considered between "
-	    << simulationStartingTime
-	    << "(s) and "
-	    << simulationEndingTime
-	    << "(s)." << std::endl;
+  std::cout << "Simulation time considered between " << simulationStartingTime
+            << "(s) and " << simulationEndingTime << "(s)." << std::endl;
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
@@ -249,9 +260,12 @@ int main(int argc, char** argv) {
   runManager->SetUserInitialization(physicsList);
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&recorder,
-   [&photonNumberPerTimeSegment, &sun] () -> G4VUserPrimaryGeneratorAction* {
-							       return new PrimaryGeneratorAction(photonNumberPerTimeSegment, &sun); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &recorder,
+      [&photonNumberPerTimeSegment, &sun ]() -> G4VUserPrimaryGeneratorAction *
+      {
+        return new PrimaryGeneratorAction(photonNumberPerTimeSegment, &sun);
+      }));
 
   // Initialize G4 kernel
   runManager->Initialize();
@@ -262,8 +276,7 @@ int main(int argc, char** argv) {
   std::vector<TGraphAsymmErrors> energyDensityGraphs;
 
   // Repeat for a number of trees
-  for (unsigned int x=0; x<treeNumber; x++){
-
+  for (unsigned int x = 0; x < treeNumber; x++) {
     TGraphAsymmErrors currentEnergyGraph;
     std::string graphName = "energyGraph_tree" + std::to_string(x);
     currentEnergyGraph.SetName(graphName.c_str());
@@ -275,7 +288,8 @@ int main(int argc, char** argv) {
     graphName = "normalizedEnergyGraph_tree" + std::to_string(x);
     currentNormalizedEnergyGraph.SetName(graphName.c_str());
     currentNormalizedEnergyGraph.SetTitle("");
-    currentNormalizedEnergyGraph.GetXaxis()->SetTitle("Time since midnight [s]");
+    currentNormalizedEnergyGraph.GetXaxis()->SetTitle(
+        "Time since midnight [s]");
     currentNormalizedEnergyGraph.GetYaxis()->SetTitle("Fractional Energy");
 
     TGraphAsymmErrors currentEnergyDensityGraph;
@@ -283,9 +297,10 @@ int main(int argc, char** argv) {
     currentEnergyDensityGraph.SetName(graphName.c_str());
     currentEnergyDensityGraph.SetTitle("");
     currentEnergyDensityGraph.GetXaxis()->SetTitle("Time since midnight [s]");
-    currentEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+    currentEnergyDensityGraph.GetYaxis()->SetTitle(
+        "Energy density [kWhm^{-2}]");
 
-    if (!singleTreeRunning){
+    if (!singleTreeRunning) {
       // Allow the geometry to be rebuilt with new settings
       tree->randomizeParameters(x + parameterSeedOffset);
       leaf->randomizeParameters(x + parameterSeedOffset);
@@ -299,19 +314,21 @@ int main(int argc, char** argv) {
       runManager->Initialize();
     }
 
-    if ( x % 50 == 0 ){
-	std::cout << "Considering tree " << x << std::endl;
-	tree->print();
-	leaf->print();
+    if (x % 50 == 0) {
+      std::cout << "Considering tree " << x << std::endl;
+      tree->print();
+      leaf->print();
     }
 
-    //Simulate at all time points with the same number of events...
-    for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
+    // Simulate at all time points with the same number of events...
+    for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+         timeIndex++) {
+      // Set the time to the mid-point of the time segment
+      sun.setTime((int)(simulationStartingTime +
+                        timeIndex * simulationStepTime +
+                        simulationStepTime / 2.0));
 
-      //Set the time to the mid-point of the time segment
-      sun.setTime( (int)(simulationStartingTime + timeIndex*simulationStepTime + simulationStepTime/2.0) );
-
-      //Run simulation with a single event per time point
+      // Run simulation with a single event per time point
       G4int eventNumber = 1;
       runManager->BeamOn(eventNumber);
     }
@@ -320,17 +337,20 @@ int main(int argc, char** argv) {
     double currentSensitiveArea = detector->getSensitiveSurfaceArea();
 
     // Sum up the energy deposited (in KiloWatt hour)
-    std::vector<std::vector<double > > hitEnergies = recorder.getSummedHitEnergies();
+    std::vector<std::vector<double> > hitEnergies =
+        recorder.getSummedHitEnergies();
 
     // Grab the total energy sum firstly for normalization!
     double totalEnergy = 0.0;
 
-    for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
-
-      // Sum up the energy deposited in a 'run' (should just be a single event per run).
-      double totalRunEnergy = 0.0; //kWh
+    for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+         timeIndex++) {
+      // Sum up the energy deposited in a 'run' (should just be a single event
+      // per run).
+      double totalRunEnergy = 0.0;  // kWh
       for (double eventHitEnergy : hitEnergies[timeIndex]) {
-	totalRunEnergy += (eventHitEnergy/1000.0) * (simulationStepTime/3600.0);
+        totalRunEnergy +=
+            (eventHitEnergy / 1000.0) * (simulationStepTime / 3600.0);
       }
 
       totalEnergy += totalRunEnergy;
@@ -339,21 +359,27 @@ int main(int argc, char** argv) {
     std::cout << "SIM: sensitive area = " << currentSensitiveArea << std::endl;
 
     // Now fill the graph
-    for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
-
-      // Sum up the energy deposited in a 'run' (should just be a single event per run).
-      double totalRunEnergy = 0.0; //kWh
+    for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+         timeIndex++) {
+      // Sum up the energy deposited in a 'run' (should just be a single event
+      // per run).
+      double totalRunEnergy = 0.0;  // kWh
       for (double eventHitEnergy : hitEnergies[timeIndex]) {
-	totalRunEnergy += (eventHitEnergy/1000.0) * (simulationStepTime/3600.0);
+        totalRunEnergy +=
+            (eventHitEnergy / 1000.0) * (simulationStepTime / 3600.0);
       }
 
       // Add the point to the graph
-      int currentTime = (int)(simulationStartingTime + timeIndex*simulationStepTime + simulationStepTime/2.0);
+      int currentTime =
+          (int)(simulationStartingTime + timeIndex * simulationStepTime +
+                simulationStepTime / 2.0);
       int nextPointIndex = currentEnergyGraph.GetN();
 
-      currentEnergyGraph.SetPoint(nextPointIndex,           currentTime, totalRunEnergy);
-      currentNormalizedEnergyGraph.SetPoint(nextPointIndex, currentTime, totalRunEnergy/totalEnergy);
-      currentEnergyDensityGraph.SetPoint(nextPointIndex,    currentTime, totalRunEnergy/currentSensitiveArea);
+      currentEnergyGraph.SetPoint(nextPointIndex, currentTime, totalRunEnergy);
+      currentNormalizedEnergyGraph.SetPoint(nextPointIndex, currentTime,
+                                            totalRunEnergy / totalEnergy);
+      currentEnergyDensityGraph.SetPoint(nextPointIndex, currentTime,
+                                         totalRunEnergy / currentSensitiveArea);
     }
 
     // Don't need to keep old records after analysis performed.
@@ -383,19 +409,15 @@ int main(int argc, char** argv) {
   }
 
   // Make a canvas combining all the plots in one summary graphic
-  createSummaryCanvas(energyGraphs,           "energySummaryCanvas",     "Time [H:M]", "Energy [kWh]");
-  createSummaryCanvas(normalizedEnergyGraphs, "normalizedSummaryCanvas", "Time [H:M]", "Fractional Energy");
-  createSummaryCanvas(energyDensityGraphs,    "energyDensityCanvas",     "Time [H:M]", "Energy density [kWhm^{-2}]");
+  createSummaryCanvas(energyGraphs, "energySummaryCanvas", "Time [H:M]",
+                      "Energy [kWh]");
+  createSummaryCanvas(normalizedEnergyGraphs, "normalizedSummaryCanvas",
+                      "Time [H:M]", "Fractional Energy");
+  createSummaryCanvas(energyDensityGraphs, "energyDensityCanvas", "Time [H:M]",
+                      "Energy density [kWhm^{-2}]");
 
   // Close the root file
   resultsFile.Close();
 
   return 0;
 }
-
-
-
-
-
-
-

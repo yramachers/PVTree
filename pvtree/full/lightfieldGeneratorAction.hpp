@@ -5,7 +5,7 @@
  * \brief Handles the generation of primary particles for the Geant Simulation
  *        using a previously evaluated lightfield.
  *
- * Currently will generate photons on the surface of a box surrounding the 
+ * Currently will generate photons on the surface of a box surrounding the
  * detector according to the passed lightfield.
  */
 
@@ -18,13 +18,12 @@ class Plenoptic3D;
 /* \brief Handles the generation of primary particles for the Geant Simulation
  *        using a previously evaluated lightfield.
  *
- * Currently will generate photons on the surface of a box surrounding the 
+ * Currently will generate photons on the surface of a box surrounding the
  * detector according to the passed lightfield.
  */
 class LightfieldGeneratorAction : public G4VUserPrimaryGeneratorAction {
-public:
-
-  /*! \brief Construct the generator action which employs the use of 
+ public:
+  /*! \brief Construct the generator action which employs the use of
    *         3d plenoptic function.
    *
    * @param[in] photonNumber The number of photons to generate per event.
@@ -40,7 +39,7 @@ public:
    * @param[in] event The event which should have primary particles added.
    */
   virtual void GeneratePrimaries(G4Event* event);
-  
+
   /*! \brief Set the number of photons to be randomly generated
    *         in each event.
    *
@@ -48,16 +47,12 @@ public:
    */
   void SetPhotonNumber(unsigned int photonNumber);
 
-private:
-
-  unsigned int         m_photonNumber;
+ private:
+  unsigned int m_photonNumber;
 
   WeightedParticleGun* m_particleGun;
 
-  Plenoptic3D*         m_lightfield;
-
+  Plenoptic3D* m_lightfield;
 };
 
-
-
-#endif //PV_FULL_LIGHTFIELD_GENERATOR_ACTION_HPP
+#endif  // PV_FULL_LIGHTFIELD_GENERATOR_ACTION_HPP

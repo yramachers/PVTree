@@ -4,6 +4,6 @@
 #pragma link off all functions;
 #pragma link C++ nestedclasses;
 
-#pragma link C++ class YearlyResult+;
+#pragma link C++ class YearlyResult + ;
 
-#endif // __CINT__
+#endif  // __CINT__

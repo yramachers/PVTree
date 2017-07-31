@@ -1,11 +1,11 @@
 /*!
- * @file 
+ * @file
  * \brief Application to test the visualization of the simulation,
  *        where a small number of optical photons are generated and
  *        fired at a default Ternary+Cordate leaf structure. The photons
  *        are now generated from a lightfield.
  *
- * The visualization shows the world bounding volume, photon tracks, hits 
+ * The visualization shows the world bounding volume, photon tracks, hits
  * and the complete detector geometry.
  */
 
@@ -36,7 +36,7 @@
 #include "G4StepLimiterPhysics.hh"
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -52,12 +52,13 @@ void showHelp() {
   std::cout << "\t -l, --leaf <LEAF TYPE NAME>" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME> :\t default ''" << std::endl;
   std::cout << "\t --photonNumber <INTEGER> :\t default 10u" << std::endl;
-  std::cout << "\t --lightfieldFileName <ROOT FILENAME> :\t default 'lightfield.root'" << std::endl;
+  std::cout
+      << "\t --lightfieldFileName <ROOT FILENAME> :\t default 'lightfield.root'"
+      << std::endl;
 }
 
 /*! Test program for the simulation step. */
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int photonNumberPerEvent;
   std::string inputTreeFileName;
@@ -67,7 +68,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -76,8 +77,9 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "simple");
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("photonNumber", photonNumberPerEvent, 10u);
-  ops >> GetOpt::Option("lightfieldFileName", lightfieldFileName, "lightfield.root");
-  
+  ops >> GetOpt::Option("lightfieldFileName", lightfieldFileName,
+                        "lightfield.root");
+
   // Also do not run if other arguments are present
   if (ops.options_remain()) {
     std::cerr << "Oops! Unexpected options." << std::endl;
@@ -87,18 +89,21 @@ int main(int argc, char** argv) {
 
   // Report input parameters
   if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName << std::endl;
+    std::cout << "Just using selected tree from " << inputTreeFileName
+              << std::endl;
     singleTreeRunning = true;
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
     std::cout << "Leaf type = " << leafType << std::endl;
     singleTreeRunning = false;
   }
-  std::cout << "Using lightfield defined in " << lightfieldFileName << " to generate photons." << std::endl;
+  std::cout << "Using lightfield defined in " << lightfieldFileName
+            << " to generate photons." << std::endl;
 
   // Load the lightfield to be used
   TFile currentLightfieldFile(lightfieldFileName.c_str(), "READ");
-  Plenoptic3D* currentLightfield = static_cast<Plenoptic3D*>( currentLightfieldFile.Get("lightfield") );
+  Plenoptic3D* currentLightfield =
+      static_cast<Plenoptic3D*>(currentLightfieldFile.Get("lightfield"));
 
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
@@ -109,8 +114,12 @@ int main(int argc, char** argv) {
     leaf = LeafFactory::instance()->getLeaf(leafType);
   } else {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    tree = std::shared_ptr<TreeConstructionInterface>(
+        (TreeConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedTree"));
+    leaf = std::shared_ptr<LeafConstructionInterface>(
+        (LeafConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedLeaf"));
     inputTreeFile.Close();
   }
 
@@ -133,13 +142,17 @@ int main(int argc, char** argv) {
 
   OpticalPhysicsList* physicsList = new OpticalPhysicsList;
   runManager->SetUserInitialization(physicsList);
- 
+
   // Set user action classes
   DummyRecorder dummyRecorder;
-  
+
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder, 
-   [&photonNumberPerEvent, &currentLightfield] () -> G4VUserPrimaryGeneratorAction* { return new LightfieldGeneratorAction(photonNumberPerEvent, currentLightfield); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &dummyRecorder, [&photonNumberPerEvent, &currentLightfield ]()
+                          -> G4VUserPrimaryGeneratorAction * {
+        return new LightfieldGeneratorAction(photonNumberPerEvent,
+                                             currentLightfield);
+      }));
 
   // Initialize visualization
   //
@@ -151,10 +164,9 @@ int main(int argc, char** argv) {
 
   // Process macro or start UI session
   //
-  if ( ! ui ) { 
+  if (!ui) {
     // Only implementing interactive mode!
-  }
-  else { 
+  } else {
     // interactive mode
     UImanager->ApplyCommand("/run/verbose 2");
     UImanager->ApplyCommand("/run/initialize");
@@ -164,8 +176,8 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/open OGLSQt");
     UImanager->ApplyCommand("/vis/scene/create");
     UImanager->ApplyCommand("/vis/scene/add/userAction");
-    
-    //Draw geometry
+
+    // Draw geometry
     UImanager->ApplyCommand("/vis/drawVolume");
 
     UImanager->ApplyCommand("/vis/scene/add/axes");
@@ -174,17 +186,22 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/viewer/set/projection p 45 deg");
     UImanager->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 90.0 90.0 deg");
     UImanager->ApplyCommand("/vis/viewer/set/rotationStyle freeRotation");
-    UImanager->ApplyCommand("/vis/viewer/set/style s"); // solid (display faces of geometry)
+    UImanager->ApplyCommand(
+        "/vis/viewer/set/style s");  // solid (display faces of geometry)
     UImanager->ApplyCommand("/vis/viewer/set/background 1 1 1 1");
 
-    // Disable auto refresh and quieten vis messages whilst scene and trajectories are established
+    // Disable auto refresh and quieten vis messages whilst scene and
+    // trajectories are established
     UImanager->ApplyCommand("/vis/viewer/set/autoRefresh false");
 
     // Draw the trajectories
     UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts "
+        "true");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
 
     // Draw the hits
     UImanager->ApplyCommand("/vis/scene/add/hits");
@@ -209,9 +226,3 @@ int main(int argc, char** argv) {
   delete visManager;
   delete runManager;
 }
-
-
-
-
-
-

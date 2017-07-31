@@ -9,4 +9,3 @@ DummyRecorder::~DummyRecorder() {}
 void DummyRecorder::recordBeginOfRun(const G4Run* /*run*/) {}
 
 void DummyRecorder::recordEndOfRun(const G4Run* /*run*/) {}
-

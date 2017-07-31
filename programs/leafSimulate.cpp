@@ -1,10 +1,10 @@
 /*!
- * @file 
+ * @file
  * \brief Application to test the visualization of the simulation,
  *        where a small number of optical photons are generated and
  *        fired at a leaf structure.
  *
- * The visualization shows the world bounding box, photon tracks, hits 
+ * The visualization shows the world bounding box, photon tracks, hits
  * and the complete detector geometry.
  */
 
@@ -39,21 +39,21 @@
 void showHelp() {
   std::cout << "leafSimulate help" << std::endl;
   std::cout << "\t -l, --leaf <LEAF TYPE NAME> : default simple" << std::endl;
-  std::cout << "\t --leafThickness <DOUBLE> : default leaf type value" << std::endl;
+  std::cout << "\t --leafThickness <DOUBLE> : default leaf type value"
+            << std::endl;
   std::cout << "\t --photonNumber <INTEGER> : default 10u" << std::endl;
 }
 
 /*! Test program for the simulation step. */
 int main(int argc, char** argv) {
-
-  std::string  leafType;
+  std::string leafType;
   unsigned int photonNumberPerEvent;
   double leafThickness;
 
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -65,7 +65,8 @@ int main(int argc, char** argv) {
   // Need to do a little earlier to get default thickness
   auto leaf = LeafFactory::instance()->getLeaf(leafType);
 
-  ops >> GetOpt::Option("leafThickness", leafThickness, leaf->getDoubleParameter("thickness"));
+  ops >> GetOpt::Option("leafThickness", leafThickness,
+                        leaf->getDoubleParameter("thickness"));
 
   // Also do not run if other arguments are present
   if (ops.options_remain()) {
@@ -87,10 +88,10 @@ int main(int argc, char** argv) {
   ClimateFactory::instance()->setConfigurationFile("default.cfg");
   ClimateFactory::instance()->setDeviceLocation(deviceLocation);
 
-  //Default turtle at origin
+  // Default turtle at origin
   Turtle* initialTurtle = new Turtle();
 
-  //Define the sun setting, just an arbitrary time and date for now
+  // Define the sun setting, just an arbitrary time and date for now
   Sun sun(deviceLocation);
   sun.setDate(190, 2014);
   sun.setTime(9, 30, 30);
@@ -110,18 +111,20 @@ int main(int argc, char** argv) {
 
   // Set mandatory initialization classes
   //
-  runManager->SetUserInitialization(new LayeredLeafConstruction(leaf, initialTurtle));
+  runManager->SetUserInitialization(
+      new LayeredLeafConstruction(leaf, initialTurtle));
 
   OpticalPhysicsList* physicsList = new OpticalPhysicsList;
   runManager->SetUserInitialization(physicsList);
- 
+
   // Set user action classes
   DummyRecorder dummyRecorder;
-  
+
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder, 
-   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* { 
-							       return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &dummyRecorder,
+      [&photonNumberPerEvent, &sun ]() -> G4VUserPrimaryGeneratorAction *
+      { return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }));
 
   // Initialize visualization
   //
@@ -133,10 +136,9 @@ int main(int argc, char** argv) {
 
   // Process macro or start UI session
   //
-  if ( ! ui ) { 
+  if (!ui) {
     // Only implementing interactive mode!
-  }
-  else { 
+  } else {
     // Interactive mode
     UImanager->ApplyCommand("/run/verbose 2");
     UImanager->ApplyCommand("/run/initialize");
@@ -146,7 +148,7 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/open OGLSQt");
     UImanager->ApplyCommand("/vis/scene/create");
     UImanager->ApplyCommand("/vis/scene/add/userAction");
-    
+
     // Draw geometry
     UImanager->ApplyCommand("/vis/drawVolume");
 
@@ -156,17 +158,22 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/viewer/set/projection p 45 deg");
     UImanager->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 90.0 90.0 deg");
     UImanager->ApplyCommand("/vis/viewer/set/rotationStyle freeRotation");
-    UImanager->ApplyCommand("/vis/viewer/set/style s"); // solid (display faces of geometry)
+    UImanager->ApplyCommand(
+        "/vis/viewer/set/style s");  // solid (display faces of geometry)
     UImanager->ApplyCommand("/vis/viewer/set/background 1 1 1 1");
 
-    // Disable auto refresh and quieten vis messages whilst scene and trajectories are established
+    // Disable auto refresh and quieten vis messages whilst scene and
+    // trajectories are established
     UImanager->ApplyCommand("/vis/viewer/set/autoRefresh false");
 
-    //Draw the trajectories
+    // Draw the trajectories
     UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UImanager->ApplyCommand("/vis/modeling/trajectories/create/drawByCharge");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true");
-    UImanager->ApplyCommand("/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts "
+        "true");
+    UImanager->ApplyCommand(
+        "/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2");
 
     // Draw the hits
     UImanager->ApplyCommand("/vis/scene/add/hits");
@@ -177,7 +184,7 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/vis/viewer/set/autoRefresh true");
     UImanager->ApplyCommand("/vis/viewer/flush");
 
-    //Generate 1 event by default
+    // Generate 1 event by default
     UImanager->ApplyCommand("/run/beamOn 1");
 
     ui->SessionStart();
@@ -191,9 +198,3 @@ int main(int argc, char** argv) {
   delete visManager;
   delete runManager;
 }
-
-
-
-
-
-

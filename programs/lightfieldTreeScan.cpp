@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to record the performance of many trees
  *        when subjected to a lightfield.
  *
@@ -37,7 +37,7 @@
 #include "G4StepLimiterPhysics.hh"
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -50,32 +50,38 @@
 
 void showHelp() {
   std::cout << "lightfieldTreeScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'"
+            << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'"
+            << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 10" << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
-  std::cout << "\t --photonNumberPerEvent <INTEGER> :\t default 500" << std::endl;
+  std::cout << "\t --photonNumberPerEvent <INTEGER> :\t default 500"
+            << std::endl;
   std::cout << "\t --eventNumber <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --parameterSeed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME> :\t default ''" << std::endl;
-  std::cout << "\t --lightfieldFileName <ROOT FILENAME> :\t default 'lightfield.root'" << std::endl;
-  std::cout << "\t --minimumSensitveArea <DOUBLE> [m^2] :\t default 0.0" << std::endl;
-  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'lightfieldTreeScan.results.root'" << std::endl;
+  std::cout
+      << "\t --lightfieldFileName <ROOT FILENAME> :\t default 'lightfield.root'"
+      << std::endl;
+  std::cout << "\t --minimumSensitveArea <DOUBLE> [m^2] :\t default 0.0"
+            << std::endl;
+  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default "
+               "'lightfieldTreeScan.results.root'" << std::endl;
 }
 
-/*! \brief Efficient tree search main test. 
+/*! \brief Efficient tree search main test.
  *
  * Provides an example of how to perform a random search with simple efficiency
  * evaluation. Also can see how to persist the trees en masse.
  *
  * @param[in] argc Number of command line arguments.
- * @param[in] argv Accepts a number of command line arguments. See help for more 
+ * @param[in] argv Accepts a number of command line arguments. See help for more
  *                 details
- * 
+ *
  */
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int treeNumber;
   unsigned int maximumTreeTrials;
@@ -92,7 +98,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -106,27 +112,35 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
-  ops >> GetOpt::Option("lightfieldFileName", lightfieldFileName, "lightfield.root");
+  ops >> GetOpt::Option("lightfieldFileName", lightfieldFileName,
+                        "lightfield.root");
   ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.0);
-  ops >> GetOpt::Option("outputFileName", outputFileName, "lightfieldTreeScan.results.root");
+  ops >> GetOpt::Option("outputFileName", outputFileName,
+                        "lightfieldTreeScan.results.root");
 
   // Report input parameters
   if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName << std::endl;
+    std::cout << "Just using selected tree from " << inputTreeFileName
+              << std::endl;
     singleTreeRunning = true;
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
     std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Using the parameter random number seed = " << parameterSeed << std::endl;
-    std::cout << "Generating "    << treeNumber << " trees with up to " << maximumTreeTrials 
-	      << " trials." << std::endl;
+    std::cout << "Using the parameter random number seed = " << parameterSeed
+              << std::endl;
+    std::cout << "Generating " << treeNumber << " trees with up to "
+              << maximumTreeTrials << " trials." << std::endl;
     singleTreeRunning = false;
   }
-  std::cout << "Using the Geant4 random number seed = " << geant4Seed << std::endl;
-  std::cout << "Considering "   << photonNumberPerEvent << " photons per event." << std::endl;
-  std::cout << "Taking average of " << eventNumber << " events per tree." << std::endl;
+  std::cout << "Using the Geant4 random number seed = " << geant4Seed
+            << std::endl;
+  std::cout << "Considering " << photonNumberPerEvent << " photons per event."
+            << std::endl;
+  std::cout << "Taking average of " << eventNumber << " events per tree."
+            << std::endl;
   std::cout << "Recording results in " << outputFileName << std::endl;
-  std::cout << "Using lightfield defined in " << lightfieldFileName << " to generate photons." << std::endl;
+  std::cout << "Using lightfield defined in " << lightfieldFileName
+            << " to generate photons." << std::endl;
 
   // Also do not run if other arguments are present
   if (ops.options_remain()) {
@@ -137,10 +151,12 @@ int main(int argc, char** argv) {
 
   // Load the lightfield to be used
   TFile currentLightfieldFile(lightfieldFileName.c_str(), "READ");
-  Plenoptic3D* currentLightfield = static_cast<Plenoptic3D*>( currentLightfieldFile.Get("lightfield") );
+  Plenoptic3D* currentLightfield =
+      static_cast<Plenoptic3D*>(currentLightfieldFile.Get("lightfield"));
 
   // Set the random number seed for the lightfield
-  currentLightfield->setRandomNumberSeedSequence(std::vector<int>{ geant4Seed, parameterSeed, 1501 });
+  currentLightfield->setRandomNumberSeedSequence(
+      std::vector<int>{geant4Seed, parameterSeed, 1501});
 
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
@@ -151,8 +167,12 @@ int main(int argc, char** argv) {
     leaf = LeafFactory::instance()->getLeaf(leafType);
   } else {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    tree = std::shared_ptr<TreeConstructionInterface>(
+        (TreeConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedTree"));
+    leaf = std::shared_ptr<LeafConstructionInterface>(
+        (LeafConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedLeaf"));
     inputTreeFile.Close();
   }
 
@@ -174,7 +194,7 @@ int main(int argc, char** argv) {
   // Set the root seed
   gRandom->SetSeed(geant4Seed);
 
-  // Set mandatory initialization classes  
+  // Set mandatory initialization classes
   DetectorConstruction* detector = new DetectorConstruction(tree, leaf);
   runManager->SetUserInitialization(detector);
 
@@ -185,8 +205,12 @@ int main(int argc, char** argv) {
   runManager->SetUserInitialization(physicsList);
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&recorder, 
-   [&photonNumberPerEvent, &currentLightfield] () -> G4VUserPrimaryGeneratorAction* { return new LightfieldGeneratorAction(photonNumberPerEvent, currentLightfield); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &recorder, [&photonNumberPerEvent, &currentLightfield ]()
+                     -> G4VUserPrimaryGeneratorAction * {
+        return new LightfieldGeneratorAction(photonNumberPerEvent,
+                                             currentLightfield);
+      }));
 
   // Initialize G4 kernel
   runManager->Initialize();
@@ -198,26 +222,27 @@ int main(int argc, char** argv) {
   TList exportList;
   resultsFile.Add(&exportList);
 
-  // Setup a signal handler to catch batch job + user terminations 
+  // Setup a signal handler to catch batch job + user terminations
   // so that we can still try to output some of the results.
   // SIGINT == 2 (Ctrl-C on command line)
   // TERM_RUNLIMIT on LSF uses User Defined Signal 2 == 12
-  SignalReceiver::instance()->setSignals({2, 12}, [&resultsFile,&exportList](int signum) {   
-      printf("Caught a signal %d\n",signum);
+  SignalReceiver::instance()->setSignals(
+      {2, 12}, [&resultsFile, &exportList](int signum) {
+        printf("Caught a signal %d\n", signum);
 
-      // Write results out to the root file
-      exportList.Write("testedStructures",  TObject::kSingleKey);
+        // Write results out to the root file
+        exportList.Write("testedStructures", TObject::kSingleKey);
 
-      // Close the root file
-      resultsFile.cd();
-      resultsFile.Close();
+        // Close the root file
+        resultsFile.cd();
+        resultsFile.Close();
 
-      printf("Attempted to write root file with %d trees.\n", exportList.GetSize());
+        printf("Attempted to write root file with %d trees.\n",
+               exportList.GetSize());
 
-      // Terminate program
-      exit(signum); }
-    );
-
+        // Terminate program
+        exit(signum);
+      });
 
   // Get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
@@ -230,13 +255,16 @@ int main(int argc, char** argv) {
   unsigned int currentTreeNumber = 0u;
   unsigned int treeTrialNumber = 0u;
   unsigned int failedRuns = 0u;
-  while( currentTreeNumber < treeNumber && treeTrialNumber < maximumTreeTrials) {
+  while (currentTreeNumber < treeNumber &&
+         treeTrialNumber < maximumTreeTrials) {
     treeTrialNumber++;
 
-    if (!singleTreeRunning){
-      unsigned int treeParameterSeed =  parameterSeedDistribution(parameterRandomGenerator);
-      unsigned int leafParameterSeed =  parameterSeedDistribution(parameterRandomGenerator);
-      
+    if (!singleTreeRunning) {
+      unsigned int treeParameterSeed =
+          parameterSeedDistribution(parameterRandomGenerator);
+      unsigned int leafParameterSeed =
+          parameterSeedDistribution(parameterRandomGenerator);
+
       // Allow the geometry to be rebuilt with new settings
       tree->randomizeParameters(treeParameterSeed);
       leaf->randomizeParameters(leafParameterSeed);
@@ -249,11 +277,11 @@ int main(int argc, char** argv) {
 
       // Apply pre-selection to the tree after manual construction.
       //      detector->Construct();
-      runManager->DefineWorldVolume(detector->Construct()); // reconstruction
+      runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
       // Lets not bother with small surface areas!
       if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
-	continue;
+        continue;
       }
     }
 
@@ -267,45 +295,55 @@ int main(int argc, char** argv) {
       continue;
     }
 
-    // Calculate the average energy deposited in the single run. (in KiloWatt hour)
-    std::vector<std::vector<double > > hitEnergies = recorder.getSummedHitEnergies();
-    std::vector<std::vector<long > >   photonCounts = recorder.getPhotonCounts();
+    // Calculate the average energy deposited in the single run. (in KiloWatt
+    // hour)
+    std::vector<std::vector<double> > hitEnergies =
+        recorder.getSummedHitEnergies();
+    std::vector<std::vector<long> > photonCounts = recorder.getPhotonCounts();
 
     if (hitEnergies.size() != 1) {
       // Not expecting there to be more than one run ..
-      std::cerr << "Wrong number of runs in hit energy vector. Giving up!" << std::endl;
+      std::cerr << "Wrong number of runs in hit energy vector. Giving up!"
+                << std::endl;
       return 1;
     }
 
     // Check that the correct number of events has been produced
     if (hitEnergies[0].size() != eventNumber) {
       // Something has gone wrong
-      std::cerr << "Did not simulate the expected number of events." << std::endl;
-      std::cerr << "Actually produced " << hitEnergies[0].size() << " events." << std::endl;
+      std::cerr << "Did not simulate the expected number of events."
+                << std::endl;
+      std::cerr << "Actually produced " << hitEnergies[0].size() << " events."
+                << std::endl;
       failedRuns++;
       recorder.reset();
       continue;
     }
 
     // Check each event had the correct number of photons produced
-    if (photonCounts.size() != 1 ) {
-      std::cerr << "Wrong number of runs in hit energy vector. Giving up!" << std::endl;
+    if (photonCounts.size() != 1) {
+      std::cerr << "Wrong number of runs in hit energy vector. Giving up!"
+                << std::endl;
       return 1;
     }
     if (photonCounts[0].size() != eventNumber) {
       // Something has gone wrong
-      std::cerr << "Did not simulate the expected number of events." << std::endl;
-      std::cerr << "Actually produced " << photonCounts[0].size() << " events." << std::endl;
+      std::cerr << "Did not simulate the expected number of events."
+                << std::endl;
+      std::cerr << "Actually produced " << photonCounts[0].size() << " events."
+                << std::endl;
       failedRuns++;
       recorder.reset();
       continue;
     }
     bool badPhotonCount = false;
-    for (long photonCount : photonCounts[0]){
+    for (long photonCount : photonCounts[0]) {
       if (photonCount != photonNumberPerEvent) {
-	badPhotonCount = true;
-	std::cerr << "Only produced " << badPhotonCount << " photons in this event. Something bad happened." << std::endl;
-	break;
+        badPhotonCount = true;
+        std::cerr << "Only produced " << badPhotonCount
+                  << " photons in this event. Something bad happened."
+                  << std::endl;
+        break;
       }
     }
     if (badPhotonCount) {
@@ -323,43 +361,51 @@ int main(int argc, char** argv) {
     // Also calculate the sample standard deviaition of the events
     double energyStandardDeviationSum = 0.0;
     for (double eventHitEnergy : hitEnergies[0]) {
-      energyStandardDeviationSum = std::pow(averageEnergySum - eventHitEnergy, 2.0);
+      energyStandardDeviationSum =
+          std::pow(averageEnergySum - eventHitEnergy, 2.0);
     }
-    double energyStandardDeviation = std::sqrt( energyStandardDeviationSum / (hitEnergies[0].size()-1) );
+    double energyStandardDeviation =
+        std::sqrt(energyStandardDeviationSum / (hitEnergies[0].size() - 1));
 
     // Convert to kWh
-    averageEnergySum = averageEnergySum / (3600.0*1000.0);
-    energyStandardDeviation = energyStandardDeviation / (3600.0*1000.0);
+    averageEnergySum = averageEnergySum / (3600.0 * 1000.0);
+    energyStandardDeviation = energyStandardDeviation / (3600.0 * 1000.0);
 
     // Remove the old records
     recorder.reset();
 
-    // Get the total surface area which is "sensitive" from current tested detector.
+    // Get the total surface area which is "sensitive" from current tested
+    // detector.
     double sensitiveArea = detector->getSensitiveSurfaceArea();
-    
+
     // Get the number of leaves
-    int    numberOfLeaves = detector->getNumberOfLeaves();
-    int    numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
+    int numberOfLeaves = detector->getNumberOfLeaves();
+    int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
 
     // Get size of the rough bounding box structure along the axis
     double structureXSize = detector->getXSize();
     double structureYSize = detector->getYSize();
     double structureZSize = detector->getZSize();
 
-    // Clone the settings/results before moving onto next tree so that they can be saved at the end.
-    std::string treeName = "tree" + std::to_string(currentTreeNumber) + "_Job" + std::to_string(parameterSeed);
-    TreeConstructionInterface* clonedTree = (TreeConstructionInterface*)tree->Clone(treeName.c_str());
-    
-    // Store additional information in the cloned tree for later analysis
-    clonedTree->setParameter("sensitiveArea",      sensitiveArea);
-    clonedTree->setParameter("leafNumber",         numberOfLeaves);
-    clonedTree->setParameter("rejectedLeafNumber", numberOfRejectedLeaves);
-    clonedTree->setParameter("structureXSize",     structureXSize);
-    clonedTree->setParameter("structureYSize",     structureYSize);
-    clonedTree->setParameter("structureZSize",     structureZSize);
+    // Clone the settings/results before moving onto next tree so that they can
+    // be saved at the end.
+    std::string treeName = "tree" + std::to_string(currentTreeNumber) + "_Job" +
+                           std::to_string(parameterSeed);
+    TreeConstructionInterface* clonedTree =
+        (TreeConstructionInterface*)tree->Clone(treeName.c_str());
 
-    std::string leafName = "leaf" + std::to_string(currentTreeNumber) + "_Job" + std::to_string(parameterSeed);
-    LeafConstructionInterface* clonedLeaf = (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
+    // Store additional information in the cloned tree for later analysis
+    clonedTree->setParameter("sensitiveArea", sensitiveArea);
+    clonedTree->setParameter("leafNumber", numberOfLeaves);
+    clonedTree->setParameter("rejectedLeafNumber", numberOfRejectedLeaves);
+    clonedTree->setParameter("structureXSize", structureXSize);
+    clonedTree->setParameter("structureYSize", structureYSize);
+    clonedTree->setParameter("structureZSize", structureZSize);
+
+    std::string leafName = "leaf" + std::to_string(currentTreeNumber) + "_Job" +
+                           std::to_string(parameterSeed);
+    LeafConstructionInterface* clonedLeaf =
+        (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
 
     // Add to the list that will be exported
     // No longer use the majority of the features of YearlyResult...
@@ -370,11 +416,13 @@ int main(int argc, char** argv) {
 
     // Attach the average total energy from the run
     clonedTree->setParameter("totalEnergy", averageEnergySum);
-    clonedTree->setParameter("totalEnergyStdDeviation", energyStandardDeviation);
+    clonedTree->setParameter("totalEnergyStdDeviation",
+                             energyStandardDeviation);
 
     exportList.Add(result);
 
-    std::cout << "Considered tree " << currentTreeNumber << " in trial " << treeTrialNumber << std::endl;
+    std::cout << "Considered tree " << currentTreeNumber << " in trial "
+              << treeTrialNumber << std::endl;
     clonedTree->print();
     clonedLeaf->print();
 
@@ -387,26 +435,22 @@ int main(int argc, char** argv) {
 
   // Write results out to the root file
   resultsFile.cd();
-  exportList.Write("testedStructures",  TObject::kSingleKey);
+  exportList.Write("testedStructures", TObject::kSingleKey);
 
   // Close the root file
   resultsFile.Close();
 
   // Output some useful information
-  std::cout << currentTreeNumber << " trees produced in " << treeTrialNumber << " trials." << std::endl; 
+  std::cout << currentTreeNumber << " trees produced in " << treeTrialNumber
+            << " trials." << std::endl;
   std::cout << failedRuns << " failed runs." << std::endl;
 
   if (!(treeTrialNumber < maximumTreeTrials)) {
-    std::cerr << "Not a sufficient number of trials available to satisfy tree demand" << std::endl;
+    std::cerr
+        << "Not a sufficient number of trials available to satisfy tree demand"
+        << std::endl;
     return 1;
   }
 
   return 0;
 }
-
-
-
-
-
-
-

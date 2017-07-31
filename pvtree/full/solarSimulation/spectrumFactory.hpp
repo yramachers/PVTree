@@ -17,14 +17,13 @@
  * block.
  */
 class SpectrumFactory {
-private:
+ private:
   //! Prevent construction of additional instances
   SpectrumFactory();
   //! Prevent copy construction of instances
   SpectrumFactory(SpectrumFactory& spectrumFactory);
 
-public:
-
+ public:
   /*! \brief Set the configurations values to default
    *         settings.
    */
@@ -33,7 +32,7 @@ public:
   /*! \brief Retrieve the singleton reference to this factory.
    */
   static SpectrumFactory* instance();
-  
+
   /*! \brief Retrieve the spectrum produced by current configuration.
    * \returns A shared pointer to a spectrum.
    */
@@ -46,13 +45,17 @@ public:
 
   /*! \brief Set the solar position (also for air mass calculation).
    *
-   * @param[in] solarElevation True astronomical elevation plus refraction correction [deg]
-   * @param[in] solarAzimuth Solar azimuth counted clockwise from North (0.0) [deg]
+   * @param[in] solarElevation True astronomical elevation plus refraction
+   *correction [deg]
+   * @param[in] solarAzimuth Solar azimuth counted clockwise from North (0.0)
+   *[deg]
    *
-   * Azimuth is only used if calculating radiation on a tilted plane (can be set to zero).
+   * Azimuth is only used if calculating radiation on a tilted plane (can be set
+   *to zero).
    */
-  void setSolarPositionWithElevationAzimuth(double solarElevation, double solarAzimuth);
-  
+  void setSolarPositionWithElevationAzimuth(double solarElevation,
+                                            double solarAzimuth);
+
   /*! \brief Set the default atmospheric pressure.
    *
    * Sets the atmospheric pressure to 1015mb and uses the mode
@@ -96,8 +99,10 @@ public:
   /*! \brief Set the ozone abundance above the site.
    *
    * @param[in] ozoneAbundance The ozone abundance above the site [atm-cm]
-   * @param[in] altitudeCorrectionMode The default of 0 will result in no altitude correction
-   *            being applied. Whilst 1 will apply a correction for an elevated site (above sea
+   * @param[in] altitudeCorrectionMode The default of 0 will result in no
+   *altitude correction
+   *            being applied. Whilst 1 will apply a correction for an elevated
+   *site (above sea
    *            level).
    */
   void setOzoneAbundance(double ozoneAbundance, int altitudeCorrectionMode = 0);
@@ -113,16 +118,21 @@ public:
    *
    * Not the best name I think...
    *
-   * @param[in] airTemperature The current atmospheric temperature at the site [deg C]
+   * @param[in] airTemperature The current atmospheric temperature at the site
+   *[deg C]
    * @param[in] relativeHumidity The relative humidity at site level [%]
-   * @param[in] time The current time, which is used to select an appropriate season.
-   * @param[in] averageDailyTemperature The average daily temperature at site level [deg C]
+   * @param[in] time The current time, which is used to select an appropriate
+   *season.
+   * @param[in] averageDailyTemperature The average daily temperature at site
+   *level [deg C]
    */
-  void setAtmosphereProperties(double airTemperature, double relativeHumidity, time_t time, double averageDailyTemperature);
+  void setAtmosphereProperties(double airTemperature, double relativeHumidity,
+                               time_t time, double averageDailyTemperature);
 
   /*! \brief Set default gas load.
    *
-   * Describes gaseous absorption and atmospheric pollution. The default is to use average vertical
+   * Describes gaseous absorption and atmospheric pollution. The default is to
+   *use average vertical
    * profiles for all gas abundances (except for CO2, O3 and water vapour).
    */
   void setDefaultGasLoad();
@@ -130,15 +140,21 @@ public:
   /*! \brief Enumeration describing options available for pollution levels.
    *
    */
-  enum GasLoad { PRISTINE, LIGHT_POLLUTION, MODERATE_POLLUTION, SEVERE_POLLUTION };
+  enum GasLoad {
+    PRISTINE,
+    LIGHT_POLLUTION,
+    MODERATE_POLLUTION,
+    SEVERE_POLLUTION
+  };
 
   /*! \brief Set gas pollution Load
    *
-   * @param[in] loadChoice Choice of gas concenctration sets as defined by the GasLoad 
+   * @param[in] loadChoice Choice of gas concenctration sets as defined by the
+   *GasLoad
    *                       enumeration.
    */
   void setGasLoad(GasLoad loadChoice);
-  
+
   /*! \brief Set the cloud cover fraction
    *
    * This is a non-smarts parameter.
@@ -149,7 +165,7 @@ public:
    *         surfaces.
    *
    * @param[in] elevation The angle of the surface with respect to the vertical
-   *                      plane. (90deg is a vertical plane). Set to -999 to 
+   *                      plane. (90deg is a vertical plane). Set to -999 to
    *                      track the sun.
    * @param[in] azimuth Surface azimuth counted clockwise from the North. Set to
    *                    -999 to track the sun.
@@ -159,9 +175,11 @@ public:
   /*! \brief Set the local albedo reference for calculations related to tilted
    *         surfaces.
    *
-   * @param[in] referenceAlbedoIndex The index of the reference albedo to be used
+   * @param[in] referenceAlbedoIndex The index of the reference albedo to be
+   *used
    *                                 for backscattering calculation. See SMARTS
-   *                                 documentation for all the options (65 of them).
+   *                                 documentation for all the options (65 of
+   *them).
    */
   void setTiltLocalAlbedo(int referenceAlbedoIndex);
 
@@ -172,11 +190,10 @@ public:
    */
   void appendOutputVariable(int extraVariableIndex);
 
-private:
-
-  bool                      m_parametersChanged;
+ private:
+  bool m_parametersChanged;
   std::shared_ptr<Spectrum> m_previousSpectrum;
-  double                    m_cloudCover;
+  double m_cloudCover;
 
   /*! \brief Output variables to be calculated by SMARTS.
    *
@@ -192,20 +209,20 @@ private:
    *
    *   Direct normal photon flux per eV (41) [cm^-2 s^-1 eV^-1]
    */
-  std::vector<int>          m_outputVariablesSelected = {1, 2, 3, 39, 41};
+  std::vector<int> m_outputVariablesSelected = {1, 2, 3, 39, 41};
 
   /*! \brief Convert c-strings to Fortran strings which are space padded and
    *         not null terminated.
-   * 
-   * from http://stackoverflow.com/questions/10163485/passing-char-arrays-from-c-to-fortran
+   *
+   * from
+   *http://stackoverflow.com/questions/10163485/passing-char-arrays-from-c-to-fortran
    *
    * @param[out] fstring Pointer to character array in the fortran common block.
    * @param[in]  fstring_len The length of the fortran character array.
    * @param[in]  cstring The C character array to copy from.
    */
-  void convertToFortran(char* fstring, std::size_t fstring_len, const char* cstring);
-  
+  void convertToFortran(char* fstring, std::size_t fstring_len,
+                        const char* cstring);
 };
 
-
-#endif //PVTREE_SOLAR_SIMULATION_SPECTRUM_FACTORY_HPP
+#endif  // PVTREE_SOLAR_SIMULATION_SPECTRUM_FACTORY_HPP

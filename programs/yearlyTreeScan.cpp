@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to record the performance of many trees
  *        over a period of many days.
  *
@@ -40,7 +40,7 @@
 #include "G4StepLimiterPhysics.hh"
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -56,8 +56,10 @@
 
 void showHelp() {
   std::cout << "yearlyTreeScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'"
+            << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'"
+            << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 10" << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
   std::cout << "\t --timeSegments <INTEGER> :\t default 50" << std::endl;
@@ -68,12 +70,13 @@ void showHelp() {
   std::cout << "\t --startDate <INTEGER> :\t default 1/1/2014" << std::endl;
   std::cout << "\t --endDate <INTEGER> :\t default 1/1/2015" << std::endl;
   std::cout << "\t --yearSegments <INTEGER> :\t default 10" << std::endl;
-  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0" << std::endl;
-  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'yearlyTreeScan.results.root'" << std::endl;
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0"
+            << std::endl;
+  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default "
+               "'yearlyTreeScan.results.root'" << std::endl;
 }
 
 bool isSameDay(time_t time1, time_t time2) {
-
   // Convert to calendar time
   struct tm* calendarTime = gmtime(&time1);
 
@@ -87,7 +90,7 @@ bool isSameDay(time_t time1, time_t time2) {
   int month2 = calendarTime->tm_mon;
   int year2 = calendarTime->tm_year;
 
-  if (monthDay1 == monthDay2 && month1 == month2 && year1 == year2){
+  if (monthDay1 == monthDay2 && month1 == month2 && year1 == year2) {
     return true;
   }
   return false;
@@ -101,7 +104,6 @@ bool isSameDay(time_t time1, time_t time2) {
  * \returns The time since epoch.
  */
 time_t interpretDate(std::string inputDate) {
-
   // Use regular expressions to extract important quantities
   std::regex regularExpression("(\\d+)/(\\d+)/(\\d+)");
 
@@ -109,35 +111,34 @@ time_t interpretDate(std::string inputDate) {
   std::regex_match(inputDate, dateMatches, regularExpression);
 
   // Is the match the correct size?
-  if ( dateMatches.size() != 4 ){
+  if (dateMatches.size() != 4) {
     throw std::string("Cannot interpret date: " + inputDate);
   }
 
   struct tm calendarTime;
 
   calendarTime.tm_sec = 0;
-  calendarTime.tm_min = 0; 
-  calendarTime.tm_hour = 12; 
-  calendarTime.tm_mday = std::stoi(dateMatches[1]); 
-  calendarTime.tm_mon =  std::stoi(dateMatches[2])-1; 
-  calendarTime.tm_year = std::stoi(dateMatches[3])-1900;
+  calendarTime.tm_min = 0;
+  calendarTime.tm_hour = 12;
+  calendarTime.tm_mday = std::stoi(dateMatches[1]);
+  calendarTime.tm_mon = std::stoi(dateMatches[2]) - 1;
+  calendarTime.tm_year = std::stoi(dateMatches[3]) - 1900;
   calendarTime.tm_isdst = 1;
 
-  return mktime(&calendarTime);  
+  return mktime(&calendarTime);
 }
 
-/*! \brief Efficient tree search main test. 
+/*! \brief Efficient tree search main test.
  *
  * Provides an example of how to perform a random search with simple efficiency
  * evaluation. Also can see how to persist the trees en masse.
  *
  * @param[in] argc Number of command line arguments.
- * @param[in] argv Accepts a number of command line arguments. See help for more 
+ * @param[in] argv Accepts a number of command line arguments. See help for more
  *                 details
- * 
+ *
  */
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int treeNumber;
   unsigned int maximumTreeTrials;
@@ -156,7 +157,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -171,10 +172,11 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("startDate", startDate, "1/1/2014");
-  ops >> GetOpt::Option("endDate",   endDate,   "1/1/2015");
+  ops >> GetOpt::Option("endDate", endDate, "1/1/2015");
   ops >> GetOpt::Option("yearSegments", yearSegments, 10u);
   ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.0);
-  ops >> GetOpt::Option("outputFileName", outputFileName, "yearlyTreeScan.results.root");
+  ops >> GetOpt::Option("outputFileName", outputFileName,
+                        "yearlyTreeScan.results.root");
 
   if (yearSegments == 0) {
     std::cerr << "Need at least one year time segment." << std::endl;
@@ -183,21 +185,27 @@ int main(int argc, char** argv) {
 
   // Report input parameters
   if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName << std::endl;
+    std::cout << "Just using selected tree from " << inputTreeFileName
+              << std::endl;
     singleTreeRunning = true;
   } else {
     std::cout << "Tree type = " << treeType << std::endl;
     std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Using the parameter random number seed = " << parameterSeed << std::endl;
-    std::cout << "Generating "    << treeNumber << " trees with up to " << maximumTreeTrials 
-	      << " trials." << std::endl;
+    std::cout << "Using the parameter random number seed = " << parameterSeed
+              << std::endl;
+    std::cout << "Generating " << treeNumber << " trees with up to "
+              << maximumTreeTrials << " trials." << std::endl;
     singleTreeRunning = false;
   }
-  std::cout << "Using the Geant4 random number seed = "           << geant4Seed << std::endl;
-  std::cout << "Simulating in " << simulationTimeSegments << " time segments." << std::endl;
-  std::cout << "Considering "   << photonNumberPerTimeSegment << " photons per time segments." << std::endl;
-  std::cout << "Starting from day " << startDate << " and finishing on " << endDate << " splitting into " 
-	    << yearSegments << " segments." << std::endl;
+  std::cout << "Using the Geant4 random number seed = " << geant4Seed
+            << std::endl;
+  std::cout << "Simulating in " << simulationTimeSegments << " time segments."
+            << std::endl;
+  std::cout << "Considering " << photonNumberPerTimeSegment
+            << " photons per time segments." << std::endl;
+  std::cout << "Starting from day " << startDate << " and finishing on "
+            << endDate << " splitting into " << yearSegments << " segments."
+            << std::endl;
   std::cout << "Recording results in " << outputFileName << std::endl;
 
   // Also do not run if other arguments are present
@@ -209,7 +217,7 @@ int main(int argc, char** argv) {
 
   // Attempt to interpret the start and end dates.
   time_t interpretedStartDate = interpretDate(startDate);
-  time_t interpretedEndDate =   interpretDate(endDate);
+  time_t interpretedEndDate = interpretDate(endDate);
 
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
@@ -220,8 +228,12 @@ int main(int argc, char** argv) {
     leaf = LeafFactory::instance()->getLeaf(leafType);
   } else {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>( (TreeConstructionInterface*)inputTreeFile.FindObjectAny("selectedTree") );
-    leaf = std::shared_ptr<LeafConstructionInterface>( (LeafConstructionInterface*)inputTreeFile.FindObjectAny("selectedLeaf") );
+    tree = std::shared_ptr<TreeConstructionInterface>(
+        (TreeConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedTree"));
+    leaf = std::shared_ptr<LeafConstructionInterface>(
+        (LeafConstructionInterface*)inputTreeFile.FindObjectAny(
+            "selectedLeaf"));
     inputTreeFile.Close();
   }
 
@@ -237,7 +249,7 @@ int main(int argc, char** argv) {
 
   // Obtain the simulation sun
   Sun sun(deviceLocation);
-  sun.setClimateOption(Sun::CLOUDCOVER, false); // Ignore clouds!
+  sun.setClimateOption(Sun::CLOUDCOVER, false);  // Ignore clouds!
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
@@ -254,20 +266,23 @@ int main(int argc, char** argv) {
 
   G4RunManager* runManager = new G4RunManager;
 
-  // Set mandatory initialization classes  
+  // Set mandatory initialization classes
   DetectorConstruction* detector = new DetectorConstruction(tree, leaf);
   runManager->SetUserInitialization(detector);
 
-  //Construct a recorder to obtain results
+  // Construct a recorder to obtain results
   ConvergenceRecorder recorder;
 
   OpticalPhysicsList* physicsList = new OpticalPhysicsList;
   runManager->SetUserInitialization(physicsList);
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&recorder, 
-   [&photonNumberPerTimeSegment, &sun] () -> G4VUserPrimaryGeneratorAction* { 
-							       return new PrimaryGeneratorAction(photonNumberPerTimeSegment, &sun); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &recorder,
+      [&photonNumberPerTimeSegment, &sun ]() -> G4VUserPrimaryGeneratorAction *
+      {
+        return new PrimaryGeneratorAction(photonNumberPerTimeSegment, &sun);
+      }));
 
   // Initialize G4 kernel
   runManager->Initialize();
@@ -279,38 +294,42 @@ int main(int argc, char** argv) {
   TList exportList;
   resultsFile.Add(&exportList);
 
-  // Setup a signal handler to catch batch job + user terminations 
+  // Setup a signal handler to catch batch job + user terminations
   // so that we can still try to output some of the results.
   // SIGINT == 2 (Ctrl-C on command line)
   // TERM_RUNLIMIT on LSF uses User Defined Signal 2 == 12
-  SignalReceiver::instance()->setSignals({2, 12}, [&resultsFile,&exportList](int signum) {   
-      printf("Caught a signal %d\n",signum);
+  SignalReceiver::instance()->setSignals(
+      {2, 12}, [&resultsFile, &exportList](int signum) {
+        printf("Caught a signal %d\n", signum);
 
-      // Write results out to the root file
-      resultsFile.cd();
-      exportList.Write("testedStructures",  TObject::kSingleKey);
+        // Write results out to the root file
+        resultsFile.cd();
+        exportList.Write("testedStructures", TObject::kSingleKey);
 
-      // Close the root file
-      resultsFile.Close();
+        // Close the root file
+        resultsFile.Close();
 
-      printf("Attempted to write root file with %d trees.\n", exportList.GetSize());
+        printf("Attempted to write root file with %d trees.\n",
+               exportList.GetSize());
 
-      // Terminate program
-      exit(signum); }
-    );
-
+        // Terminate program
+        exit(signum);
+      });
 
   // Repeat for a number of trees
   // Use a maximum trial limit to prevent infinite loop
   unsigned int currentTreeNumber = 0u;
   unsigned int treeTrialNumber = 0u;
-  while( currentTreeNumber < treeNumber && treeTrialNumber < maximumTreeTrials) {
+  while (currentTreeNumber < treeNumber &&
+         treeTrialNumber < maximumTreeTrials) {
     treeTrialNumber++;
 
-    if (!singleTreeRunning){
-      unsigned int treeParameterSeed =  parameterSeedDistribution(parameterRandomGenerator);
-      unsigned int leafParameterSeed =  parameterSeedDistribution(parameterRandomGenerator);
-      
+    if (!singleTreeRunning) {
+      unsigned int treeParameterSeed =
+          parameterSeedDistribution(parameterRandomGenerator);
+      unsigned int leafParameterSeed =
+          parameterSeedDistribution(parameterRandomGenerator);
+
       // Allow the geometry to be rebuilt with new settings
       tree->randomizeParameters(treeParameterSeed);
       leaf->randomizeParameters(leafParameterSeed);
@@ -323,27 +342,29 @@ int main(int argc, char** argv) {
 
       // Apply pre-selection to the tree after manual construction.
       //      detector->Construct();
-      runManager->DefineWorldVolume(detector->Construct()); // reconstruction
+      runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
       // Lets not bother with small surface areas!
       if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
-	continue;
+        continue;
       }
     }
 
-    std::vector<time_t > dayTimes;
-    std::vector<double > dayEnergySums;
+    std::vector<time_t> dayTimes;
+    std::vector<double> dayEnergySums;
 
     // Create a list of days (avoiding duplication).
-    double yearSegmentSize = (interpretedEndDate-interpretedStartDate)/yearSegments;
+    double yearSegmentSize =
+        (interpretedEndDate - interpretedStartDate) / yearSegments;
 
-    for (unsigned int segmentIndex=0; segmentIndex<yearSegments+1; segmentIndex++ ) {
-
-      time_t candidateDay = interpretedStartDate + yearSegmentSize*segmentIndex;
+    for (unsigned int segmentIndex = 0; segmentIndex < yearSegments + 1;
+         segmentIndex++) {
+      time_t candidateDay =
+          interpretedStartDate + yearSegmentSize * segmentIndex;
 
       // Check that it is on a different day
-      if ( dayTimes.size() > 0 && isSameDay(candidateDay, dayTimes.back()) ) {
-	continue;
+      if (dayTimes.size() > 0 && isSameDay(candidateDay, dayTimes.back())) {
+        continue;
       }
 
       dayTimes.push_back(candidateDay);
@@ -352,42 +373,49 @@ int main(int argc, char** argv) {
     double totalEvaluatedEnergy = 0.0;
 
     // Repeat simulation for each day
-    for (unsigned int dayIndex=0; dayIndex<dayTimes.size(); dayIndex++) {
-
-      // Perform the simulation between the sunrise and sunset on the selected day.
+    for (unsigned int dayIndex = 0; dayIndex < dayTimes.size(); dayIndex++) {
+      // Perform the simulation between the sunrise and sunset on the selected
+      // day.
       sun.setDate(dayTimes[dayIndex]);
-      int simulationStartingTime = sun.getSunriseTime()*60; //s
-      int simulationEndingTime   = sun.getSunsetTime()*60; //s, 
-      int simulationStepTime     = (double)(simulationEndingTime-simulationStartingTime)/simulationTimeSegments;
+      int simulationStartingTime = sun.getSunriseTime() * 60;  // s
+      int simulationEndingTime = sun.getSunsetTime() * 60;  // s,
+      int simulationStepTime =
+          (double)(simulationEndingTime - simulationStartingTime) /
+          simulationTimeSegments;
 
       // Integrate over the representative day
       // Simulate at all time points with the same number of events...
-      for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
-      
-	// Set the time to the mid-point of the day-time segment
-	sun.setTime( (int)(simulationStartingTime + timeIndex*simulationStepTime + simulationStepTime/2.0) );
-      
-	// Run simulation with a single event per time point
-	G4int eventNumber = 1;
-	runManager->BeamOn(eventNumber);
+      for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+           timeIndex++) {
+        // Set the time to the mid-point of the day-time segment
+        sun.setTime((int)(simulationStartingTime +
+                          timeIndex * simulationStepTime +
+                          simulationStepTime / 2.0));
+
+        // Run simulation with a single event per time point
+        G4int eventNumber = 1;
+        runManager->BeamOn(eventNumber);
       }
 
       // Sum up the energy deposited (in KiloWatt hour)
-      std::vector<std::vector<double > > hitEnergies = recorder.getSummedHitEnergies();
+      std::vector<std::vector<double> > hitEnergies =
+          recorder.getSummedHitEnergies();
 
       // Grab the total energy sum firstly for normalization!
       double totalEnergy = 0.0;
-      
-      for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
-	
-	// Sum up the energy deposited in a 'run' (should just be a single event per run).
-	double totalRunEnergy = 0.0; //kWh
-	for (double eventHitEnergy : hitEnergies[timeIndex]) {
-	  totalRunEnergy += (eventHitEnergy/1000.0) * (simulationStepTime/3600.0);
-	}
 
-	totalEnergy += totalRunEnergy;
-	totalEvaluatedEnergy += totalRunEnergy;
+      for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+           timeIndex++) {
+        // Sum up the energy deposited in a 'run' (should just be a single event
+        // per run).
+        double totalRunEnergy = 0.0;  // kWh
+        for (double eventHitEnergy : hitEnergies[timeIndex]) {
+          totalRunEnergy +=
+              (eventHitEnergy / 1000.0) * (simulationStepTime / 3600.0);
+        }
+
+        totalEnergy += totalRunEnergy;
+        totalEvaluatedEnergy += totalRunEnergy;
       }
 
       dayEnergySums.push_back(totalEnergy);
@@ -398,32 +426,38 @@ int main(int argc, char** argv) {
     }
     std::cout << "Total evaluated Energy " << totalEvaluatedEnergy << std::endl;
 
-    // Get the total surface area which is "sensitive" from current tested detector.
+    // Get the total surface area which is "sensitive" from current tested
+    // detector.
     double sensitiveArea = detector->getSensitiveSurfaceArea();
-    
+
     // Get the number of leaves
-    int    numberOfLeaves = detector->getNumberOfLeaves();
-    int    numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
+    int numberOfLeaves = detector->getNumberOfLeaves();
+    int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
 
     // Get size of the rough bounding box structure along the axis
     double structureXSize = detector->getXSize();
     double structureYSize = detector->getYSize();
     double structureZSize = detector->getZSize();
 
-    // Clone the settings/results before moving onto next tree so that they can be saved at the end.
-    std::string treeName = "tree" + std::to_string(currentTreeNumber) + "_Job" + std::to_string(parameterSeed);
-    TreeConstructionInterface* clonedTree = (TreeConstructionInterface*)tree->Clone(treeName.c_str());
-    
-    // Store additional information in the cloned tree for later analysis
-    clonedTree->setParameter("sensitiveArea",      sensitiveArea);
-    clonedTree->setParameter("leafNumber",         numberOfLeaves);
-    clonedTree->setParameter("rejectedLeafNumber", numberOfRejectedLeaves);
-    clonedTree->setParameter("structureXSize",     structureXSize);
-    clonedTree->setParameter("structureYSize",     structureYSize);
-    clonedTree->setParameter("structureZSize",     structureZSize);
+    // Clone the settings/results before moving onto next tree so that they can
+    // be saved at the end.
+    std::string treeName = "tree" + std::to_string(currentTreeNumber) + "_Job" +
+                           std::to_string(parameterSeed);
+    TreeConstructionInterface* clonedTree =
+        (TreeConstructionInterface*)tree->Clone(treeName.c_str());
 
-    std::string leafName = "leaf" + std::to_string(currentTreeNumber) + "_Job" + std::to_string(parameterSeed);
-    LeafConstructionInterface* clonedLeaf = (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
+    // Store additional information in the cloned tree for later analysis
+    clonedTree->setParameter("sensitiveArea", sensitiveArea);
+    clonedTree->setParameter("leafNumber", numberOfLeaves);
+    clonedTree->setParameter("rejectedLeafNumber", numberOfRejectedLeaves);
+    clonedTree->setParameter("structureXSize", structureXSize);
+    clonedTree->setParameter("structureYSize", structureYSize);
+    clonedTree->setParameter("structureZSize", structureZSize);
+
+    std::string leafName = "leaf" + std::to_string(currentTreeNumber) + "_Job" +
+                           std::to_string(parameterSeed);
+    LeafConstructionInterface* clonedLeaf =
+        (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
 
     // Add to the list that will be exported
     YearlyResult* result = new YearlyResult();
@@ -438,12 +472,13 @@ int main(int argc, char** argv) {
     double totalEnergyDeposited = result->getEnergyIntegral();
 
     // Also attach this to the tree
-    clonedTree->setParameter("totalEnergy"   ,       totalEnergyDeposited);
+    clonedTree->setParameter("totalEnergy", totalEnergyDeposited);
     clonedTree->setParameter("totalEvaluatedEnergy", totalEvaluatedEnergy);
 
     exportList.Add(result);
 
-    std::cout << "Considered tree " << currentTreeNumber << " in trial " << treeTrialNumber << std::endl;
+    std::cout << "Considered tree " << currentTreeNumber << " in trial "
+              << treeTrialNumber << std::endl;
     clonedTree->print();
     clonedLeaf->print();
 
@@ -456,25 +491,21 @@ int main(int argc, char** argv) {
 
   // Write results out to the root file
   resultsFile.cd();
-  exportList.Write("testedStructures",  TObject::kSingleKey);
+  exportList.Write("testedStructures", TObject::kSingleKey);
 
   // Close the root file
   resultsFile.Close();
 
   // Output some useful information
-  std::cout <<  currentTreeNumber << " trees produced in " << treeTrialNumber << " trials." << std::endl; 
+  std::cout << currentTreeNumber << " trees produced in " << treeTrialNumber
+            << " trials." << std::endl;
 
   if (!(treeTrialNumber < maximumTreeTrials)) {
-    std::cerr << "Not a sufficient number of trials available to satisfy tree demand" << std::endl;
+    std::cerr
+        << "Not a sufficient number of trials available to satisfy tree demand"
+        << std::endl;
     return 1;
   }
 
   return 0;
 }
-
-
-
-
-
-
-

@@ -2,8 +2,7 @@
 #include "pvtree/full/solarSimulation/spectrumFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
 
-TEST_CASE( "solarSimulation/spectrumFactory", "[sun]" ) {
-
+TEST_CASE("solarSimulation/spectrumFactory", "[sun]") {
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");
 
@@ -19,7 +18,7 @@ TEST_CASE( "solarSimulation/spectrumFactory", "[sun]" ) {
   Spectrum validationSpectrum("spectra/validation.default.results");
 
   // Check equality of all data as well
-  CHECK( *(spectrum.get()) == validationSpectrum );
+  CHECK(*(spectrum.get()) == validationSpectrum);
 
   // Produce a second spectrum online with the same parameters
   // so it should be identical as well. Need to clear the factory
@@ -27,10 +26,10 @@ TEST_CASE( "solarSimulation/spectrumFactory", "[sun]" ) {
   factory->clearCache();
   std::shared_ptr<Spectrum> secondSpectrum = factory->getSpectrum();
 
-  CHECK( *(spectrum.get()) == *(secondSpectrum.get()) );
+  CHECK(*(spectrum.get()) == *(secondSpectrum.get()));
 
   // For sanity purposes also should equal self
-  CHECK( *(spectrum.get()) == *(spectrum.get()) );
+  CHECK(*(spectrum.get()) == *(spectrum.get()));
 
   // If I change the parameters in a signficant way do I get
   // different spectra?
@@ -42,5 +41,5 @@ TEST_CASE( "solarSimulation/spectrumFactory", "[sun]" ) {
   factory->setSolarPositionWithElevationAzimuth(elevation, 0.0);
   std::shared_ptr<Spectrum> highElevationSpectrum = factory->getSpectrum();
 
-  CHECK(  *(lowElevationSpectrum.get()) != *(highElevationSpectrum.get()) );
+  CHECK(*(lowElevationSpectrum.get()) != *(highElevationSpectrum.get()));
 }

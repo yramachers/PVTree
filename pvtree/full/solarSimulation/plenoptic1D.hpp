@@ -22,8 +22,7 @@ class TH1D;
  * Angle is in radians and has the maximal range 0->2 PI
  */
 class Plenoptic1D : public TObject {
-public:
-
+ public:
   /*! \brief Create an empty Plenoptic function, this is just
    *         for root persistence.
    *
@@ -75,23 +74,26 @@ public:
    * The chosen surface must not have overlaps. e.g. A ray to infinity must
    * not pass through the surface twice from the inside.
    *
-   * @param[in] vertexPositions A vector of (x, y) positions which defines the 
+   * @param[in] vertexPositions A vector of (x, y) positions which defines the
    *                            generation surface.
    */
-  void setSurfaceGeometry(std::vector<std::tuple<double, double> > vertexPositions);
+  void setSurfaceGeometry(
+      std::vector<std::tuple<double, double> > vertexPositions);
 
-  /*! \brief Generate a set of particles with starting position, angle and weight
+  /*! \brief Generate a set of particles with starting position, angle and
+   *weight
    *
-   * The default root random number generator is used, so set the ROOT seed the 
+   * The default root random number generator is used, so set the ROOT seed the
    * standard way.
    *
-   * @param[in] number The number of particles to generate, which defaults to one.
+   * @param[in] number The number of particles to generate, which defaults to
+   *one.
    * \returns A vector of tuples containing x, y, theta and weight.
    */
-  std::vector<std::tuple<double, double, double, double> > generate(unsigned int number = 1u) const;
-  
-private:
+  std::vector<std::tuple<double, double, double, double> > generate(
+      unsigned int number = 1u) const;
 
+ private:
   //! Histogram which stores the binned values of the plenoptic function.
   TH1D* m_histogram;
 
@@ -116,8 +118,7 @@ private:
   //! Record that the surface geometry has been provided
   bool m_hasSurfaceGeometry;
 
-private:
-  
+ private:
   /*! \brief Calculate the flux from the plenoptic function through a line
    *         segment.
    *
@@ -137,7 +138,8 @@ private:
    * \param[in] y2 The ending y coordinate.
    * \returns The length of a segment.
    */
-  double calculateElementLength(double x1, double y1, double x2, double y2) const;
+  double calculateElementLength(double x1, double y1, double x2,
+                                double y2) const;
 
   /*! \brief Calculate the normal angle of a segment.
    *
@@ -147,7 +149,8 @@ private:
    * \param[in] y2 The ending y coordinate.
    * \returns The angle of a segment.
    */
-  double calculateElementAngle(double x1, double y1, double x2, double y2) const;
+  double calculateElementAngle(double x1, double y1, double x2,
+                               double y2) const;
 
   /*! \brief Calculate minimal angular separation.
    *
@@ -167,5 +170,4 @@ private:
   ClassDef(Plenoptic1D, 1);
 };
 
-
-#endif //PVTREE_SOLARSIMULATION_PLENOPTIC1D
+#endif  // PVTREE_SOLARSIMULATION_PLENOPTIC1D

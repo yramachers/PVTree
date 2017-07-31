@@ -7,5 +7,4 @@
  */
 void Style_SolarEnergyFlat();
 
-#endif //PVTREE_ANALYSIS_ROOT_STYLES_HPP
-
+#endif  // PVTREE_ANALYSIS_ROOT_STYLES_HPP

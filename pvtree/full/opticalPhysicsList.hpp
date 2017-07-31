@@ -4,24 +4,21 @@
 #include "G4VUserPhysicsList.hh"
 
 class OpticalPhysicsList : public G4VUserPhysicsList {
-private:
+ private:
   bool m_verbosityLevel;
 
-public:
-
+ public:
   OpticalPhysicsList();
   virtual ~OpticalPhysicsList();
 
-protected:
-  virtual void ConstructParticle(); 
+ protected:
+  virtual void ConstructParticle();
   virtual void ConstructProcess();
 
   virtual void AddTransportation();
 
-public:
+ public:
   virtual void SetCuts();
 };
 
-
-
-#endif //PV_FULL_OPTICAL_PHYSICS_LIST
+#endif  // PV_FULL_OPTICAL_PHYSICS_LIST

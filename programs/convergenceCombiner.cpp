@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to combine the results of the convergence example.
  *
  * Just want to merge a subset of the histograms.
@@ -29,21 +29,22 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
 
   ops >> GetOpt::Option('i', "inputRootFiles", inputFilenames);
-  ops >> GetOpt::Option('o', "outputRootFile", outputFilename, "combined.convergence.root");
+  ops >> GetOpt::Option('o', "outputRootFile", outputFilename,
+                        "combined.convergence.root");
 
-  if (inputFilenames.size() == 0){
+  if (inputFilenames.size() == 0) {
     std::cerr << "No input filenames specified" << std::endl;
     showHelp();
     return -1;
   }
 
-  if (outputFilename == ""){
+  if (outputFilename == "") {
     std::cerr << "Empty output filename" << std::endl;
     showHelp();
     return -1;
@@ -63,37 +64,33 @@ int main(int argc, char** argv) {
   TList* keyList = initialInputFile.GetListOfKeys();
   TIter iterateOverKeys(keyList);
 
-  for ( int k=0; k<keyList->GetSize(); k++) {
+  for (int k = 0; k < keyList->GetSize(); k++) {
     TKey* key = (TKey*)iterateOverKeys();
 
-    //Pick out histograms with names containing 'relative'
+    // Pick out histograms with names containing 'relative'
     std::string keyName = key->GetName();
-    
-    if (keyName.find("relative")!=std::string::npos){
 
+    if (keyName.find("relative") != std::string::npos) {
       std::string newName = keyName + "_merged";
 
       TH1D* histogram = (TH1D*)initialInputFile.Get(keyName.c_str());
       mergingHistograms[keyName] = (TH1D*)histogram->Clone(newName.c_str());
-
     }
   }
 
   // Merge the efficiency error and energy error histograms
-  for (unsigned int inputFileNumber=1; inputFileNumber<inputFilenames.size(); inputFileNumber++) {
-    
-      TFile inputFile(inputFilenames[inputFileNumber].c_str(), "READ");
+  for (unsigned int inputFileNumber = 1;
+       inputFileNumber < inputFilenames.size(); inputFileNumber++) {
+    TFile inputFile(inputFilenames[inputFileNumber].c_str(), "READ");
 
-      for (auto& toMerge : mergingHistograms) {
-	
-	TH1D* histogram = (TH1D*)inputFile.Get(toMerge.first.c_str());
-	toMerge.second->Add(histogram);
-      }
-      
-      inputFile.Close();
+    for (auto& toMerge : mergingHistograms) {
+      TH1D* histogram = (TH1D*)inputFile.Get(toMerge.first.c_str());
+      toMerge.second->Add(histogram);
+    }
+
+    inputFile.Close();
   }
 
-  
   // Prepare a root file to store the results
   TFile outputCombinedFile(outputFilename.c_str(), "RECREATE");
 
@@ -101,7 +98,7 @@ int main(int argc, char** argv) {
   for (auto& merged : mergingHistograms) {
     merged.second->Write(merged.first.c_str());
   }
-   
+
   // Close the root file
   outputCombinedFile.Close();
 

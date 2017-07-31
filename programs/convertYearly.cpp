@@ -15,7 +15,7 @@
 void showHelp() {
   std::cout << "converter help" << std::endl;
   std::cout << "\t -f, --inputRootFile <ROOT FILE NAME>" << std::endl;
-    }
+}
 
 int main(int argc, char** argv) {
   std::string filename;
@@ -24,14 +24,14 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
 
   ops >> GetOpt::Option('f', "inputRootFile", filename, "");
 
-  if (filename == ""){
+  if (filename == "") {
     std::cerr << "Empty filename" << std::endl;
     showHelp();
     return -1;
@@ -43,20 +43,21 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
-  
+
   filename_out = "converted_yearly.root";
-  TFile ff(filename.c_str(),"READ");
+  TFile ff(filename.c_str(), "READ");
   TList* structureList = (TList*)ff.Get("testedStructures");
   TIter structureListIterator(structureList);
 
-  if ( structureList->GetSize() == 0 ){
+  if (structureList->GetSize() == 0) {
     std::cout << "There are no trees to consider." << std::endl;
     return 1;
   }
 
-  TFile ffout(filename_out.c_str(),"RECREATE");
+  TFile ffout(filename_out.c_str(), "RECREATE");
   ffout.cd();
-  TNtupleD* results = new TNtupleD("treeoutput","Tree data output","id:area:nleaves:energy:efficiency");
+  TNtupleD* results = new TNtupleD("treeoutput", "Tree data output",
+                                   "id:area:nleaves:energy:efficiency");
   double id = 0.;
   double area;
   double nleaves;
@@ -65,23 +66,26 @@ int main(int argc, char** argv) {
 
   ff.cd();
   double besteff = 0.0;
-  while (YearlyResult* currentStructure = (YearlyResult*)structureListIterator()) {
+  while (YearlyResult* currentStructure =
+             (YearlyResult*)structureListIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
-    LeafConstructionInterface* clonedL = currentStructure->getLeaf();;
+    LeafConstructionInterface* clonedL = currentStructure->getLeaf();
+    ;
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
     energy = clonedT->getDoubleParameter("totalEnergy");
     eff = energy / area;
-    if (eff > besteff) { // book best tree
+    if (eff > besteff) {  // book best tree
       TreeConstructionInterface* bestT = clonedT;
       LeafConstructionInterface* bestL = clonedL;
       besteff = eff;
       bestT->print();
       bestL->print();
-      std::cout << "Tree ID: "<< id << "; Best efficiency = " << besteff << std::endl;
+      std::cout << "Tree ID: " << id << "; Best efficiency = " << besteff
+                << std::endl;
     }
     ffout.cd();
-    results->Fill(id,area, nleaves, energy, eff);
+    results->Fill(id, area, nleaves, energy, eff);
     id++;
     ff.cd();
   }
@@ -90,5 +94,4 @@ int main(int argc, char** argv) {
   ffout.Close();
 
   ff.Close();
-
 }

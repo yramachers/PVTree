@@ -6,14 +6,12 @@
 
 #include "TFile.h"
 
-TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
-
+TEST_CASE("treeSystem/treeFactory", "[tree]") {
   auto helicalTree = TreeFactory::instance()->getTree("helical");
 
   // Test that current parameters can be set and retrieved
   helicalTree->setParameter("initialLength", 4.6);
-  REQUIRE( helicalTree->getDoubleParameter("initialLength") == 4.6);
-
+  REQUIRE(helicalTree->getDoubleParameter("initialLength") == 4.6);
 
   // Test that the random generator seeding produces consistant results
   helicalTree->setRandomParameterRange("initialLength", 4.0, 10.5);
@@ -22,57 +20,56 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
   double result1 = helicalTree->getDoubleParameter("initialLength");
   helicalTree->randomizeParameter(seed, "initialLength");
   double result2 = helicalTree->getDoubleParameter("initialLength");
-  REQUIRE( result1 == result2 );
+  REQUIRE(result1 == result2);
 
-
-  // Test that the random generator seeding produces consistant results when randomizing all parameters
+  // Test that the random generator seeding produces consistant results when
+  // randomizing all parameters
   seed = 4321;
   helicalTree->randomizeParameters(seed);
   result1 = helicalTree->getDoubleParameter("initialLength");
   helicalTree->randomizeParameters(seed);
   result2 = helicalTree->getDoubleParameter("initialLength");
-  REQUIRE( result1 == result2 );
-
+  REQUIRE(result1 == result2);
 
   // Test that a non-existant parameter can not be retrieved
   bool nonExistantParameterRetrieved = true;
-  try{
+  try {
     helicalTree->getDoubleParameter("noParameterWithName");
-  } catch(const std::invalid_argument& err) {
+  } catch (const std::invalid_argument& err) {
     nonExistantParameterRetrieved = false;
   }
-  REQUIRE( nonExistantParameterRetrieved == false );
-
+  REQUIRE(nonExistantParameterRetrieved == false);
 
   // Test that a non-existant parameter (for a given type) can not be retrieved.
   nonExistantParameterRetrieved = true;
-  try{
+  try {
     helicalTree->getIntegerParameter("initialLength");
-  } catch(const std::invalid_argument& err) {
+  } catch (const std::invalid_argument& err) {
     nonExistantParameterRetrieved = false;
   }
-  REQUIRE( nonExistantParameterRetrieved == false );
-
+  REQUIRE(nonExistantParameterRetrieved == false);
 
   // Test that a non-existant parameter can not be randomized
   bool nonExistantParameterRandomized = true;
-  try{
+  try {
     helicalTree->randomizeParameter(seed, "noParameterWithName");
-  } catch(const std::invalid_argument& err) {
+  } catch (const std::invalid_argument& err) {
     nonExistantParameterRandomized = false;
   }
-  REQUIRE( nonExistantParameterRandomized == false );
+  REQUIRE(nonExistantParameterRandomized == false);
 
-
-  // Test that you can have a double and integer parameter with the same name (maybe shouldn't)
+  // Test that you can have a double and integer parameter with the same name
+  // (maybe shouldn't)
   helicalTree->setParameter("branchingAngle", 7.5);
   helicalTree->setParameter("branchingAngle", 4);
 
-  bool bothParametersRetrievedCorrectly = helicalTree->getDoubleParameter("branchingAngle") == 7.5 &&
-    helicalTree->getIntegerParameter("branchingAngle") == 4;
-  REQUIRE( bothParametersRetrievedCorrectly == true  );
+  bool bothParametersRetrievedCorrectly =
+      helicalTree->getDoubleParameter("branchingAngle") == 7.5 &&
+      helicalTree->getIntegerParameter("branchingAngle") == 4;
+  REQUIRE(bothParametersRetrievedCorrectly == true);
 
-  // Test that the parameter ranges can be set and retrieved from file successfully.
+  // Test that the parameter ranges can be set and retrieved from file
+  // successfully.
   std::string persistFileName = "/tmp/unit-treeConstuction-temp.root";
 
   TFile exportFile(persistFileName.c_str(), "RECREATE");
@@ -81,39 +78,42 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
 
   TFile importFile(persistFileName.c_str(), "READ");
 
-  TreeConstructionInterface* importTree = static_cast<TreeConstructionInterface*>(importFile.FindObjectAny("testTree"));
+  TreeConstructionInterface* importTree =
+      static_cast<TreeConstructionInterface*>(
+          importFile.FindObjectAny("testTree"));
 
-  REQUIRE( *importTree == *helicalTree );
+  REQUIRE(*importTree == *helicalTree);
 
   // If I randomize parameters it should no longer be equal
   seed++;
   helicalTree->randomizeParameters(seed);
 
-  REQUIRE( *importTree != *helicalTree );
+  REQUIRE(*importTree != *helicalTree);
 
   // Randomizing the loaded tree should return the equality
   importTree->randomizeParameters(seed);
-  REQUIRE( *importTree == *helicalTree );
+  REQUIRE(*importTree == *helicalTree);
 
   // It should also not match a completely different tree
   auto sympodialTree = TreeFactory::instance()->getTree("sympodial");
 
-  REQUIRE( *importTree != *sympodialTree );
+  REQUIRE(*importTree != *sympodialTree);
 
   importFile.Close();
 
   // Test that the temporary file can be deleted.
   int removeFileFlag = std::remove(persistFileName.c_str());
-  REQUIRE( removeFileFlag == 0 );
+  REQUIRE(removeFileFlag == 0);
 
   // Check that the L-Systems evolve in the same manner
   std::stringstream actualTreeState(std::string(""));
 
   // Check helical initial state
   helicalTree = TreeFactory::instance()->getTree("helical");
-  helicalTree->print( actualTreeState );
+  helicalTree->print(actualTreeState);
 
-  std::string refTreeState = R"( -------------------------------------------------------------
+  std::string refTreeState =
+      R"( -------------------------------------------------------------
  |   Double Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
  |      initialLength :       0.42 |        0.3 |        0.7 |
@@ -141,15 +141,15 @@ TEST_CASE( "treeSystem/treeFactory", "[tree]" ) {
 Produced Helical Rules = /(0)[/(0)&(90)f(0)+(90)&(-90)A(0.42,0.2,0,0)][/(45)&(90)f(0)+(90)&(-90)A(0.42,0.23,0,0)][/(90)&(90)f(0)+(90)&(-90)A(0.42,0.2,0,0)][/(135)&(90)f(0)+(90)&(-90)A(0.42,0.23,0,0)][/(180)&(90)f(0)+(90)&(-90)A(0.42,0.2,0,0)][/(225)&(90)f(0)+(90)&(-90)A(0.42,0.23,0,0)][/(270)&(90)f(0)+(90)&(-90)A(0.42,0.2,0,0)][/(315)&(90)f(0)+(90)&(-90)A(0.42,0.23,0,0)]
 )";
 
-
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 
   // Check monopodial initial state
   auto monopodialTree = TreeFactory::instance()->getTree("monopodial");
-  monopodialTree->print( actualTreeState );
+  monopodialTree->print(actualTreeState);
 
-  refTreeState =R"( -------------------------------------------------------------
+  refTreeState =
+      R"( -------------------------------------------------------------
  |   Double Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
  |      initialHeight :          1 |          0 |          2 |
@@ -169,14 +169,15 @@ Produced Helical Rules = /(0)[/(0)&(90)f(0)+(90)&(-90)A(0.42,0.2,0,0)][/(45)&(90
 Produced Monopodial Rules = /(67)A(1,0.2)
 )";
 
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 
   // Check stochastic initial state
   auto stochasticTree = TreeFactory::instance()->getTree("stochastic");
-  stochasticTree->print( actualTreeState );
+  stochasticTree->print(actualTreeState);
 
-  refTreeState =R"( --------------------------------------------------------------
+  refTreeState =
+      R"( --------------------------------------------------------------
  |    Double Parameter :      Value |    Minimum |    Maximum |
  --------------------------------------------------------------
  |       initialHeight :       0.37 |       0.37 |       0.37 |
@@ -204,14 +205,15 @@ Produced Monopodial Rules = /(67)A(1,0.2)
 Produced Stochastic Rules = RandomSeed(1234)!(0.05,1.6)F(0.37)/(314)A
 )";
 
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 
   // Check the stump initial state
   auto stumpTree = TreeFactory::instance()->getTree("stump");
-  stumpTree->print( actualTreeState );
+  stumpTree->print(actualTreeState);
 
-  refTreeState =R"( ------------------------------------------------------------
+  refTreeState =
+      R"( ------------------------------------------------------------
  |  Double Parameter :      Value |    Minimum |    Maximum |
  ------------------------------------------------------------
  |     initialHeight :        0.5 |        0.1 |          1 |
@@ -226,14 +228,15 @@ Produced Stochastic Rules = RandomSeed(1234)!(0.05,1.6)F(0.37)/(314)A
 Produced Stump Rules = !(0.05)F(0.5)/(180)&(45)F(0.5)
 )";
 
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 
   // Check the sympodial initial state
   sympodialTree = TreeFactory::instance()->getTree("sympodial");
-  sympodialTree->print( actualTreeState );
+  sympodialTree->print(actualTreeState);
 
-  refTreeState =R"( -------------------------------------------------------------
+  refTreeState =
+      R"( -------------------------------------------------------------
  |   Double Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
  |      initialHeight :          1 |      0.001 |          2 |
@@ -252,14 +255,15 @@ Produced Stump Rules = !(0.05)F(0.5)/(180)&(45)F(0.5)
 Produced Sympodial Rules = /(67)A(1,0.2)
 )";
 
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 
   // Check the ternary initial state
   auto ternaryTree = TreeFactory::instance()->getTree("ternary");
-  ternaryTree->print( actualTreeState );
+  ternaryTree->print(actualTreeState);
 
-  refTreeState =R"( -------------------------------------------------------------
+  refTreeState =
+      R"( -------------------------------------------------------------
  |   Double Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
  |      initialHeight :       0.07 |       0.04 |        0.1 |
@@ -279,6 +283,6 @@ Produced Sympodial Rules = /(67)A(1,0.2)
 Produced Ternary Rules = !(0.02)F(0.07)/(67)A
 )";
 
-  CHECK( refTreeState == actualTreeState.str() );
+  CHECK(refTreeState == actualTreeState.str());
   actualTreeState.str("");
 }

@@ -25,16 +25,16 @@ class LeafTrackerSD;
  * Goes beyond previous leaf construction by composing a solid out of
  * multiple materials in up to three layers.
  *
- * A simple improvement would be to add parameterisation of the leaf layers 
+ * A simple improvement would be to add parameterisation of the leaf layers
  * (e.g. thickness/number/type).
  */
 class LayeredLeafConstruction : public G4VUserDetectorConstruction {
-public:
-  /* \brief Constructor with full specification of leaf system for the 
+ public:
+  /* \brief Constructor with full specification of leaf system for the
    *        case of standalone use.
    */
   LayeredLeafConstruction(std::shared_ptr<LeafConstructionInterface> leafSystem,
-			  Turtle* initialTurtle);
+                          Turtle* initialTurtle);
 
   /* \brief Constructor without the specification of the L-System or initial
    *        turtle. For the case where there is a need to construct many leaves
@@ -45,20 +45,19 @@ public:
   virtual ~LayeredLeafConstruction();
 
   virtual G4VPhysicalVolume* Construct();
-  virtual void               ConstructSDandField();
+  virtual void ConstructSDandField();
 
   /* \brief Construct a logical volume for a leaf with a specified L-System
    *        and an initial turtle.
    */
-  G4LogicalVolume* constructForTree(std::shared_ptr<LeafConstructionInterface> leafSystem,
-				    Turtle* initialTurtle); 
+  G4LogicalVolume* constructForTree(
+      std::shared_ptr<LeafConstructionInterface> leafSystem,
+      Turtle* initialTurtle);
 
-  void getExtentForTree(G4ThreeVector& minExtent, 
-			G4ThreeVector& maxExtent);
+  void getExtentForTree(G4ThreeVector& minExtent, G4ThreeVector& maxExtent);
   void getExtentForTree(std::shared_ptr<LeafConstructionInterface> leafSystem,
-			Turtle* initialTurtle,
-			G4ThreeVector& minExtent, 
-			G4ThreeVector& maxExtent);
+                        Turtle* initialTurtle, G4ThreeVector& minExtent,
+                        G4ThreeVector& maxExtent);
 
   G4LogicalVolume* getLogicalVolume();
 
@@ -66,10 +65,9 @@ public:
    *
    * \returns Area in units of meters squared.
    */
-  double           getSensitiveSurfaceArea();
+  double getSensitiveSurfaceArea();
 
-private:
-
+ private:
   /*! \brief Iterate Lindenmeyer system for leaf.
    *
    */
@@ -80,24 +78,23 @@ private:
    */
   std::vector<Polygon*> generateSurface();
 
-
   /*! \brief Construct leaf logical volume using current settings
    *         for initial turtle and Lindenmeyer system.
    */
   G4LogicalVolume* constructLeafLogicalVolume();
 
-  /*! \brief Remove degenerate vertices without destroying the polygons. 
+  /*! \brief Remove degenerate vertices without destroying the polygons.
    *
    * After merge should expect there to be many shared vertices between
    * polygons.
    *
-   * @param[in] polygons List of input polygons containing vertices which should 
+   * @param[in] polygons List of input polygons containing vertices which should
    *            have a merge check performed.
    *
    * \returns List of unique vertices for all polygons.
   */
-  std::vector<std::shared_ptr<Vertex>> mergeVertices(std::vector<Polygon* >& polygons);
-
+  std::vector<std::shared_ptr<Vertex>> mergeVertices(
+      std::vector<Polygon*>& polygons);
 
   /*! \brief Convert a surface defined by a set of polygons into a 3d mesh
    *         by duplicating the surface and extrapolating along the vertex
@@ -112,10 +109,9 @@ private:
    * \returns A vector of polygons (which need to be deleted) describing the
    *          extrapolated mesh.
    */
-  std::vector<Polygon*> extrapolateSurfaceIntoMesh(const std::vector<Polygon*>& polygons,
-						   double frontSurfaceOffsetFactor, 
-						   double backSurfaceOffsetFactor);
-  
+  std::vector<Polygon*> extrapolateSurfaceIntoMesh(
+      const std::vector<Polygon*>& polygons, double frontSurfaceOffsetFactor,
+      double backSurfaceOffsetFactor);
 
   /*! \brief Function to calculate the surface area of a
    *         surface after extrapolation along normals has taken
@@ -127,16 +123,16 @@ private:
    * \returns The area of the surface in meters squared.
    */
   double calculateExtrapolatedSurfaceArea(const std::vector<Polygon*>& polygons,
-					  double frontSurfaceOffsetFactor,
-					  double backSurfaceOffsetFactor);
+                                          double frontSurfaceOffsetFactor,
+                                          double backSurfaceOffsetFactor);
 
   /*! \brief Create the edge mesh between two extrapolated surfaces.
    *
    * \returns A vector of polygons representing the edge.
    */
-  std::vector<Polygon*> createEdgeSurface(const std::vector<Polygon*>& surfacePolygons, 
-					  double frontSurfaceOffsetFactor,
-					  double backSurfaceOffsetFactor);
+  std::vector<Polygon*> createEdgeSurface(
+      const std::vector<Polygon*>& surfacePolygons,
+      double frontSurfaceOffsetFactor, double backSurfaceOffsetFactor);
 
   /*! \brief Convert mesh into a tessellated solid.
    *
@@ -148,14 +144,13 @@ private:
    * @param[in] solidName Name to give the Geant4 solid.
    *
    * \returns A Geant4 Tessellated Solid.
-   *          
+   *
    */
-  G4TessellatedSolid* convertMeshToTessellatedSolid(const std::vector<Polygon*>& polygons,
-						    std::string solidName);
+  G4TessellatedSolid* convertMeshToTessellatedSolid(
+      const std::vector<Polygon*>& polygons, std::string solidName);
 
-  void getExtent(std::vector<Polygon*>& polygons,
-		 G4ThreeVector& minExtent,
-		 G4ThreeVector& maxExtent);
+  void getExtent(std::vector<Polygon*>& polygons, G4ThreeVector& minExtent,
+                 G4ThreeVector& maxExtent);
 
   /*! \brief Translate a ROOT TVector into a Geant4 vector.
    *
@@ -170,21 +165,20 @@ private:
    *
    */
   void clearPolygonList(std::vector<Polygon*>& polygons);
-  
+
   /*! \brief Obtain Geant4 materials for each layer.
    *
    */
   void defineMaterials();
 
+  std::shared_ptr<LeafConstructionInterface> m_leafSystem;
+  std::vector<std::shared_ptr<LeafSystemInterface>> m_leafConditions;
+  Turtle* m_initialTurtle;
 
-  std::shared_ptr<LeafConstructionInterface>         m_leafSystem;
-  std::vector<std::shared_ptr<LeafSystemInterface> > m_leafConditions;
-  Turtle*                                            m_initialTurtle;
-
-  //Volumes
+  // Volumes
   G4LogicalVolume* m_worldLogicalVolume;
 
-  //Sensitive volumes
+  // Sensitive volumes
   LeafTrackerSD* m_trackerSD;
 
   // Materials
@@ -193,19 +187,18 @@ private:
   std::string m_sensitiveMaterialName;
   std::string m_backMaterialName;
 
-  //Visualization attributes
+  // Visualization attributes
   G4VisAttributes m_frontAttributes;
   G4VisAttributes m_sensitiveAttributes;
   G4VisAttributes m_backAttributes;
   G4VisAttributes m_worldVisualAttributes;
   G4VisAttributes m_envelopeAttributes;
 
-  //For re-construction
+  // For re-construction
   bool m_constructedSensitiveDetectors;
 
-  //Important leaf properties
+  // Important leaf properties
   double m_sensitiveArea;
 };
 
-
-#endif //PVTREE_FULL_LAYERED_LEAF_CONSTRUCTION
+#endif  // PVTREE_FULL_LAYERED_LEAF_CONSTRUCTION

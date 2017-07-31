@@ -7,16 +7,14 @@ class G4Run;
 class RecorderBase;
 
 class RunAction : public G4UserRunAction {
-
-public:
+ public:
   explicit RunAction(RecorderBase* recorder);
   virtual ~RunAction();
   virtual void BeginOfRunAction(const G4Run*);
   virtual void EndOfRunAction(const G4Run*);
 
-private:
+ private:
   RecorderBase* m_recorder;
-
 };
 
-#endif //PV_FULL_RUN_ACTION
+#endif  // PV_FULL_RUN_ACTION

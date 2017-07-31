@@ -10,11 +10,10 @@ class G4Event;
  *         particle a weight.
  */
 class WeightedParticleGun : public G4ParticleGun {
-public:
-
+ public:
   WeightedParticleGun();
   virtual ~WeightedParticleGun();
-  
+
   /*! \brief Add a new vertex to the event using the
    *         current particle definition.
    *
@@ -22,8 +21,8 @@ public:
    * class but with the option to pass a weight.
    */
   void GenerateWeightedPrimaryVertex(G4Event* evt, double weight);
-private:
 
+ private:
 };
 
-#endif //PV_FULL_WEIGHTED_PARTICLE_GUN
+#endif  // PV_FULL_WEIGHTED_PARTICLE_GUN

@@ -9,7 +9,7 @@
 
 #include "TFile.h"
 
-/*! @file 
+/*! @file
  * \brief Example program to check that tree and leaf constructors can
  *        be saved to a root file and then retrieved.
  */
@@ -21,17 +21,16 @@ void showHelp() {
 }
 
 void create(std::string treeType, std::string leafType) {
-
   auto initialTree = TreeFactory::instance()->getTree(treeType);
   auto initialLeaf = LeafFactory::instance()->getLeaf(leafType);
 
-  // Change some of the parameters 
-  initialTree->setParameter("elongationRate",    1.309);
+  // Change some of the parameters
+  initialTree->setParameter("elongationRate", 1.309);
   initialTree->setParameter("widthIncreaseRate", 1.832);
-  initialTree->setParameter("branchingAngle",    2.0);
-  initialTree->setParameter("divergenceAngle1",  280.0);
-  initialTree->setParameter("divergenceAngle2",  12.0);
-  initialTree->setParameter("lengthScale",       65.0);
+  initialTree->setParameter("branchingAngle", 2.0);
+  initialTree->setParameter("divergenceAngle1", 280.0);
+  initialTree->setParameter("divergenceAngle2", 12.0);
+  initialTree->setParameter("lengthScale", 65.0);
 
   // Show current parameters
   std::cout << "Initial Tree Parameters: -" << std::endl;
@@ -44,12 +43,14 @@ void create(std::string treeType, std::string leafType) {
   TFile exportFile("persistenceCheck.root", "RECREATE");
 
   // Make a yearly result
-  std::vector<time_t > dayTimes;
-  std::vector<double > dayEnergySums;
+  std::vector<time_t> dayTimes;
+  std::vector<double> dayEnergySums;
 
   // Need to clone the tree and leaf because YearlyResult requires ownership.
-  TreeConstructionInterface* clonedTree = (TreeConstructionInterface*)initialTree->Clone();
-  LeafConstructionInterface* clonedLeaf = (LeafConstructionInterface*)initialLeaf->Clone();
+  TreeConstructionInterface* clonedTree =
+      (TreeConstructionInterface*)initialTree->Clone();
+  LeafConstructionInterface* clonedLeaf =
+      (LeafConstructionInterface*)initialLeaf->Clone();
 
   YearlyResult initialResult;
   initialResult.setTree(clonedTree);
@@ -63,12 +64,12 @@ void create(std::string treeType, std::string leafType) {
 }
 
 void check() {
-
   // Open a root file
   TFile importFile("persistenceCheck.root", "READ");
 
   // Read in yearly result
-  YearlyResult* importedResult = (YearlyResult*)importFile.FindObjectAny("initialResult");
+  YearlyResult* importedResult =
+      (YearlyResult*)importFile.FindObjectAny("initialResult");
 
   // Show loaded parameters
   std::cout << "Loaded Tree Parameters: -" << std::endl;
@@ -79,17 +80,15 @@ void check() {
 
   // Close the root file
   importFile.Close();
-
 }
 
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
 
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -108,14 +107,9 @@ int main(int argc, char** argv) {
   create(treeType, leafType);
 
   // ... Some time later ...
-  std::cout << "\n...Close and re-open the file some time later...\n" << std::endl;
+  std::cout << "\n...Close and re-open the file some time later...\n"
+            << std::endl;
 
   // Check that the file can be read back in normally
   check();
 }
-
-
-
-
-
-

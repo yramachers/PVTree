@@ -13,8 +13,7 @@
 #include <iosfwd>
 
 class LocationDetails {
-public:
-
+ public:
   explicit LocationDetails(std::string inputFilePath);
   explicit LocationDetails(double longitude, double latitiude, double altitude);
   LocationDetails(const LocationDetails& original);
@@ -25,21 +24,20 @@ public:
    * \returns the longitude
    */
   double getLongitude() const;
-  
+
   /*! \brief Get the latitude of the location
    *
    * \returns the latitude
    */
   double getLatitude() const;
-  
+
   /*! \brief Get the altitude of the location
    *
    * \returns the altitude [km]
    */
   double getAltitude() const;
 
-private:
-
+ private:
   /*! \brief Extract the location configuration
    *         from specified input file
    */
@@ -50,5 +48,4 @@ private:
   double m_altitude;
 };
 
-
-#endif //PVTREE_LOCATION_LOCATION_DETAILS
+#endif  // PVTREE_LOCATION_LOCATION_DETAILS

@@ -14,7 +14,7 @@
 #include <memory>
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -28,12 +28,12 @@ extern "C" {
 #include "pvtree/solpos/solpos00.h"
 }
 
-/*! \brief A class used to keep track of the properties of the simulated sun used
+/*! \brief A class used to keep track of the properties of the simulated sun
+ * used
  *  in the simulation.
  */
 class Sun {
-public:
-
+ public:
   /// Control the use of climate information
   enum RealClimateOption {
     TEMPERATURE,
@@ -43,12 +43,11 @@ public:
     CLOUDCOVER
   };
 
-private:
-
+ private:
   /// As an underlying implementation use the solar library SolPos 2.0
   /// http://rredc.nrel.gov/solar/codesandalgorithms/solpos/
   struct posdata m_solarPositionData;
-  
+
   /// Keep track of the need to update the temperature and pressure
   bool m_recalculateEnvironment;
   bool m_recalculateSolarPosition;
@@ -58,12 +57,12 @@ private:
   LocationDetails m_deviceLocation;
 
   //! Climate corrections to apply (by default)
-  std::map<RealClimateOption, bool> m_climateOptions = { {TEMPERATURE, true},
-							 {PRESSURE,    true},
-							 {COLUMNWATER, true},
-							 {COLUMNOZONE, true},
-							 {CLOUDCOVER,  true} };
-  
+  std::map<RealClimateOption, bool> m_climateOptions = {{TEMPERATURE, true},
+                                                        {PRESSURE, true},
+                                                        {COLUMNWATER, true},
+                                                        {COLUMNOZONE, true},
+                                                        {CLOUDCOVER, true}};
+
   /*! \brief Setting environment variables from climate factory.
    *
    */
@@ -74,7 +73,7 @@ private:
    */
   void updateSolarPosition();
 
-public:
+ public:
   explicit Sun(LocationDetails deviceLocation);
   ~Sun();
 
@@ -100,12 +99,12 @@ public:
   /*! \brief Get the direct normal solar irradiance at the current time.
    *
    * This uses the more simple solpos model to evaluate irradiance. The
-   * SMARTS implementation supersedes this. Might still be useful as a 
+   * SMARTS implementation supersedes this. Might still be useful as a
    * cross check.
    *
    * \returns The total normal solar irradiance.
    */
-  double   getIrradiance();
+  double getIrradiance();
 
   /*! \brief Get the time of the sunset for the current day.
    *
@@ -113,7 +112,7 @@ public:
    *
    * \returns The time in minutes since midnight.
    */
-  double   getSunsetTime();
+  double getSunsetTime();
 
   /*! \brief Get the time of the sunrise for the current day.
    *
@@ -121,7 +120,7 @@ public:
    *
    * \returns The time in minutes since midnight.
    */
-  double   getSunriseTime();
+  double getSunriseTime();
 
   /*! \brief Get the current photon energy spectrum.
    *
@@ -179,17 +178,18 @@ public:
    *
    * @param[in] option The option as found in the RealClimateOption enumeration
    *
-   * \returns True if the climate variable from real data is used in simulation config.
+   * \returns True if the climate variable from real data is used in simulation
+   *config.
    */
   bool getClimateOption(RealClimateOption option);
 
   /*! \brief Set if a climate variable should be used
    *
    * @param[in] option The option as found in the RealClimateOption enumeration
-   * @param[in] isEnabled Set to true if you want the climate variable from real data to be used.
+   * @param[in] isEnabled Set to true if you want the climate variable from real
+   *data to be used.
    */
   void setClimateOption(RealClimateOption option, bool isEnabled);
-
 };
 
-#endif //PVTREE_SOLAR_SIMULATION_SUN
+#endif  // PVTREE_SOLAR_SIMULATION_SUN

@@ -12,14 +12,14 @@ class G4VPhysicalVolume;
 /*! \brief Visualization action for case where no
  *         simulation needs to be performed. Should
  *         work for generic world logical volume.
- * 
+ *
  */
 class VisualizationAction : public G4VUserVisAction {
-public:
+ public:
   explicit VisualizationAction(G4LogicalVolume* volumeToDraw);
   virtual void Draw();
 
-private:
+ private:
   //! \brief Top volume (world)
   G4LogicalVolume* m_volumeToDraw;
 
@@ -30,9 +30,8 @@ private:
    *         to the appropriate visual attributes.
    *
    */
-  void DrawRecursively(G4VVisManager* visManager, G4VPhysicalVolume* currentPhysicalVolume);
-
+  void DrawRecursively(G4VVisManager* visManager,
+                       G4VPhysicalVolume* currentPhysicalVolume);
 };
 
-
-#endif //PV_VISUALIZATION_ACTION
+#endif  // PV_VISUALIZATION_ACTION

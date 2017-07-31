@@ -23,12 +23,12 @@ class LeafTrackerSD;
  *           Geant4 geometry.
  */
 class LeafConstruction : public G4VUserDetectorConstruction {
-public:
-  /*! \brief Constructor with full specification of leaf system for the 
+ public:
+  /*! \brief Constructor with full specification of leaf system for the
    *        case of standalone use.
    */
   LeafConstruction(std::shared_ptr<LeafConstructionInterface> leafConstructor,
-		   Turtle* initialTurtle);
+                   Turtle* initialTurtle);
 
   /*! \brief Constructor without the specification of the L-System or initial
    *        turtle. For the case where there is a need to construct many leaves
@@ -39,20 +39,20 @@ public:
   virtual ~LeafConstruction();
 
   virtual G4VPhysicalVolume* Construct();
-  virtual void               ConstructSDandField();
+  virtual void ConstructSDandField();
 
   /*! \brief Construct a logical volume for a leaf with a specified L-System
    *        and an initial turtle.
    */
-  G4LogicalVolume* constructForTree(std::shared_ptr<LeafConstructionInterface> leafConstructor,
-				    Turtle* initialTurtle); 
+  G4LogicalVolume* constructForTree(
+      std::shared_ptr<LeafConstructionInterface> leafConstructor,
+      Turtle* initialTurtle);
 
-  void getExtentForTree(G4ThreeVector& minExtent, 
-			G4ThreeVector& maxExtent);
-  void getExtentForTree(std::shared_ptr<LeafConstructionInterface> leafConstructor,
-			Turtle* initialTurtle,
-			G4ThreeVector& minExtent, 
-			G4ThreeVector& maxExtent);
+  void getExtentForTree(G4ThreeVector& minExtent, G4ThreeVector& maxExtent);
+  void getExtentForTree(
+      std::shared_ptr<LeafConstructionInterface> leafConstructor,
+      Turtle* initialTurtle, G4ThreeVector& minExtent,
+      G4ThreeVector& maxExtent);
 
   G4LogicalVolume* getLogicalVolume();
 
@@ -60,50 +60,47 @@ public:
    *
    * \returns Area in units of meters squared.
    */
-  double           getSensitiveSurfaceArea();
+  double getSensitiveSurfaceArea();
 
-private:
+ private:
+  void iterateLSystem();
+  void clearPolygonLists();
+  void generateSurface();
+  std::vector<std::shared_ptr<Vertex>> mergeVertices(
+      std::vector<Polygon*> polygons);
+  void solidifyLeaf();
+  void getExtent(std::vector<Polygon*> polygons, G4ThreeVector& minExtent,
+                 G4ThreeVector& maxExtent);
+  G4ThreeVector convertVector(const TVector3& input);
 
-  void                                 iterateLSystem();
-  void                                 clearPolygonLists();
-  void                                 generateSurface();
-  std::vector<std::shared_ptr<Vertex>> mergeVertices(std::vector<Polygon* > polygons);
-  void                                 solidifyLeaf();
-  void                                 getExtent(std::vector<Polygon*> polygons,
-						 G4ThreeVector& minExtent,
-						 G4ThreeVector& maxExtent);
-  G4ThreeVector                        convertVector(const TVector3& input);
+  std::shared_ptr<LeafConstructionInterface> m_leafConstructor;
+  std::vector<std::shared_ptr<LeafSystemInterface>> m_leafConditions;
+  Turtle* m_initialTurtle;
+  std::vector<Polygon*> m_leafSurface;
+  std::vector<Polygon*> m_completeLeaf;
 
-
-  std::shared_ptr<LeafConstructionInterface>         m_leafConstructor;
-  std::vector<std::shared_ptr<LeafSystemInterface> > m_leafConditions;
-  Turtle*                                            m_initialTurtle;
-  std::vector<Polygon*>                              m_leafSurface;
-  std::vector<Polygon*>                              m_completeLeaf;
-
-  //Solids
+  // Solids
   G4TessellatedSolid* m_leafSolid;
 
-  //Volumes
+  // Volumes
   G4LogicalVolume* m_worldLogicalVolume;
 
-  //Sensitive volumes
+  // Sensitive volumes
   LeafTrackerSD* m_trackerSD;
 
   // Materials
   std::string m_airMaterialName;
   std::string m_sensitiveMaterialName;
 
-  //Visualization attributes
+  // Visualization attributes
   G4VisAttributes m_leafVisualAttributes;
   G4VisAttributes m_worldVisualAttributes;
 
-  //For re-construction
+  // For re-construction
   bool m_constructedSensitiveDetectors;
 
-  //Important leaf properties
+  // Important leaf properties
   double m_leafArea;
 };
 
-
-#endif //PV_FULL_LEAF_CONSTRUCTION
+#endif  // PV_FULL_LEAF_CONSTRUCTION

@@ -3,8 +3,8 @@
 
 /*! @file
  * \brief Prepare standard set of user actions to generate primary particles,
- *        handle new runs and handle new events. 
- *        
+ *        handle new runs and handle new events.
+ *
  * A number of elements of the simulation are configured here including the
  * analysis performed, number of photons and the light source.
  */
@@ -17,17 +17,18 @@ class RecorderBase;
 class Sun;
 
 class ActionInitialization : public G4VUserActionInitialization {
-
-public:
-  ActionInitialization(RecorderBase* recorder, std::function<G4VUserPrimaryGeneratorAction*()> primaryGenerator);
+ public:
+  ActionInitialization(
+      RecorderBase* recorder,
+      std::function<G4VUserPrimaryGeneratorAction*()> primaryGenerator);
   virtual ~ActionInitialization();
 
   virtual void BuildForMaster() const;
   virtual void Build() const;
 
-private:
+ private:
   /*! \brief Number of photons to generate per event. */
-  unsigned int  m_photonNumber;
+  unsigned int m_photonNumber;
 
   /*! \brief Inteface to analysis code. */
   RecorderBase* m_recorder;
@@ -39,7 +40,4 @@ private:
   Sun* m_sun;
 };
 
-
-
-
-#endif // PV_FULL_ACTION_INITIALIZATION
+#endif  // PV_FULL_ACTION_INITIALIZATION

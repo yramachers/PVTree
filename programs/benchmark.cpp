@@ -28,7 +28,7 @@
 #include "pvtree/climate/climateFactory.hpp"
 #include "pvtree/full/solarSimulation/spectrumFactory.hpp"
 
-//For memory monitoring
+// For memory monitoring
 size_t getPeakRSS();
 size_t getCurrentRSS();
 
@@ -41,7 +41,6 @@ void showHelp() {
 }
 
 int main(int argc, char** argv) {
-
   std::string treeType, leafType;
   unsigned int treeNumber;
   unsigned int photonNumberPerEvent;
@@ -49,7 +48,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -66,13 +65,15 @@ int main(int argc, char** argv) {
     return -1;
   }
 
-  //keep track of the times for each of the trees
-  std::chrono::time_point<std::chrono::system_clock> start, end, stepStart, stepEnd;
-  std::chrono::duration<double> elapsed_seconds, elapsed_initialize, elapsed_wrapUp, elapsed_simulation;
+  // keep track of the times for each of the trees
+  std::chrono::time_point<std::chrono::system_clock> start, end, stepStart,
+      stepEnd;
+  std::chrono::duration<double> elapsed_seconds, elapsed_initialize,
+      elapsed_wrapUp, elapsed_simulation;
 
-  //Initialize Geant4
+  // Initialize Geant4
   stepStart = std::chrono::system_clock::now();
-  //Reduce the verbosity
+  // Reduce the verbosity
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
   UImanager->ApplyCommand("/run/verbose 0");
   UImanager->ApplyCommand("/event/verbose 0");
@@ -85,7 +86,6 @@ int main(int argc, char** argv) {
   UImanager->ApplyCommand("/material/verbose 0");
   UImanager->ApplyCommand("/hits/verbose 0");
   UImanager->ApplyCommand("/random/verbose 0");
-  
 
   // Choose the Random engine
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
@@ -105,8 +105,8 @@ int main(int argc, char** argv) {
   // Prepare initial conditions for test trunk and leaves
   auto tree = TreeFactory::instance()->getTree(treeType);
   auto leaf = LeafFactory::instance()->getLeaf(leafType);
-    
-  //Define the sun setting, just an arbitrary time and date for now
+
+  // Define the sun setting, just an arbitrary time and date for now
   Sun sun(deviceLocation);
   sun.setDate(190, 2014);
   sun.setTime(12, 30, 30);
@@ -117,21 +117,22 @@ int main(int argc, char** argv) {
   // Construct the default run manager
   G4RunManager* runManager = new G4RunManager;
 
-  // Set mandatory initialization classes  
+  // Set mandatory initialization classes
   OpticalPhysicsList* physicsList = new OpticalPhysicsList;
   runManager->SetUserInitialization(physicsList);
-  
+
   DummyRecorder dummyRecorder;
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&dummyRecorder, 
-   [&photonNumberPerEvent, &sun] () -> G4VUserPrimaryGeneratorAction* { 
-							       return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }) );
+  runManager->SetUserInitialization(new ActionInitialization(
+      &dummyRecorder,
+      [&photonNumberPerEvent, &sun ]() -> G4VUserPrimaryGeneratorAction *
+      { return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }));
 
   DetectorConstruction* detector = new DetectorConstruction(tree, leaf);
 
   runManager->SetUserInitialization(detector);
-    
+
   // Initialize G4 kernel
   runManager->Initialize();
   stepEnd = std::chrono::system_clock::now();
@@ -139,7 +140,7 @@ int main(int argc, char** argv) {
 
   // Start the clock on the many-tree sim loop
   start = std::chrono::system_clock::now();
-  for (unsigned int x=0; x<treeNumber; x++){
+  for (unsigned int x = 0; x < treeNumber; x++) {
     // Allow the geometry to be rebuilt with new settings
     tree->randomizeParameters(x);
     detector->resetGeometry(tree, leaf);
@@ -153,14 +154,15 @@ int main(int argc, char** argv) {
     int numberOfEvent = 1;
     runManager->BeamOn(numberOfEvent);
     stepEnd = std::chrono::system_clock::now();
-    elapsed_simulation += stepEnd -stepStart;
+    elapsed_simulation += stepEnd - stepStart;
 
-    if (x % 10 == 0){
+    if (x % 10 == 0) {
       std::cout << "Attempted tree " << x << std::endl;
-      std::cout << "Current memory usage = " << getCurrentRSS()/(1024.0*1024.0) << " MB" 
-		<< "   Peak memory usage = " << getPeakRSS()/(1024.0*1024.0) << " MB" << std::endl;
+      std::cout << "Current memory usage = "
+                << getCurrentRSS() / (1024.0 * 1024.0) << " MB"
+                << "   Peak memory usage = " << getPeakRSS() / (1024.0 * 1024.0)
+                << " MB" << std::endl;
     }
-
   }
   end = std::chrono::system_clock::now();
   elapsed_seconds = end - start;
@@ -171,24 +173,25 @@ int main(int argc, char** argv) {
   stepEnd = std::chrono::system_clock::now();
   elapsed_wrapUp += stepEnd - stepStart;
 
-
   // Report benchmark results to screen.
-  std::cout << "Total time taken for " << treeNumber << " trees = " << elapsed_seconds.count() << " sec" << std::endl;
-  std::cout << "Initialize time = "    << elapsed_initialize.count() << " sec" << std::endl;
-  std::cout << "Wrap up time = "       << elapsed_wrapUp.count()     << " sec" << std::endl;
-  std::cout << "Simulation time = "    << elapsed_simulation.count() << " sec" << std::endl;
+  std::cout << "Total time taken for " << treeNumber
+            << " trees = " << elapsed_seconds.count() << " sec" << std::endl;
+  std::cout << "Initialize time = " << elapsed_initialize.count() << " sec"
+            << std::endl;
+  std::cout << "Wrap up time = " << elapsed_wrapUp.count() << " sec"
+            << std::endl;
+  std::cout << "Simulation time = " << elapsed_simulation.count() << " sec"
+            << std::endl;
 
-  std::cout << "Average time per tree = "    << elapsed_seconds.count()/treeNumber << " sec" << std::endl;
-  std::cout << "Estimated trees per hour = " << treeNumber*((60.0*60.0)/elapsed_seconds.count())<< std::endl;
+  std::cout << "Average time per tree = "
+            << elapsed_seconds.count() / treeNumber << " sec" << std::endl;
+  std::cout << "Estimated trees per hour = "
+            << treeNumber*((60.0 * 60.0) / elapsed_seconds.count())
+            << std::endl;
 
   // Report memory usage
-  std::cout << "Peak memory usage = " << getPeakRSS()/(1024.0*1024.0) << " MB" << std::endl;
+  std::cout << "Peak memory usage = " << getPeakRSS() / (1024.0 * 1024.0)
+            << " MB" << std::endl;
 
   return 0;
 }
-
-
-
-
-
-

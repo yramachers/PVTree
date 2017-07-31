@@ -10,22 +10,21 @@
 class Vertex;
 
 class Polygon {
-
-private:
+ private:
   std::vector<std::shared_ptr<Vertex>> m_vertices;
 
-public:
+ public:
   Polygon();
   Polygon(const Polygon& original);
 
-  unsigned int              size();
-  void                      addVertex(std::shared_ptr<Vertex> vertex);
-  void                      addVertex(TVector3 vertexPosition);
-  std::shared_ptr<Vertex>   getVertex(unsigned int index);
-  void                      replaceVertex(std::shared_ptr<Vertex> originalVertex,
-					  std::shared_ptr<Vertex> replacementVertex);
-  TVector3                  getNormal();
-  void                      invertNormal();
+  unsigned int size();
+  void addVertex(std::shared_ptr<Vertex> vertex);
+  void addVertex(TVector3 vertexPosition);
+  std::shared_ptr<Vertex> getVertex(unsigned int index);
+  void replaceVertex(std::shared_ptr<Vertex> originalVertex,
+                     std::shared_ptr<Vertex> replacementVertex);
+  TVector3 getNormal();
+  void invertNormal();
 
   /*! \brief Calculate the area of the polygon.
    *
@@ -33,8 +32,7 @@ public:
    *
    * \returns The area of the triangle.
    */
-  double                    getArea();
-
+  double getArea();
 };
 
-#endif //PV_POLYGON
+#endif  // PV_POLYGON

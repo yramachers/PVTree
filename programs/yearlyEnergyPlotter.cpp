@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to plot the energy collected over a period of
  *        a year.
  *
@@ -23,7 +23,7 @@
 #include <algorithm>
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -41,21 +41,23 @@ void showHelp() {
   std::cout << "yearlyEnergyPlotter help" << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 10" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME> :\t default ''" << std::endl;
-  std::cout << "\t --minimumSensitveArea <DOUBLE> [m^2] :\t default 0.001" << std::endl;
-  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'yearlyEnergyPlotter.results.root'" << std::endl;
+  std::cout << "\t --minimumSensitveArea <DOUBLE> [m^2] :\t default 0.001"
+            << std::endl;
+  std::cout << "\t --outputFileName <ROOT FILENAME> : \t default "
+               "'yearlyEnergyPlotter.results.root'" << std::endl;
 }
 
 double offsetToRootTime(time_t currentTime) {
-  
-  // ROOT defines time as starting from 01/01/1995, so I need to move the time to there
+  // ROOT defines time as starting from 01/01/1995, so I need to move the time
+  // to there
   struct tm calendarTime;
-  calendarTime.tm_sec=0;
-  calendarTime.tm_min=0; 
-  calendarTime.tm_hour=1; 
-  calendarTime.tm_mday=1; 
-  calendarTime.tm_mon=0; 
-  calendarTime.tm_year=95;
-  calendarTime.tm_isdst=1;
+  calendarTime.tm_sec = 0;
+  calendarTime.tm_min = 0;
+  calendarTime.tm_hour = 1;
+  calendarTime.tm_mday = 1;
+  calendarTime.tm_mon = 0;
+  calendarTime.tm_year = 95;
+  calendarTime.tm_isdst = 1;
 
   time_t rootStartTime = mktime(&calendarTime);
 
@@ -63,12 +65,10 @@ double offsetToRootTime(time_t currentTime) {
   return difftime(currentTime, rootStartTime);
 }
 
-void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs, 
-			  std::string canvasName, 
-			  std::string xAxisTitle, 
-			  std::string yAxisTitle) {
-
-  if (graphs.size() < 1){
+void createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
+                         std::string canvasName, std::string xAxisTitle,
+                         std::string yAxisTitle) {
+  if (graphs.size() < 1) {
     // Don't do anything.
     return;
   }
@@ -79,25 +79,24 @@ void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
   graphs[0].Draw("AL");
   graphs[0].GetXaxis()->SetTitle(xAxisTitle.c_str());
   graphs[0].GetYaxis()->SetTitle(yAxisTitle.c_str());
-  graphs[0].SetLineColorAlpha(kRed-2, 0.01);
+  graphs[0].SetLineColorAlpha(kRed - 2, 0.01);
   graphs[0].GetXaxis()->SetTimeDisplay(1);
   graphs[0].GetXaxis()->SetTimeFormat("%d/%m/%Y");
- 
+
   // Repeat for other graphs
-  for (unsigned int g = 1; g < graphs.size(); g++){
-    graphs[g].SetLineColorAlpha(kRed-2, 0.01);
+  for (unsigned int g = 1; g < graphs.size(); g++) {
+    graphs[g].SetLineColorAlpha(kRed - 2, 0.01);
     graphs[g].Draw("SAMEL");
   }
 
   // Save to disk
   canvas.Update();
   canvas.Write();
-
 }
-  
-void createAverageGraph(TGraphAsymmErrors& resultGraph, std::vector<TGraphAsymmErrors> inputGraphs) {
-  
-  if (inputGraphs.size() == 0){
+
+void createAverageGraph(TGraphAsymmErrors& resultGraph,
+                        std::vector<TGraphAsymmErrors> inputGraphs) {
+  if (inputGraphs.size() == 0) {
     // Nothing to do
     return;
   }
@@ -107,15 +106,15 @@ void createAverageGraph(TGraphAsymmErrors& resultGraph, std::vector<TGraphAsymmE
 
   for (auto& graph : inputGraphs) {
     if (numberOfPoints != graph.GetN()) {
-      // Inconsistency 
-      std::cout << "Different number of points present in plots for averaging." << std::endl;
+      // Inconsistency
+      std::cout << "Different number of points present in plots for averaging."
+                << std::endl;
       return;
     }
   }
 
   // For each point on each graph find the average and standard deviation
-  for (int p=0; p<numberOfPoints; p++){
-
+  for (int p = 0; p < numberOfPoints; p++) {
     std::vector<double> yValues;
 
     for (auto& graph : inputGraphs) {
@@ -124,7 +123,7 @@ void createAverageGraph(TGraphAsymmErrors& resultGraph, std::vector<TGraphAsymmE
 
     // Calculate the average
     double averageY = 0.0;
-    for (auto& val : yValues){
+    for (auto& val : yValues) {
       averageY += val;
     }
     averageY /= inputGraphs.size();
@@ -132,41 +131,38 @@ void createAverageGraph(TGraphAsymmErrors& resultGraph, std::vector<TGraphAsymmE
     // Calculate the standard deviation
     double standardDeviationY = 0.0;
     double sumSquaredDifference = 0.0;
-    
-    for (auto& val : yValues){
-      sumSquaredDifference += std::pow(val -averageY,2.0);
+
+    for (auto& val : yValues) {
+      sumSquaredDifference += std::pow(val - averageY, 2.0);
     }
-    standardDeviationY = std::sqrt(sumSquaredDifference/(yValues.size()-1));
+    standardDeviationY = std::sqrt(sumSquaredDifference / (yValues.size() - 1));
 
     // Set the point
     int nextPointIndex = resultGraph.GetN();
-      
+
     resultGraph.SetPoint(nextPointIndex, inputGraphs[0].GetX()[p], averageY);
 
     resultGraph.SetPointEYhigh(nextPointIndex, standardDeviationY);
-    resultGraph.SetPointEYlow( nextPointIndex, standardDeviationY);
+    resultGraph.SetPointEYlow(nextPointIndex, standardDeviationY);
 
     resultGraph.SetPointEXhigh(nextPointIndex, inputGraphs[0].GetEXhigh()[p]);
-    resultGraph.SetPointEXlow( nextPointIndex, inputGraphs[0].GetEXlow()[p]);
-  } 
+    resultGraph.SetPointEXlow(nextPointIndex, inputGraphs[0].GetEXlow()[p]);
+  }
 }
 
 time_t timeOfMonthStart(int month, int year) {
-
   struct tm calendarTime;
-  calendarTime.tm_sec=0;
-  calendarTime.tm_min=0; 
-  calendarTime.tm_hour=12; 
-  calendarTime.tm_mday=1; 
-  calendarTime.tm_mon=month; 
-  calendarTime.tm_year=year;
-  calendarTime.tm_isdst=1;
+  calendarTime.tm_sec = 0;
+  calendarTime.tm_min = 0;
+  calendarTime.tm_hour = 12;
+  calendarTime.tm_mday = 1;
+  calendarTime.tm_mon = month;
+  calendarTime.tm_year = year;
+  calendarTime.tm_isdst = 1;
   return mktime(&calendarTime);
-
 }
 
 time_t timeOfMonthEnd(int month, int year) {
-
   // Find next month
   month++;
 
@@ -177,37 +173,38 @@ time_t timeOfMonthEnd(int month, int year) {
   }
 
   struct tm calendarTime;
-  calendarTime.tm_sec=0;
-  calendarTime.tm_min=0; 
-  calendarTime.tm_hour=12; 
-  calendarTime.tm_mday=1; 
-  calendarTime.tm_mon=month; 
-  calendarTime.tm_year=year;
-  calendarTime.tm_isdst=1;
+  calendarTime.tm_sec = 0;
+  calendarTime.tm_min = 0;
+  calendarTime.tm_hour = 12;
+  calendarTime.tm_mday = 1;
+  calendarTime.tm_mon = month;
+  calendarTime.tm_year = year;
+  calendarTime.tm_isdst = 1;
   return mktime(&calendarTime);
-
 }
 
-void  fillGraphWithIntegratedMonth(TGraphAsymmErrors& graph, 
-				   YearlyResult* structure) {
-  // Just handling the energy density at the moment, so scale by the sensitive area
-  double sensitiveArea         = structure->getTree()->getDoubleParameter("sensitiveArea");
+void fillGraphWithIntegratedMonth(TGraphAsymmErrors& graph,
+                                  YearlyResult* structure) {
+  // Just handling the energy density at the moment, so scale by the sensitive
+  // area
+  double sensitiveArea =
+      structure->getTree()->getDoubleParameter("sensitiveArea");
 
   // Build a list of months to fill
-  std::vector<time_t> dayTimes = structure->getDayTimes(); 
+  std::vector<time_t> dayTimes = structure->getDayTimes();
 
-  std::vector<std::tuple<int, int>> monthYearEntries;  
-  for (auto& day : dayTimes){
-
+  std::vector<std::tuple<int, int>> monthYearEntries;
+  for (auto& day : dayTimes) {
     struct tm* calendarTime = gmtime(&day);
 
     int month = calendarTime->tm_mon;
-    int year  = calendarTime->tm_year;
-    
+    int year = calendarTime->tm_year;
+
     // Add to month year entries if not already present
     auto nextMonthYear = std::make_tuple(month, year);
 
-    if ( std::find(begin(monthYearEntries), end(monthYearEntries) ,nextMonthYear) == monthYearEntries.end() ){
+    if (std::find(begin(monthYearEntries), end(monthYearEntries),
+                  nextMonthYear) == monthYearEntries.end()) {
       monthYearEntries.push_back(nextMonthYear);
     }
   }
@@ -218,19 +215,19 @@ void  fillGraphWithIntegratedMonth(TGraphAsymmErrors& graph,
 
   // Fill any gaps in the month vector
   std::vector<std::tuple<int, int>> filledMonthYearEntries;
-  filledMonthYearEntries.push_back( monthYearEntries[0] );
+  filledMonthYearEntries.push_back(monthYearEntries[0]);
 
-  while ( filledMonthYearEntries.back() != monthYearEntries.back() ){
-
+  while (filledMonthYearEntries.back() != monthYearEntries.back()) {
     int currentMonth = std::get<0>(filledMonthYearEntries.back());
-    int currentYear  = std::get<1>(filledMonthYearEntries.back());
+    int currentYear = std::get<1>(filledMonthYearEntries.back());
 
     if (currentMonth == 11) {
-      filledMonthYearEntries.push_back( std::make_tuple(0, currentYear+1) );
+      filledMonthYearEntries.push_back(std::make_tuple(0, currentYear + 1));
       continue;
     }
 
-    filledMonthYearEntries.push_back( std::make_tuple(currentMonth+1, currentYear) );
+    filledMonthYearEntries.push_back(
+        std::make_tuple(currentMonth + 1, currentYear));
 
     // Avoid memory filling error
     if (filledMonthYearEntries.size() > 1000) {
@@ -242,15 +239,16 @@ void  fillGraphWithIntegratedMonth(TGraphAsymmErrors& graph,
   std::vector<std::tuple<int, int>> selectedMonthYearEntries;
 
   for (auto& monthYearTuple : filledMonthYearEntries) {
-
-    time_t monthIntegrationStart = timeOfMonthStart(std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
-    time_t monthIntegrationEnd = timeOfMonthEnd(std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
+    time_t monthIntegrationStart = timeOfMonthStart(
+        std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
+    time_t monthIntegrationEnd = timeOfMonthEnd(std::get<0>(monthYearTuple),
+                                                std::get<1>(monthYearTuple));
 
     // Allow 12 hour leeway
-    if ( monthIntegrationStart < dayTimes[0] - (60*60*12) ){ 
+    if (monthIntegrationStart < dayTimes[0] - (60 * 60 * 12)) {
       continue;
     }
-    if ( monthIntegrationEnd > dayTimes.back() + (60*60*12) ) {
+    if (monthIntegrationEnd > dayTimes.back() + (60 * 60 * 12)) {
       continue;
     }
 
@@ -262,53 +260,59 @@ void  fillGraphWithIntegratedMonth(TGraphAsymmErrors& graph,
   // Test print out all the month year pairs
   /*
   for ( auto& monthYearTuple : filledMonthYearEntries ){
-    std::cout << "FILL month: " << std::get<0>(monthYearTuple) << " year: " << std::get<1>(monthYearTuple) << std::endl;
+    std::cout << "FILL month: " << std::get<0>(monthYearTuple) << " year: " <<
+  std::get<1>(monthYearTuple) << std::endl;
   }
 
   for ( auto& monthYearTuple : selectedMonthYearEntries ){
-    std::cout << "USING month: " << std::get<0>(monthYearTuple) << " year: " << std::get<1>(monthYearTuple) << std::endl;
+    std::cout << "USING month: " << std::get<0>(monthYearTuple) << " year: " <<
+  std::get<1>(monthYearTuple) << std::endl;
   }
 
   throw;
   */
 
   // Apply integration for each month and then add a new point
-  for ( auto& monthYearTuple : selectedMonthYearEntries ){
-    
+  for (auto& monthYearTuple : selectedMonthYearEntries) {
     // Build start and end times for month being integrated
-    time_t monthIntegrationStart = timeOfMonthStart(std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
-    time_t monthIntegrationEnd = timeOfMonthEnd(std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
-    
-    double energyIntegral = structure->getEnergyIntegral(monthIntegrationStart, monthIntegrationEnd);
+    time_t monthIntegrationStart = timeOfMonthStart(
+        std::get<0>(monthYearTuple), std::get<1>(monthYearTuple));
+    time_t monthIntegrationEnd = timeOfMonthEnd(std::get<0>(monthYearTuple),
+                                                std::get<1>(monthYearTuple));
+
+    double energyIntegral = structure->getEnergyIntegral(monthIntegrationStart,
+                                                         monthIntegrationEnd);
 
     // Add point to the graph
     long rootStartTime = offsetToRootTime(monthIntegrationStart);
     long rootEndTime = offsetToRootTime(monthIntegrationEnd);
 
-    long centreTime = rootStartTime + (rootEndTime-rootStartTime)/2.0;
+    long centreTime = rootStartTime + (rootEndTime - rootStartTime) / 2.0;
 
-    int nextPointIndex = graph.GetN();     
-    graph.SetPoint(nextPointIndex,    centreTime, energyIntegral/sensitiveArea);
+    int nextPointIndex = graph.GetN();
+    graph.SetPoint(nextPointIndex, centreTime, energyIntegral / sensitiveArea);
     graph.SetPointEXlow(nextPointIndex, centreTime - rootStartTime);
     graph.SetPointEXhigh(nextPointIndex, rootEndTime - centreTime);
   }
 }
 
-void  fillGraphWithIntegratedYear(TGraphAsymmErrors& graph, 
-				  YearlyResult* structure) {
-  // Just handling the energy density at the moment, so scale by the sensitive area
-  double sensitiveArea         = structure->getTree()->getDoubleParameter("sensitiveArea");
+void fillGraphWithIntegratedYear(TGraphAsymmErrors& graph,
+                                 YearlyResult* structure) {
+  // Just handling the energy density at the moment, so scale by the sensitive
+  // area
+  double sensitiveArea =
+      structure->getTree()->getDoubleParameter("sensitiveArea");
 
   // Build a list of years to fill
-  std::vector<time_t> dayTimes = structure->getDayTimes(); 
+  std::vector<time_t> dayTimes = structure->getDayTimes();
 
-  std::vector<int> yearEntries;  
-  for (auto& day : dayTimes){
-
+  std::vector<int> yearEntries;
+  for (auto& day : dayTimes) {
     struct tm* calendarTime = gmtime(&day);
-    int year  = calendarTime->tm_year;
-    
-    if ( std::find(begin(yearEntries), end(yearEntries), year) == yearEntries.end() ){
+    int year = calendarTime->tm_year;
+
+    if (std::find(begin(yearEntries), end(yearEntries), year) ==
+        yearEntries.end()) {
       yearEntries.push_back(year);
     }
   }
@@ -319,12 +323,11 @@ void  fillGraphWithIntegratedYear(TGraphAsymmErrors& graph,
 
   // Fill any gaps in the year vector
   std::vector<int> filledYearEntries;
-  filledYearEntries.push_back( yearEntries[0] );
+  filledYearEntries.push_back(yearEntries[0]);
 
-  while ( filledYearEntries.back() != yearEntries.back() ){
-
-    int currentYear  = filledYearEntries.back();
-    filledYearEntries.push_back( currentYear+1 );
+  while (filledYearEntries.back() != yearEntries.back()) {
+    int currentYear = filledYearEntries.back();
+    filledYearEntries.push_back(currentYear + 1);
 
     // Avoid memory filling error
     if (filledYearEntries.size() > 1000) {
@@ -336,15 +339,14 @@ void  fillGraphWithIntegratedYear(TGraphAsymmErrors& graph,
   std::vector<int> selectedYearEntries;
 
   for (auto& year : filledYearEntries) {
-
     time_t yearIntegrationStart = timeOfMonthStart(0, year);
-    time_t yearIntegrationEnd = timeOfMonthStart(0, year+1);
+    time_t yearIntegrationEnd = timeOfMonthStart(0, year + 1);
 
     // Allow 12 hour leeway
-    if ( yearIntegrationStart < dayTimes[0] - (60*60*12) ){ 
+    if (yearIntegrationStart < dayTimes[0] - (60 * 60 * 12)) {
       continue;
     }
-    if ( yearIntegrationEnd > dayTimes.back() + (60*60*12) ) {
+    if (yearIntegrationEnd > dayTimes.back() + (60 * 60 * 12)) {
       continue;
     }
 
@@ -364,43 +366,42 @@ void  fillGraphWithIntegratedYear(TGraphAsymmErrors& graph,
 
   // Apply integration for each month and then add a new point
   for (auto& year : selectedYearEntries) {
-
     time_t yearIntegrationStart = timeOfMonthStart(0, year);
-    time_t yearIntegrationEnd = timeOfMonthStart(0, year+1);
-    
-    double energyIntegral = structure->getEnergyIntegral(yearIntegrationStart, yearIntegrationEnd);
+    time_t yearIntegrationEnd = timeOfMonthStart(0, year + 1);
+
+    double energyIntegral =
+        structure->getEnergyIntegral(yearIntegrationStart, yearIntegrationEnd);
 
     // Add point to the graph
     long rootStartTime = offsetToRootTime(yearIntegrationStart);
     long rootEndTime = offsetToRootTime(yearIntegrationEnd);
 
-    long centreTime = rootStartTime + (rootEndTime-rootStartTime)/2.0;
+    long centreTime = rootStartTime + (rootEndTime - rootStartTime) / 2.0;
 
-    int nextPointIndex = graph.GetN();     
-    graph.SetPoint(nextPointIndex,    centreTime, energyIntegral/sensitiveArea);
+    int nextPointIndex = graph.GetN();
+    graph.SetPoint(nextPointIndex, centreTime, energyIntegral / sensitiveArea);
     graph.SetPointEXlow(nextPointIndex, centreTime - rootStartTime);
     graph.SetPointEXhigh(nextPointIndex, rootEndTime - centreTime);
   }
 }
 
-void fillGraphs(TList* scanResults, std::string outputFileName, double minimumSensitiveArea, int treeNumber){
-
+void fillGraphs(TList* scanResults, std::string outputFileName,
+                double minimumSensitiveArea, int treeNumber) {
   // Iterate through the scan results list
   TIter scanIterator(scanResults);
 
   // Store a TGraph for each tree
-  std::vector<TGraphAsymmErrors> energyGraphs; 
-  std::vector<TGraphAsymmErrors> normalizedEnergyGraphs; 
+  std::vector<TGraphAsymmErrors> energyGraphs;
+  std::vector<TGraphAsymmErrors> normalizedEnergyGraphs;
   std::vector<TGraphAsymmErrors> energyDensityGraphs;
 
   // For monthly integrations
   std::vector<TGraphAsymmErrors> monthlyEnergyDensityGraphs;
-  
+
   // For yearly integrations
   std::vector<TGraphAsymmErrors> yearlyEnergyDensityGraphs;
 
-  for (int s=0; s<scanResults->GetSize(); s++ ){
-
+  for (int s = 0; s < scanResults->GetSize(); s++) {
     if (s > treeNumber) {
       break;
     }
@@ -411,77 +412,85 @@ void fillGraphs(TList* scanResults, std::string outputFileName, double minimumSe
     currentEnergyGraph.SetTitle("");
     currentEnergyGraph.GetXaxis()->SetTitle("Day of Year");
     currentEnergyGraph.GetYaxis()->SetTitle("Energy [kWh]");
-  
+
     TGraphAsymmErrors currentNormalizedEnergyGraph;
     graphName = "normalizedEnergyGraph_tree" + std::to_string(s);
     currentNormalizedEnergyGraph.SetName(graphName.c_str());
     currentNormalizedEnergyGraph.SetTitle("");
     currentNormalizedEnergyGraph.GetXaxis()->SetTitle("Day of Year");
     currentNormalizedEnergyGraph.GetYaxis()->SetTitle("Fractional Energy");
-    
+
     TGraphAsymmErrors currentEnergyDensityGraph;
     graphName = "energyDensityGraph_tree" + std::to_string(s);
     currentEnergyDensityGraph.SetName(graphName.c_str());
     currentEnergyDensityGraph.SetTitle("");
     currentEnergyDensityGraph.GetXaxis()->SetTitle("Day of Year");
-    currentEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+    currentEnergyDensityGraph.GetYaxis()->SetTitle(
+        "Energy density [kWhm^{-2}]");
 
     TGraphAsymmErrors currentMonthlyEnergyDensityGraph;
     graphName = "monthlyEnergyDensityGraph_tree" + std::to_string(s);
     currentMonthlyEnergyDensityGraph.SetName(graphName.c_str());
     currentMonthlyEnergyDensityGraph.SetTitle("");
     currentMonthlyEnergyDensityGraph.GetXaxis()->SetTitle("Month");
-    currentMonthlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+    currentMonthlyEnergyDensityGraph.GetYaxis()->SetTitle(
+        "Energy density [kWhm^{-2}]");
 
     TGraphAsymmErrors currentYearlyEnergyDensityGraph;
     graphName = "monthlyEnergyDensityGraph_tree" + std::to_string(s);
     currentYearlyEnergyDensityGraph.SetName(graphName.c_str());
     currentYearlyEnergyDensityGraph.SetTitle("");
     currentYearlyEnergyDensityGraph.GetXaxis()->SetTitle("Year");
-    currentYearlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
-    
+    currentYearlyEnergyDensityGraph.GetYaxis()->SetTitle(
+        "Energy density [kWhm^{-2}]");
+
     // Get simulation values
-    YearlyResult* currentStructure      = (YearlyResult*)scanIterator();
-    double currentSensitiveArea         = currentStructure->getTree()->getDoubleParameter("sensitiveArea");
-    std::vector<time_t> dayTimes        = currentStructure->getDayTimes();
-    std::vector<double> energyDeposited = currentStructure->getEnergyDeposited();
-    double totalYearEnergySum           = currentStructure->getEnergyIntegral();
+    YearlyResult* currentStructure = (YearlyResult*)scanIterator();
+    double currentSensitiveArea =
+        currentStructure->getTree()->getDoubleParameter("sensitiveArea");
+    std::vector<time_t> dayTimes = currentStructure->getDayTimes();
+    std::vector<double> energyDeposited =
+        currentStructure->getEnergyDeposited();
+    double totalYearEnergySum = currentStructure->getEnergyIntegral();
 
     // Check if the sensitive area is large enough
-    if (currentSensitiveArea <= minimumSensitiveArea){
+    if (currentSensitiveArea <= minimumSensitiveArea) {
       delete currentStructure;
       continue;
     }
 
     // Check energy sum is positive (why would it not?!)
-    if (totalYearEnergySum <= 0.0){
+    if (totalYearEnergySum <= 0.0) {
       delete currentStructure;
       continue;
     }
 
     // Fill graphs with days which have all simulated days
-    for (unsigned int d=0; d<dayTimes.size(); d++) {
-      
+    for (unsigned int d = 0; d < dayTimes.size(); d++) {
       // Add the point to the graph
       time_t currentTime = dayTimes[d];
       long rootTime = offsetToRootTime(currentTime);
 
-      int nextPointIndex = currentEnergyGraph.GetN();     
-      currentEnergyGraph.SetPoint(nextPointIndex,           rootTime, energyDeposited[d]);
-      currentNormalizedEnergyGraph.SetPoint(nextPointIndex, rootTime, energyDeposited[d]/totalYearEnergySum);
-      currentEnergyDensityGraph.SetPoint(nextPointIndex,    rootTime, energyDeposited[d]/currentSensitiveArea);
+      int nextPointIndex = currentEnergyGraph.GetN();
+      currentEnergyGraph.SetPoint(nextPointIndex, rootTime, energyDeposited[d]);
+      currentNormalizedEnergyGraph.SetPoint(
+          nextPointIndex, rootTime, energyDeposited[d] / totalYearEnergySum);
+      currentEnergyDensityGraph.SetPoint(
+          nextPointIndex, rootTime, energyDeposited[d] / currentSensitiveArea);
     }
 
     // Fill integrated monthly graphs
-    fillGraphWithIntegratedMonth(currentMonthlyEnergyDensityGraph, currentStructure);
+    fillGraphWithIntegratedMonth(currentMonthlyEnergyDensityGraph,
+                                 currentStructure);
 
     // Fill integrated yearly graphs
-    fillGraphWithIntegratedYear(currentYearlyEnergyDensityGraph, currentStructure);
+    fillGraphWithIntegratedYear(currentYearlyEnergyDensityGraph,
+                                currentStructure);
 
     // Store for later writing.
     energyGraphs.push_back(currentEnergyGraph);
     normalizedEnergyGraphs.push_back(currentNormalizedEnergyGraph);
-    energyDensityGraphs.push_back(currentEnergyDensityGraph); 
+    energyDensityGraphs.push_back(currentEnergyDensityGraph);
     monthlyEnergyDensityGraphs.push_back(currentMonthlyEnergyDensityGraph);
     yearlyEnergyDensityGraphs.push_back(currentYearlyEnergyDensityGraph);
 
@@ -513,38 +522,48 @@ void fillGraphs(TList* scanResults, std::string outputFileName, double minimumSe
   averageTreeEnergyDensityGraph.SetName("averageTreeEnergyDensityGraph");
   averageTreeEnergyDensityGraph.SetTitle("");
   averageTreeEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+  averageTreeEnergyDensityGraph.GetYaxis()->SetTitle(
+      "Energy density [kWhm^{-2}]");
   averageTreeEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
   averageTreeEnergyDensityGraph.GetXaxis()->SetTimeFormat("%d/%m/%Y");
 
-  averageTreeMonthlyEnergyDensityGraph.SetName("averageTreeMonthlyEnergyDensityGraph");
+  averageTreeMonthlyEnergyDensityGraph.SetName(
+      "averageTreeMonthlyEnergyDensityGraph");
   averageTreeMonthlyEnergyDensityGraph.SetTitle("");
   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeMonthlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+  averageTreeMonthlyEnergyDensityGraph.GetYaxis()->SetTitle(
+      "Energy density [kWhm^{-2}]");
   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
   averageTreeMonthlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
 
-  averageTreeYearlyEnergyDensityGraph.SetName("averageTreeYearlyEnergyDensityGraph");
+  averageTreeYearlyEnergyDensityGraph.SetName(
+      "averageTreeYearlyEnergyDensityGraph");
   averageTreeYearlyEnergyDensityGraph.SetTitle("");
   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTitle("Time");
-  averageTreeYearlyEnergyDensityGraph.GetYaxis()->SetTitle("Energy density [kWhm^{-2}]");
+  averageTreeYearlyEnergyDensityGraph.GetYaxis()->SetTitle(
+      "Energy density [kWhm^{-2}]");
   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeDisplay(1);
   averageTreeYearlyEnergyDensityGraph.GetXaxis()->SetTimeFormat("%m/%Y");
 
   // Create the averages from previously filled graphs
-  createAverageGraph(averageTreeEnergyGraph,           energyGraphs);
+  createAverageGraph(averageTreeEnergyGraph, energyGraphs);
   createAverageGraph(averageTreeNormalizedEnergyGraph, normalizedEnergyGraphs);
-  createAverageGraph(averageTreeEnergyDensityGraph,    energyDensityGraphs);
-  createAverageGraph(averageTreeMonthlyEnergyDensityGraph,    monthlyEnergyDensityGraphs);
-  createAverageGraph(averageTreeYearlyEnergyDensityGraph,    yearlyEnergyDensityGraphs);
+  createAverageGraph(averageTreeEnergyDensityGraph, energyDensityGraphs);
+  createAverageGraph(averageTreeMonthlyEnergyDensityGraph,
+                     monthlyEnergyDensityGraphs);
+  createAverageGraph(averageTreeYearlyEnergyDensityGraph,
+                     yearlyEnergyDensityGraphs);
 
   // Prepare a root file to store the results
   TFile resultsFile(outputFileName.c_str(), "RECREATE");
 
   // Make a canvas combining all the plots in one summary graphic
-  createSummaryCanvas(energyGraphs,           "energySummaryCanvas",     "Time", "Energy per day[kWh/day]");
-  createSummaryCanvas(normalizedEnergyGraphs, "normalizedSummaryCanvas", "Time", "Fractional Energy per day");
-  createSummaryCanvas(energyDensityGraphs,    "energyDensityCanvas",     "Time", "Energy density per day [kWhm^{-2}/day]");
+  createSummaryCanvas(energyGraphs, "energySummaryCanvas", "Time",
+                      "Energy per day[kWh/day]");
+  createSummaryCanvas(normalizedEnergyGraphs, "normalizedSummaryCanvas", "Time",
+                      "Fractional Energy per day");
+  createSummaryCanvas(energyDensityGraphs, "energyDensityCanvas", "Time",
+                      "Energy density per day [kWhm^{-2}/day]");
 
   // Save the averaged plots
   averageTreeEnergyGraph.Write();
@@ -557,18 +576,18 @@ void fillGraphs(TList* scanResults, std::string outputFileName, double minimumSe
   resultsFile.Close();
 }
 
-
-/*! \brief Time binned energy plotter main. 
+/*! \brief Time binned energy plotter main.
  *
- * Display simulation results over periods involving many days. Uses both actual simulated
+ * Display simulation results over periods involving many days. Uses both actual
+ *simulated
  * days and interpolation results. Binning is also applied for monthly periods.
  *
  * @param[in] argc Number of command line arguments.
- * @param[in] argv See yearlyEnergyPlotter --help (showHelp) for available arguments.
- * 
+ * @param[in] argv See yearlyEnergyPlotter --help (showHelp) for available
+ *arguments.
+ *
  */
 int main(int argc, char** argv) {
-
   unsigned int treeNumber;
   std::string inputTreeFileName;
   std::string outputFileName;
@@ -577,7 +596,7 @@ int main(int argc, char** argv) {
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -585,7 +604,8 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("treeNumber", treeNumber, 10u);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.001);
-  ops >> GetOpt::Option("outputFileName", outputFileName,"yearlyEnergyPlotter.results.root");
+  ops >> GetOpt::Option("outputFileName", outputFileName,
+                        "yearlyEnergyPlotter.results.root");
 
   if (inputTreeFileName == "") {
     std::cerr << "No tree file specified." << std::endl;
@@ -595,7 +615,7 @@ int main(int argc, char** argv) {
 
   // Report input parameters
   std::cout << "Just using trees from " << inputTreeFileName << std::endl;
-  std::cout << "Plotting "    << treeNumber << " trees." << std::endl;
+  std::cout << "Plotting " << treeNumber << " trees." << std::endl;
   std::cout << "Recording results in " << outputFileName << std::endl;
 
   // Also do not run if other arguments are present
@@ -608,18 +628,11 @@ int main(int argc, char** argv) {
   // Load from file
   TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
   TList* scanResults = (TList*)inputTreeFile.FindObjectAny("testedStructures");
-  
+
   // Fill the graphs
   fillGraphs(scanResults, outputFileName, minimumSensitiveArea, treeNumber);
-  
+
   inputTreeFile.Close();
-  
+
   return 0;
 }
-
-
-
-
-
-
-

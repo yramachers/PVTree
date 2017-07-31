@@ -11,59 +11,53 @@
 //
  */
 
-class LeafTrackerHit : public G4VHit
-{
-public:
+class LeafTrackerHit : public G4VHit {
+ public:
   LeafTrackerHit();
   LeafTrackerHit(const LeafTrackerHit&);
   virtual ~LeafTrackerHit();
 
   const LeafTrackerHit& operator=(const LeafTrackerHit&);
   G4int operator==(const LeafTrackerHit&) const;
-  
+
   inline void* operator new(size_t);
-  inline void  operator delete(void*);
+  inline void operator delete(void*);
 
   // methods from base class
   virtual void Draw();
   virtual void Print();
 
-  //Setters
-  void setTrackID(G4int trackID);    
+  // Setters
+  void setTrackID(G4int trackID);
   void setChamberNumber(G4int chamberNumber);
   void setEnergyDeposited(G4double energy);
   void setPosition(G4ThreeVector position);
-  
-  //Getters
-  G4int         getTrackID();
-  G4int         getChamberNumber();
-  G4double      getEnergyDeposited();
+
+  // Getters
+  G4int getTrackID();
+  G4int getChamberNumber();
+  G4double getEnergyDeposited();
   G4ThreeVector getPosition();
 
-private:
-  G4int         m_trackID;
-  G4int         m_chamberNumber;
-  G4double      m_energyDeposited;
+ private:
+  G4int m_trackID;
+  G4int m_chamberNumber;
+  G4double m_energyDeposited;
   G4ThreeVector m_position;
 };
 
-
 typedef G4THitsCollection<LeafTrackerHit> LeafTrackerHitsCollection;
 
-extern  G4ThreadLocal G4Allocator<LeafTrackerHit>* LeafTrackerHitAllocator;
+extern G4ThreadLocal G4Allocator<LeafTrackerHit>* LeafTrackerHitAllocator;
 
-inline void* LeafTrackerHit::operator new(size_t)
-{
-  if(!LeafTrackerHitAllocator)
-      LeafTrackerHitAllocator = new G4Allocator<LeafTrackerHit>;
-  return static_cast<void *>(LeafTrackerHitAllocator->MallocSingle());
+inline void* LeafTrackerHit::operator new(size_t) {
+  if (!LeafTrackerHitAllocator)
+    LeafTrackerHitAllocator = new G4Allocator<LeafTrackerHit>;
+  return static_cast<void*>(LeafTrackerHitAllocator->MallocSingle());
 }
 
-
-inline void LeafTrackerHit::operator delete(void *hit)
-{
-  LeafTrackerHitAllocator->FreeSingle( static_cast<LeafTrackerHit*>(hit) );
+inline void LeafTrackerHit::operator delete(void* hit) {
+  LeafTrackerHitAllocator->FreeSingle(static_cast<LeafTrackerHit*>(hit));
 }
 
-
-#endif //LEAF_TRACKER_HIT_HPP
+#endif  // LEAF_TRACKER_HIT_HPP

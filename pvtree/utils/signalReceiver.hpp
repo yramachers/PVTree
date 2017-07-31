@@ -19,19 +19,19 @@
  *
  */
 class SignalReceiver {
-public:
-  
+ public:
   /*! \brief Mechanism to access signal receiver
    */
   static SignalReceiver* instance();
 
   /*! \brief Set the user action for a single signal
    */
-  void setSignal(int signalNumber,                std::function<void(int)> userAction);
+  void setSignal(int signalNumber, std::function<void(int)> userAction);
 
   /*! \brief Set the user action for a set of signals
    */
-  void setSignals(std::vector<int> signalNumbers, std::function<void(int)> userAction);
+  void setSignals(std::vector<int> signalNumbers,
+                  std::function<void(int)> userAction);
 
   /*! \brief Change all the signal actions to the defaults
    */
@@ -40,16 +40,15 @@ public:
   /*! \brief Change all the signal actions to the defaults
    */
   void resetToDefault(int signalNumber);
-  
-private:
-  
+
+ private:
   /*! \brief Create an singleton instance
    */
   SignalReceiver();
   SignalReceiver(SignalReceiver& signalReceiver);
   ~SignalReceiver();
 
-  /*! \brief Functions defined by user which should be 
+  /*! \brief Functions defined by user which should be
    *         called when a signal is received.
    *
    */
@@ -62,5 +61,4 @@ private:
   static void cWrapper(int signalNumber);
 };
 
-
-#endif //PVTREE_UTILS_SIGNAL_RECEIVER_HPP
+#endif  // PVTREE_UTILS_SIGNAL_RECEIVER_HPP

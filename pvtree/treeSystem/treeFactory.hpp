@@ -14,28 +14,32 @@
  * is made through a static instance.
  */
 class TreeFactory {
-private:
-  TreeFactory();//!< Prevent construction of additional instances
-  TreeFactory(TreeFactory& treeFactory);//!< Prevent copy construction of instances
+ private:
+  TreeFactory();  //!< Prevent construction of additional instances
+  TreeFactory(
+      TreeFactory& treeFactory);  //!< Prevent copy construction of instances
 
   //! Store available tree constructors by a string
-  std::map<std::string, std::function<TreeConstructionInterface*(void)>> m_factoryFunctionRegistry;
-public:
+  std::map<std::string, std::function<TreeConstructionInterface*(void)>>
+      m_factoryFunctionRegistry;
 
+ public:
   /*! \brief Retrieve the singleton reference to this factory.
    */
   static TreeFactory* instance();
-  
+
   /*! \brief Retrieve a tree constructor using a tree name.
-   * @param[in] treeName  Name of the tree as registered in the constructor definition
+   * @param[in] treeName  Name of the tree as registered in the constructor
+   * definition
    * \returns A shared pointer to a tree constructor.
    */
   std::shared_ptr<TreeConstructionInterface> getTree(std::string treeName);
-  
+
   /*! brief Register a tree constructor with the factory
    */
-  void registerConstructor(std::string treeName, 
-			   std::function<TreeConstructionInterface*(void)> constructorFunction);
+  void registerConstructor(
+      std::string treeName,
+      std::function<TreeConstructionInterface*(void)> constructorFunction);
 };
 
 /*! \brief Registration class for tree factory
@@ -43,16 +47,14 @@ public:
  * Need to create an instance per tree that should be available
  * in the global tree factory.
  */
-template<class T>
+template <class T>
 class TreeFactoryRegistrar {
-public:
-  explicit TreeFactoryRegistrar(std::string treeName)
-    {
-      //register the class factory function
-      TreeFactory::instance()->registerConstructor(treeName,
-						   [](void) -> TreeConstructionInterface * { return new T();});
-    }
+ public:
+  explicit TreeFactoryRegistrar(std::string treeName) {
+    // register the class factory function
+    TreeFactory::instance()->registerConstructor(
+        treeName, [](void) -> TreeConstructionInterface * { return new T(); });
+  }
 };
 
-
-#endif //TREE_SYSTEM_TREE_FACTORY_HPP
+#endif  // TREE_SYSTEM_TREE_FACTORY_HPP

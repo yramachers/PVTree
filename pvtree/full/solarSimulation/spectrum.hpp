@@ -18,13 +18,11 @@
 class TH1D;
 
 class Spectrum {
-public:
-
+ public:
   explicit Spectrum(std::string inputFilePath);
   Spectrum(std::vector<std::string> columnNames,
-	   std::map<std::string, std::vector<double> > data);
+           std::map<std::string, std::vector<double> > data);
   ~Spectrum();
-
 
   /*! \brief Produce a set of photons with the
    *         bias of more photons in regions with
@@ -35,7 +33,8 @@ public:
    *          To recover the original distribution still need
    *          to divide by the total number of photons considered.
    */
-  std::vector<std::tuple<double, double> > generatePhotons(unsigned int photonNumber);
+  std::vector<std::tuple<double, double> > generatePhotons(
+      unsigned int photonNumber);
 
   /*! \brief Retrieve the raw SMARTS column names
    *         for the spectrum
@@ -48,7 +47,7 @@ public:
    *
    * \returns a map containing bin values for each variable
    *          where the map is indexed by the column name.
-   */  
+   */
   std::map<std::string, std::vector<double> > getSMARTSData() const;
 
   /*! \brief Retrieve the SMARTS column data binned in wavelength
@@ -69,8 +68,7 @@ public:
    */
   bool operator!=(const Spectrum& otherSpectrum);
 
-private:
-
+ private:
   /*! \brief Extract the spectra definition
    *         from a text file from SMARTS.
    */
@@ -86,15 +84,13 @@ private:
   std::map<std::string, std::vector<double> > m_data;
 
   //! Store the column names seperately as well
-  std::vector<std::string > m_columnNames;
+  std::vector<std::string> m_columnNames;
 
   //! Store the histograms by name
   std::map<std::string, std::shared_ptr<TH1D> > m_histograms;
 
   //! Precision of import format (to handle standard smarts export)
   int m_dataPrecision;
-
 };
 
-
-#endif //PVTREE_SOLAR_SIMULATION_SPECTRUM
+#endif  // PVTREE_SOLAR_SIMULATION_SPECTRUM

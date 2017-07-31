@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to visualize randomly chosen trees. Useful for
  *        checking the random parameter ranges are not causing issues.
  *
@@ -35,30 +35,29 @@ void showHelp() {
 
 /*! \brief Random tree visualizer.
  *
- * Example how 
+ * Example how
  *
  * @param[in] argc Number of command line arguments.
  * @param[in] argv Accepts two command line arguments. The first is the
  *                 name of the tree system and the second is the name of
  *                 the leaf system.
- * 
+ *
  */
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv) {
   std::string treeType, leafType;
   unsigned int seed;
 
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
 
   ops >> GetOpt::Option('t', "tree", treeType, "helical");
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
-  ops >> GetOpt::Option('s', "seed", seed,     1234u);
+  ops >> GetOpt::Option('s', "seed", seed, 1234u);
 
   // Also do not run if other arguments are present
   if (ops.options_remain()) {
@@ -67,8 +66,9 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  //double updatePeriod = 3.0; //Seconds
-  //int randomSeedStart = 1234; //Set a default random number seed starting point
+  // double updatePeriod = 3.0; //Seconds
+  // int randomSeedStart = 1234; //Set a default random number seed starting
+  // point
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
@@ -90,43 +90,42 @@ int main(int argc, char **argv) {
   G4LogicalVolume* logicalWorldVolume = detector->getLogicalVolume();
 
   // Set the scale of the visualization extent
-  G4double visualScale = 3.0*m;
+  G4double visualScale = 3.0 * m;
 
-  //Setting the Geant visualization
+  // Setting the Geant visualization
   G4VisManager* visManager = new G4VisExecutive;
-  visManager->RegisterRunDurationUserVisAction
-    ("Testing visualization", new VisualizationAction(logicalWorldVolume), 
-     G4VisExtent(-visualScale,visualScale,
-		 -visualScale,visualScale,
-		 -visualScale,visualScale));
+  visManager->RegisterRunDurationUserVisAction(
+      "Testing visualization", new VisualizationAction(logicalWorldVolume),
+      G4VisExtent(-visualScale, visualScale, -visualScale, visualScale,
+                  -visualScale, visualScale));
   visManager->Initialize();
 
   G4UIExecutive* ui = new G4UIExecutive(argc, argv);
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-  UImanager->ApplyCommand ("/control/verbose 2");
-  UImanager->ApplyCommand ("/vis/verbose parameters");
-  UImanager->ApplyCommand ("/vis/open OGLSQt");
-  UImanager->ApplyCommand ("/vis/scene/create");
-  UImanager->ApplyCommand ("/vis/scene/add/userAction");
-  UImanager->ApplyCommand ("/vis/sceneHandler/attach");
+  UImanager->ApplyCommand("/control/verbose 2");
+  UImanager->ApplyCommand("/vis/verbose parameters");
+  UImanager->ApplyCommand("/vis/open OGLSQt");
+  UImanager->ApplyCommand("/vis/scene/create");
+  UImanager->ApplyCommand("/vis/scene/add/userAction");
+  UImanager->ApplyCommand("/vis/sceneHandler/attach");
 
-  UImanager->ApplyCommand ("/vis/scene/add/scale");
-  UImanager->ApplyCommand ("/vis/scene/add/axes");
-  
-  UImanager->ApplyCommand ("/vis/viewer/set/upVector 0 0 1");
-  UImanager->ApplyCommand ("/vis/viewer/set/projection p 45 deg");
-  UImanager->ApplyCommand ("/vis/viewer/set/viewpointThetaPhi 70.0 20.0 deg");
-  UImanager->ApplyCommand ("/vis/viewer/set/rotationStyle freeRotation");
-  UImanager->ApplyCommand ("/vis/viewer/set/style s"); // solid (display faces of geometry)
-  UImanager->ApplyCommand ("/vis/viewer/set/background 1 1 1 1");
-  UImanager->ApplyCommand ("/vis/viewer/flush");
-  
+  UImanager->ApplyCommand("/vis/scene/add/scale");
+  UImanager->ApplyCommand("/vis/scene/add/axes");
+
+  UImanager->ApplyCommand("/vis/viewer/set/upVector 0 0 1");
+  UImanager->ApplyCommand("/vis/viewer/set/projection p 45 deg");
+  UImanager->ApplyCommand("/vis/viewer/set/viewpointThetaPhi 70.0 20.0 deg");
+  UImanager->ApplyCommand("/vis/viewer/set/rotationStyle freeRotation");
+  UImanager->ApplyCommand(
+      "/vis/viewer/set/style s");  // solid (display faces of geometry)
+  UImanager->ApplyCommand("/vis/viewer/set/background 1 1 1 1");
+  UImanager->ApplyCommand("/vis/viewer/flush");
+
   ui->SessionStart();
 
   delete ui;
   delete visManager;
-
 
   /*
   std::chrono::time_point<std::chrono::system_clock> start, end;
@@ -143,7 +142,7 @@ int main(int argc, char **argv) {
 
     if (elapsed_seconds.count() > updatePeriod){
       if (tree != 0){
-	delete tree;
+        delete tree;
       }
 
       currentSeed++;
@@ -151,19 +150,13 @@ int main(int argc, char **argv) {
       myCanvas.cd(1);
       tree->draw();
 
-      myCanvas.Update();    
-  
+      myCanvas.Update();
+
       end = std::chrono::system_clock::now();
       start = end;
     }
-    
+
     gSystem->ProcessEvents();
   }
   */
 }
-
-
-
-
-
-

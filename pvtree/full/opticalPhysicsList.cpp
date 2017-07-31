@@ -6,24 +6,17 @@
 #include "G4ParticleTable.hh"
 #include "G4ProcessManager.hh"
 
-OpticalPhysicsList::OpticalPhysicsList() : G4VUserPhysicsList(),
-					   m_verbosityLevel(0) {
+OpticalPhysicsList::OpticalPhysicsList()
+    : G4VUserPhysicsList(), m_verbosityLevel(0) {}
 
-}
-
-OpticalPhysicsList::~OpticalPhysicsList() {
-
-}
+OpticalPhysicsList::~OpticalPhysicsList() {}
 
 void OpticalPhysicsList::ConstructParticle() {
-
-  //Just want optical photons
+  // Just want optical photons
   G4OpticalPhoton::OpticalPhotonDefinition();
-
 }
 
 void OpticalPhysicsList::ConstructProcess() {
-
   AddTransportation();
 
   // optical processes
@@ -39,30 +32,27 @@ void OpticalPhysicsList::ConstructProcess() {
 
   auto theParticleIterator = GetParticleIterator();
   theParticleIterator->reset();
-  while( (*(theParticleIterator))() )
-    {
-      G4ParticleDefinition* particle = theParticleIterator->value();
-      G4ProcessManager* pmanager = particle->GetProcessManager();
-      G4String particleName = particle->GetParticleName();
-      
-      if (particleName == "opticalphoton") {
-	pmanager->AddDiscreteProcess(theAbsorptionProcess);
-	pmanager->AddDiscreteProcess(theBoundaryProcess);
-	pmanager->AddDiscreteProcess(rayleighScatteringProcess);
-	theAbsorptionProcessNeverUsed = false;
-	theBoundaryProcessNeverUsed = false;
-	theRayleighProcessNeverUsed = false;
-      }
+  while ((*(theParticleIterator))()) {
+    G4ParticleDefinition* particle = theParticleIterator->value();
+    G4ProcessManager* pmanager = particle->GetProcessManager();
+    G4String particleName = particle->GetParticleName();
+
+    if (particleName == "opticalphoton") {
+      pmanager->AddDiscreteProcess(theAbsorptionProcess);
+      pmanager->AddDiscreteProcess(theBoundaryProcess);
+      pmanager->AddDiscreteProcess(rayleighScatteringProcess);
+      theAbsorptionProcessNeverUsed = false;
+      theBoundaryProcessNeverUsed = false;
+      theRayleighProcessNeverUsed = false;
     }
-    if ( theBoundaryProcessNeverUsed ) delete theBoundaryProcess;
-    if ( theAbsorptionProcessNeverUsed ) delete theAbsorptionProcess;
-    if ( theRayleighProcessNeverUsed ) delete rayleighScatteringProcess;
+  }
+  if (theBoundaryProcessNeverUsed) delete theBoundaryProcess;
+  if (theAbsorptionProcessNeverUsed) delete theAbsorptionProcess;
+  if (theRayleighProcessNeverUsed) delete rayleighScatteringProcess;
 }
 
 void OpticalPhysicsList::AddTransportation() {
-
   G4VUserPhysicsList::AddTransportation();
-  
 }
 
 void OpticalPhysicsList::SetCuts() {
@@ -70,5 +60,3 @@ void OpticalPhysicsList::SetCuts() {
   //   the default cut value for all particle types
   SetCutsWithDefault();
 }
-
-

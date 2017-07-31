@@ -12,8 +12,7 @@
  *
  */
 class YearlyResult : public TObject {
-private:
-
+ private:
   // Store the unix time stamp for each day (the start of)
   std::vector<double> m_dayTimes;
 
@@ -46,7 +45,7 @@ private:
    */
   time_t getReducedGranularityTime(time_t time) const;
 
-public:
+ public:
   YearlyResult();
   ~YearlyResult();
 
@@ -109,35 +108,40 @@ public:
    *
    * @param[in] time Time to retrieve energy deposit, which
    *                  will resolve to just a day.
-   * @param[in] interpolationType The method of interpolation that should be used,
+   * @param[in] interpolationType The method of interpolation that should be
+   *used,
    *            where by default the cubic spline method is used.
    *
    * \returns The energy deposited in kWh on this day only.
    */
   double getEnergyDeposited(time_t time,
-			    ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
+                            ROOT::Math::Interpolation::Type interpolationType =
+                                ROOT::Math::Interpolation::kCSPLINE) const;
 
   /* \brief Get the energy integral between two days
    *
    * @param[in] startTime First day of the integral
    * @param[in] endTime   The day to stop integration.
-   * @param[in] interpolationType The method of interpolation that should be used,
+   * @param[in] interpolationType The method of interpolation that should be
+   *used,
    *            where by default the cubic spline method is used.
    *
    * \returns The energy deposited in kWh between two days.
    */
-  double getEnergyIntegral(time_t startTime,
-			   time_t endTime,
-			   ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
+  double getEnergyIntegral(time_t startTime, time_t endTime,
+                           ROOT::Math::Interpolation::Type interpolationType =
+                               ROOT::Math::Interpolation::kCSPLINE) const;
 
   /* \brief Get the energy integral for complete time range
    *
-   * @param[in] interpolationType The method of interpolation that should be used,
+   * @param[in] interpolationType The method of interpolation that should be
+   *used,
    *            where by default the cubic spline method is used.
    *
    * \returns The energy deposited in kWh in complete time range
    */
-  double getEnergyIntegral(ROOT::Math::Interpolation::Type interpolationType = ROOT::Math::Interpolation::kCSPLINE) const;
+  double getEnergyIntegral(ROOT::Math::Interpolation::Type interpolationType =
+                               ROOT::Math::Interpolation::kCSPLINE) const;
 
   /* \brief Get the list of day middle times where simulation
    *        has taken place.
@@ -158,13 +162,7 @@ public:
    */
   time_t getMinimumTime() const;
 
-
   ClassDef(YearlyResult, 2);
 };
 
-
-#endif //PVTREE_ANALYSIS_YEARLY_RESULT_HPP
-
-
-
-
+#endif  // PVTREE_ANALYSIS_YEARLY_RESULT_HPP

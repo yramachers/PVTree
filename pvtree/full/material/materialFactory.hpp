@@ -14,10 +14,9 @@
 #include <memory>
 #include <vector>
 
-namespace libconfig{
-  class Config;
+namespace libconfig {
+class Config;
 }
-
 
 /*! \brief Factory which will provide Geant4 materials
  *         and related optical surface properties built
@@ -27,22 +26,21 @@ namespace libconfig{
  * is made through a static instance.
  */
 class MaterialFactory {
-private:
-  
+ private:
   // List of currently opened configuration files
-  std::vector<libconfig::Config* >          m_openedConfigurations;
+  std::vector<libconfig::Config*> m_openedConfigurations;
 
   // List of all the materials that can be found in configuration
-  std::vector<std::string>                  m_availableMaterialNames;
+  std::vector<std::string> m_availableMaterialNames;
 
   // map of materials to config files
   std::map<std::string, libconfig::Config*> m_materialConfigurations;
 
   // map of materials to constructed Geant4 material
-  std::map<std::string, G4Material*>        m_geant4Materials;
+  std::map<std::string, G4Material*> m_geant4Materials;
 
   // map of materials to constructed optical surface
-  std::map<std::string, G4OpticalSurface*>  m_geant4OpticalSurfaces;
+  std::map<std::string, G4OpticalSurface*> m_geant4OpticalSurfaces;
 
   /*! \brief Prevent construction of additional instances
    *
@@ -68,7 +66,7 @@ private:
    *         some standard parse checking applied by libconfig.
    *
    */
-  bool openConfigurationFile(std::string fileName, libconfig::Config* cfg);  
+  bool openConfigurationFile(std::string fileName, libconfig::Config* cfg);
 
   /*! \brief Obtain the set of configurations described
    *         by the path.
@@ -107,12 +105,11 @@ private:
    */
   G4OpticalSurfaceModel translateSurfaceModel(std::string input);
 
-public:
-
+ public:
   /*! \brief Retrieve the singleton reference to this factory.
    */
   static MaterialFactory* instance();
-  
+
   /*! \brief Pass additional configuration file.
    */
   bool addConfigurationFile(std::string configurationFileName);
@@ -132,4 +129,4 @@ public:
   G4OpticalSurface* getOpticalSurface(std::string materialName);
 };
 
-#endif //PVTREE_MATERIAL_MATERIAL_FACTORY_HPP
+#endif  // PVTREE_MATERIAL_MATERIAL_FACTORY_HPP

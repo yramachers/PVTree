@@ -11,13 +11,12 @@
 #include "TFile.h"
 #include "TList.h"
 
-TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
-
+TEST_CASE("analysis/yearlyResult", "[analysis]") {
   auto tree = TreeFactory::instance()->getTree("sympodial");
   auto leaf = LeafFactory::instance()->getLeaf("cordate");
 
   // Create some random analysis 'results'
-  int seed        = 1024;
+  int seed = 1024;
   int trialNumber = 100;
   int equalityPrecisionFactor = 10;
 
@@ -35,12 +34,11 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
   std::vector<time_t> dayTimes;
 
   bool cloningSuccessful = true;
-  for (int t=0; t<trialNumber; t++){
+  for (int t = 0; t < trialNumber; t++) {
+    tree->randomizeParameters(seed + t);
+    leaf->randomizeParameters(seed + t);
 
-    tree->randomizeParameters(seed+t);
-    leaf->randomizeParameters(seed+t);
-
-    if (t % 10 == 0){
+    if (t % 10 == 0) {
       energies.clear();
       dayTimes.clear();
     }
@@ -50,16 +48,19 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
 
     // ... Simulation would go here ...
 
-    std::string treeName = "tree" + std::to_string(t) + "_Seed" + std::to_string(seed);
-    TreeConstructionInterface* clonedTree = static_cast<TreeConstructionInterface*>(tree->Clone(treeName.c_str()));
+    std::string treeName =
+        "tree" + std::to_string(t) + "_Seed" + std::to_string(seed);
+    TreeConstructionInterface* clonedTree =
+        static_cast<TreeConstructionInterface*>(tree->Clone(treeName.c_str()));
 
-    std::string leafName = "leaf" + std::to_string(t) + "_Seed" + std::to_string(seed);
-    LeafConstructionInterface* clonedLeaf = static_cast<LeafConstructionInterface*>(leaf->Clone(leafName.c_str()));
+    std::string leafName =
+        "leaf" + std::to_string(t) + "_Seed" + std::to_string(seed);
+    LeafConstructionInterface* clonedLeaf =
+        static_cast<LeafConstructionInterface*>(leaf->Clone(leafName.c_str()));
 
-    if ( *clonedTree != *tree || *clonedLeaf != *leaf ){
+    if (*clonedTree != *tree || *clonedLeaf != *leaf) {
       cloningSuccessful = false;
     }
-
 
     // Add to the list that will be exported
     YearlyResult* result = new YearlyResult();
@@ -72,7 +73,7 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
   }
 
   // Check that there wasn't any problem in cloning the structures.
-  CHECK( cloningSuccessful );
+  CHECK(cloningSuccessful);
 
   // Test that the analysis results can be stored correctly
   std::string persistFileName = "/tmp/unit-analysisPersistence-temp.root";
@@ -82,12 +83,11 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
 
   exportFile.Close();
 
-
   TFile importFile(persistFileName.c_str(), "READ");
   TList* importList = (TList*)importFile.FindObjectAny("testedStructures");
 
   // Compare imported and exported lists
-  REQUIRE( importList->GetSize() == exportList.GetSize() );
+  REQUIRE(importList->GetSize() == exportList.GetSize());
 
   TIter importIterator(importList);
   TIter exportIterator(&exportList);
@@ -96,20 +96,21 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
   bool leavesIdentical = true;
   bool daysIdentical = true;
   bool energiesIdentical = true;
-  for (int i=0; i<importList->GetSize(); i++) {
+  for (int i = 0; i < importList->GetSize(); i++) {
+    YearlyResult* importedResult =
+        static_cast<YearlyResult*>(importIterator.Next());
+    YearlyResult* exportedResult =
+        static_cast<YearlyResult*>(exportIterator.Next());
 
-    YearlyResult* importedResult = static_cast<YearlyResult*>(importIterator.Next());
-    YearlyResult* exportedResult = static_cast<YearlyResult*>(exportIterator.Next());
-
-    if ( *(importedResult->getTree()) != *(exportedResult->getTree()) ){
+    if (*(importedResult->getTree()) != *(exportedResult->getTree())) {
       treesIdentical = false;
     }
 
-    if ( *(importedResult->getLeaf()) != *(exportedResult->getLeaf()) ){
+    if (*(importedResult->getLeaf()) != *(exportedResult->getLeaf())) {
       leavesIdentical = false;
     }
 
-    if ( importedResult->getDayTimes() != exportedResult->getDayTimes() ){
+    if (importedResult->getDayTimes() != exportedResult->getDayTimes()) {
       daysIdentical = false;
     }
 
@@ -122,23 +123,22 @@ TEST_CASE( "analysis/yearlyResult", "[analysis]" ) {
     }
 
     // For floating point value comparison use special equality check.
-    for (unsigned int j=0; j<importedEnergies.size(); j++){
-      if ( !almost_equal(importedEnergies[j], exportedEnergies[j], equalityPrecisionFactor) ){
-	energiesIdentical = false;
+    for (unsigned int j = 0; j < importedEnergies.size(); j++) {
+      if (!almost_equal(importedEnergies[j], exportedEnergies[j],
+                        equalityPrecisionFactor)) {
+        energiesIdentical = false;
       }
     }
-
   }
 
-  CHECK( treesIdentical );
-  CHECK( leavesIdentical );
-  CHECK( daysIdentical );
-  CHECK( energiesIdentical );
+  CHECK(treesIdentical);
+  CHECK(leavesIdentical);
+  CHECK(daysIdentical);
+  CHECK(energiesIdentical);
 
   importFile.Close();
 
   // Test that the temporary file can be deleted.
   int removeFileFlag = std::remove(persistFileName.c_str());
-  REQUIRE( removeFileFlag == 0 );
-
+  REQUIRE(removeFileFlag == 0);
 }

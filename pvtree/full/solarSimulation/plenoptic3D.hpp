@@ -7,7 +7,7 @@
 #include <random>
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -27,12 +27,11 @@ class WeightedParticleGun;
  *
  */
 class Plenoptic3D : public TObject {
-public:
-
+ public:
   /*! \brief Enumeration unifying the axis setting and getting.
    *
    */
-  enum Axis { AZIMUTH = 1 , ELEVATION = 2, ENERGY = 3 };
+  enum Axis { AZIMUTH = 1, ELEVATION = 2, ENERGY = 3 };
 
   /*! \brief Create a 3D Plenoptic function with default settings.
    *
@@ -47,10 +46,11 @@ public:
    *
    * @param[in] azimuthBinNumber The number of bins to subdivide azimuth.
    * @param[in] elevationBinNumber The number of bins to subdivide elevation.
-   * @param[in] energyBinNumber The number of bins to subdivide the 
+   * @param[in] energyBinNumber The number of bins to subdivide the
    *            photon energy (in the range 280.0 nm to 1500.0 nm).
    */
-  Plenoptic3D(int azimuthBinNumber, int elevationBinNumber, int energyBinNumber);
+  Plenoptic3D(int azimuthBinNumber, int elevationBinNumber,
+              int energyBinNumber);
 
   /*! \brief Copy a Plenoptic3D function
    */
@@ -70,7 +70,8 @@ public:
    * @param[in] minimumValue The first bins low value.
    * @param[in] maximumValue The last bins high value.
    */
-  void setBinning(Axis selectedAxis, int binNumber, double minimumValue, double maximumValue);
+  void setBinning(Axis selectedAxis, int binNumber, double minimumValue,
+                  double maximumValue);
 
   /*! \brief Set bin low edges
    *
@@ -118,15 +119,16 @@ public:
    * @param[in] particleGun The object which constructs the photons.
    * @param[in] number The number of photons to added to the event.
    */
-  void generate(G4Event* event, WeightedParticleGun* particleGun, unsigned int number);
+  void generate(G4Event* event, WeightedParticleGun* particleGun,
+                unsigned int number);
 
   /*! \brief Retreive the elevation vs azimuth histogram with energy projected
    *         out.
    *
    * Mainly for a visual inspection of the plenoptic function.
    */
-  TH2D* getEnergyProjectedHistogram() const ;
-  
+  TH2D* getEnergyProjectedHistogram() const;
+
   /*! \brief Add another plenoptic function onto this instance.
    *
    * @param[in] source The plenoptic function to copy from.
@@ -140,19 +142,21 @@ public:
    */
   void setRandomNumberSeedSequence(std::vector<int> seedSequence);
 
-private:
-
+ private:
   //! Histogram which stores the binned values of the plenoptic function.
   TH3D* m_histogram;
 
   //! Current binning vectors
   std::map<Axis, std::vector<double>> m_binLowEdges;
-  std::map<Axis, int>    m_axisDefaultBinNumbers = { {AZIMUTH, 50}, {ELEVATION, 50}, {ENERGY,  100} };
-  std::map<Axis, double> m_axisMinimumAllowed = { {AZIMUTH, 0.0     }, {ELEVATION, 0.0     }, {ENERGY,  1.0} };
-  std::map<Axis, double> m_axisMaximumAllowed = { {AZIMUTH, 2.0*M_PI}, {ELEVATION, M_PI/2.0}, {ENERGY, 10.0} };
-  
+  std::map<Axis, int> m_axisDefaultBinNumbers = {
+      {AZIMUTH, 50}, {ELEVATION, 50}, {ENERGY, 100}};
+  std::map<Axis, double> m_axisMinimumAllowed = {
+      {AZIMUTH, 0.0}, {ELEVATION, 0.0}, {ENERGY, 1.0}};
+  std::map<Axis, double> m_axisMaximumAllowed = {
+      {AZIMUTH, 2.0 * M_PI}, {ELEVATION, M_PI / 2.0}, {ENERGY, 10.0}};
+
   //! Surface definition
-  std::vector< std::pair<TVector3, TVector3> > m_surfaces;
+  std::vector<std::pair<TVector3, TVector3>> m_surfaces;
 
   //! The energy flux through each element of the surface
   std::vector<double> m_surfaceFlux;
@@ -182,10 +186,9 @@ private:
   bool m_seedChanged;
 
   //! Random number generator (that should not be persisted)
-  std::mt19937* m_generator; //! transient
+  std::mt19937* m_generator;  //! transient
 
-private:
-  
+ private:
   /*! \brief Construct the lightfield surface geometry
    *
    * Currently just builds a five sided cube (missing the bottom out) where
@@ -238,7 +241,8 @@ private:
    * @param[in] valueA Arbitrary value.
    * @param[in] valueB Arbitrary value.
    */
-  double getOrderedFractionalValue(double fraction, double valueA, double valueB) const;
+  double getOrderedFractionalValue(double fraction, double valueA,
+                                   double valueB) const;
 
   /*! \brief Choose a random photon polarisation for the next shot.
    *
@@ -249,5 +253,4 @@ private:
   ClassDef(Plenoptic3D, 1);
 };
 
-
-#endif //PVTREE_SOLARSIMULATION_PLENOPTIC3D
+#endif  // PVTREE_SOLARSIMULATION_PLENOPTIC3D

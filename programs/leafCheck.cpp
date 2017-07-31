@@ -12,13 +12,12 @@ void showHelp() {
 }
 
 int main(int argc, char** argv) {
-
   std::string leafType;
   unsigned int iterationNumber;
   GetOpt::GetOpt_pp ops(argc, argv);
 
   // Check for help request
-  if (ops >> GetOpt::OptionPresent('h', "help")){
+  if (ops >> GetOpt::OptionPresent('h', "help")) {
     showHelp();
     return 0;
   }
@@ -35,36 +34,32 @@ int main(int argc, char** argv) {
 
   auto leaf = LeafFactory::instance()->getLeaf(leafType);
 
-  //initialConditions
-  std::vector<std::shared_ptr<LeafSystemInterface> > conditions = leaf->getInitialConditions();
+  // initialConditions
+  std::vector<std::shared_ptr<LeafSystemInterface> > conditions =
+      leaf->getInitialConditions();
   leaf->print();
 
-  for (unsigned int i=0; i<iterationNumber; i++){
+  for (unsigned int i = 0; i < iterationNumber; i++) {
     std::vector<std::shared_ptr<LeafSystemInterface> > latestConditions;
 
-    for (const auto & condition : conditions) {
-      for (const auto & newCondition : condition->applyRule()) {
-	latestConditions.push_back(newCondition);
+    for (const auto& condition : conditions) {
+      for (const auto& newCondition : condition->applyRule()) {
+        latestConditions.push_back(newCondition);
       }
     }
-    
-    //Use the new iteration
+
+    // Use the new iteration
     conditions.clear();
     conditions = latestConditions;
 
-    //Display some information
-    std::cout << "For iteration " << i << " there are " << conditions.size() << " conditions." << std::endl;
+    // Display some information
+    std::cout << "For iteration " << i << " there are " << conditions.size()
+              << " conditions." << std::endl;
 
     std::cout << "Produced Rules = ";
-    for (unsigned int x=0; x<conditions.size(); x++) {
+    for (unsigned int x = 0; x < conditions.size(); x++) {
       conditions[x]->print(std::cout);
     }
     std::cout << std::endl;
   }
 }
-
-
-
-
-
-

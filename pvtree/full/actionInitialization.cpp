@@ -5,21 +5,21 @@
 #include "pvtree/full/recorders/recorderBase.hpp"
 #include "pvtree/full/solarSimulation/sun.hpp"
 
-ActionInitialization::ActionInitialization(RecorderBase* recorder, 
-					   std::function<G4VUserPrimaryGeneratorAction*()> primaryGenerator) : 
-  G4VUserActionInitialization(),  
-  m_recorder(recorder),
-  m_primaryGenerator(primaryGenerator) {}
-
+ActionInitialization::ActionInitialization(
+    RecorderBase* recorder,
+    std::function<G4VUserPrimaryGeneratorAction*()> primaryGenerator)
+    : G4VUserActionInitialization(),
+      m_recorder(recorder),
+      m_primaryGenerator(primaryGenerator) {}
 
 ActionInitialization::~ActionInitialization() {}
 
-void ActionInitialization::BuildForMaster() const{
+void ActionInitialization::BuildForMaster() const {
   SetUserAction(new RunAction(m_recorder));
 }
 
-void ActionInitialization::Build() const{
-  SetUserAction( m_primaryGenerator() );
+void ActionInitialization::Build() const {
+  SetUserAction(m_primaryGenerator());
   SetUserAction(new RunAction(m_recorder));
   SetUserAction(new EventAction(m_recorder));
   SetUserAction(new SteppingAction());

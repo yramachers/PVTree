@@ -14,21 +14,19 @@ class G4HCofThisEvent;
 //
  */
 
-class LeafTrackerSD : public G4VSensitiveDetector
-{
-public:
+class LeafTrackerSD : public G4VSensitiveDetector {
+ public:
   LeafTrackerSD(const G4String& name, const G4String& hitsCollectionName);
   virtual ~LeafTrackerSD();
 
   // methods from base class
-  virtual void   Initialize(G4HCofThisEvent* hitCollection);
+  virtual void Initialize(G4HCofThisEvent* hitCollection);
   virtual G4bool ProcessHits(G4Step* step, G4TouchableHistory* history);
-  virtual void   EndOfEvent(G4HCofThisEvent* hitCollection);
+  virtual void EndOfEvent(G4HCofThisEvent* hitCollection);
   G4bool ProcessHits_user(const G4Step* step, G4TouchableHistory* history);
 
-private:
+ private:
   LeafTrackerHitsCollection* m_hitsCollection;
 };
 
-
-#endif //LEAF_TRACKER_SD_HPP
+#endif  // LEAF_TRACKER_SD_HPP

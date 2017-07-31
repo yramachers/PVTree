@@ -23,20 +23,19 @@ class Climate;
  *
  */
 class ClimateFactory {
-private:
-
+ private:
   /*! \brief Name of configuration file describing climate.
    */
-  std::string     m_climateConfiguration;
+  std::string m_climateConfiguration;
 
   /*! \brief Instance of climate. Deletion of this object is
    *         handled by the climate factory.
    */
-  Climate*        m_climate;
+  Climate* m_climate;
 
   /*! \brief Monitor climate configuration name
    */
-  bool            m_climateConfigurationChanged;
+  bool m_climateConfigurationChanged;
 
   /*! \brief Device location information
    */
@@ -57,8 +56,7 @@ private:
    */
   ~ClimateFactory();
 
-public:
-
+ public:
   /*! \brief Retrieve the singleton reference to this factory.
    */
   static ClimateFactory* instance();
@@ -78,7 +76,6 @@ public:
    * Will lazily construct the climate when first requested.
    */
   const Climate* getClimate();
-
 };
 
-#endif //PVTREE_CLIMATE_CLIMATE_FACTORY_HPP
+#endif  // PVTREE_CLIMATE_CLIMATE_FACTORY_HPP

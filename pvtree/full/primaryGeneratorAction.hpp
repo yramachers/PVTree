@@ -17,8 +17,7 @@ class WeightedParticleGun;
 class Sun;
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
-
-public:
+ public:
   PrimaryGeneratorAction(unsigned int photonNumber, Sun* sun);
   virtual ~PrimaryGeneratorAction();
 
@@ -27,19 +26,19 @@ public:
    *
    */
   virtual void GeneratePrimaries(G4Event* event);
-  
+
   /*! \brief Set the number of photons to be randomly generated
    *         in each event.
    */
   void SetPhotonNumber(unsigned int photonNumber);
 
-private:
-  unsigned int         m_photonNumber;
+ private:
+  unsigned int m_photonNumber;
   WeightedParticleGun* m_particleGun;
-  Sun*                 m_sun;
+  Sun* m_sun;
 
   /*! \brief Assume photons should be generated with a random
-   *         polarisation. This is the default but if it is 
+   *         polarisation. This is the default but if it is
    *         not done manually there will be warnings!
    *
    * Currently taking implementation from : -
@@ -55,6 +54,4 @@ private:
   TVector3 directSun(double genrad, TVector3 v1, TVector3 v2, TVector3 lv);
 };
 
-
-
-#endif //PV_FULL_PRIMARY_GENERATOR_ACTION_HPP
+#endif  // PV_FULL_PRIMARY_GENERATOR_ACTION_HPP

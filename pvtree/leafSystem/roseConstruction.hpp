@@ -6,16 +6,15 @@
 #include "pvtree/leafSystem/leafFactory.hpp"
 
 /*! \brief Class to handle construction of Rose leaf type.
- * 
+ *
  * Initializes the default parameters for the Rose leaf type
  * and provides the initial conditions for the L-System.
  *
  * The base class provides the functionality to handle the parameters.
  */
-class RoseConstruction : public LeafConstructionInterface  {
-private:
-
-public:
+class RoseConstruction : public LeafConstructionInterface {
+ private:
+ public:
   RoseConstruction();
   virtual ~RoseConstruction();
   void print(std::ostream& os = std::cout);
@@ -24,4 +23,4 @@ public:
   ClassDef(RoseConstruction, 2);
 };
 
-#endif //LEAF_SYSTEM_ROSE_CONSTRUCTION_HPP
+#endif  // LEAF_SYSTEM_ROSE_CONSTRUCTION_HPP
