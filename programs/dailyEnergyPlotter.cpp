@@ -1,5 +1,5 @@
 /*!
- * @file 
+ * @file
  * \brief Application to plot the energy collected over a period of
  *        a day.
  *
@@ -38,7 +38,7 @@
 #include "G4StepLimiterPhysics.hh"
 
 // save diagnostic state
-#pragma GCC diagnostic push 
+#pragma GCC diagnostic push
 
 // turn off the specific warning.
 #pragma GCC diagnostic ignored "-Wshadow"
@@ -66,9 +66,9 @@ void showHelp() {
   std::cout << "\t --outputFileName <ROOT FILENAME> : \t default 'dailyEnergyPlotter.results.root'" << std::endl;
 }
 
-void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs, 
-			  std::string canvasName, 
-			  std::string xAxisTitle, 
+void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
+			  std::string canvasName,
+			  std::string xAxisTitle,
 			  std::string yAxisTitle) {
 
   if (graphs.size() < 1){
@@ -98,14 +98,14 @@ void  createSummaryCanvas(std::vector<TGraphAsymmErrors>& graphs,
 
 }
 
-/*! \brief Time binned energy plotter main. 
+/*! \brief Time binned energy plotter main.
  *
  * Provides an example of how to perform a random search with output simply
  * being the energy as a function of time over the period of a day.
  *
  * @param[in] argc Number of command line arguments.
  * @param[in] argv See dailyEnergyPlotter --help (showHelp) for available arguments.
- * 
+ *
  */
 int main(int argc, char** argv) {
 
@@ -165,8 +165,8 @@ int main(int argc, char** argv) {
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;
   std::shared_ptr<LeafConstructionInterface> leaf;
-  TreeConstructionInterface* bestT;
-  LeafConstructionInterface* bestL;
+  TreeConstructionInterface* bestT {nullptr};
+  LeafConstructionInterface* bestL {nullptr} ;
 
   if (!singleTreeRunning) {
     tree = TreeFactory::instance()->getTree(treeType);
@@ -175,7 +175,7 @@ int main(int argc, char** argv) {
     TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
     TList* structureList = (TList*)inputTreeFile.Get("testedStructures");
     TIter structureListIterator(structureList);
-    
+
     if ( structureList->GetSize() == 0 ){
       std::cout << "There are no trees to consider." << std::endl;
       return 1;
@@ -220,11 +220,11 @@ int main(int argc, char** argv) {
   Sun sun(deviceLocation);
   sun.setDate(dayNumber, 2014);
   int simulationStartingTime = sun.getSunriseTime()*60; //s
-  int simulationEndingTime   = sun.getSunsetTime()*60; //s, 
+  int simulationEndingTime   = sun.getSunsetTime()*60; //s,
   int simulationStepTime     = (double)(simulationEndingTime-simulationStartingTime)/simulationTimeSegments;
 
-  std::cout << "Simulation time considered between " 
-	    << simulationStartingTime 
+  std::cout << "Simulation time considered between "
+	    << simulationStartingTime
 	    << "(s) and "
 	    << simulationEndingTime
 	    << "(s)." << std::endl;
@@ -238,7 +238,7 @@ int main(int argc, char** argv) {
 
   G4RunManager* runManager = new G4RunManager;
 
-  // Set mandatory initialization classes  
+  // Set mandatory initialization classes
   DetectorConstruction* detector = new DetectorConstruction(tree, leaf);
   runManager->SetUserInitialization(detector);
 
@@ -249,21 +249,21 @@ int main(int argc, char** argv) {
   runManager->SetUserInitialization(physicsList);
 
   // Setup primary generator to initialize for the simulation
-  runManager->SetUserInitialization(new ActionInitialization(&recorder, 
-   [&photonNumberPerTimeSegment, &sun] () -> G4VUserPrimaryGeneratorAction* { 
+  runManager->SetUserInitialization(new ActionInitialization(&recorder,
+   [&photonNumberPerTimeSegment, &sun] () -> G4VUserPrimaryGeneratorAction* {
 							       return new PrimaryGeneratorAction(photonNumberPerTimeSegment, &sun); }) );
 
   // Initialize G4 kernel
   runManager->Initialize();
 
   // Store a TGraph for each tree
-  std::vector<TGraphAsymmErrors> energyGraphs; 
-  std::vector<TGraphAsymmErrors> normalizedEnergyGraphs; 
+  std::vector<TGraphAsymmErrors> energyGraphs;
+  std::vector<TGraphAsymmErrors> normalizedEnergyGraphs;
   std::vector<TGraphAsymmErrors> energyDensityGraphs;
-  
+
   // Repeat for a number of trees
   for (unsigned int x=0; x<treeNumber; x++){
-    
+
     TGraphAsymmErrors currentEnergyGraph;
     std::string graphName = "energyGraph_tree" + std::to_string(x);
     currentEnergyGraph.SetName(graphName.c_str());
@@ -307,10 +307,10 @@ int main(int argc, char** argv) {
 
     //Simulate at all time points with the same number of events...
     for (unsigned int timeIndex=0; timeIndex<simulationTimeSegments; timeIndex++) {
-      
+
       //Set the time to the mid-point of the time segment
       sun.setTime( (int)(simulationStartingTime + timeIndex*simulationStepTime + simulationStepTime/2.0) );
-      
+
       //Run simulation with a single event per time point
       G4int eventNumber = 1;
       runManager->BeamOn(eventNumber);
