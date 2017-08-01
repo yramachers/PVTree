@@ -9,7 +9,7 @@
 */
 #ifndef __BINRELOC_C__
 #define __BINRELOC_C__
-
+#define ENABLE_BINRELOC
 #ifdef ENABLE_BINRELOC
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -80,6 +80,14 @@ target_link_libraries(treeConstruction
   )
 pvtree_add_test(treeConstruction)
 
+add_executable(selfLocation selfLocation.cpp)
+target_link_libraries(selfLocation
+  pvtree-catchmain
+  pvtree-utils
+  )
+# - Should not need environment for this!!
+add_test(NAME selfLocation COMMAND selfLocation)
+
 #add_cppcheck(unittest
 #  SUPPRESS
 #  "*:${CMAKE_SOURCE_DIR}/include/testing/catch.hpp"

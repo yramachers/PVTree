@@ -1,0 +1,98 @@
+#include "pvtree/utils/resource.hpp"
+
+#include <stdexcept>
+
+#define ENABLE_BINRELOC
+#include "pvtree_binreloc.h"
+
+namespace {
+//! Convert BrInitError code to a string describing the error
+//! \todo add errno to returned string
+std::string BRErrorAsString(const BrInitError& err) {
+  std::string errMsg;
+  switch (err) {
+    case BR_INIT_ERROR_NOMEM:
+      errMsg = "Unable to open /proc/self/maps";
+      break;
+    case BR_INIT_ERROR_OPEN_MAPS:
+      errMsg =  "Unable to read from /proc/self/maps";
+      break;
+    case BR_INIT_ERROR_READ_MAPS:
+      errMsg = "The file format of /proc/self/maps";
+      break;
+    case BR_INIT_ERROR_INVALID_MAPS:
+      errMsg = "The file format of /proc/self/maps is invalid";
+      break;
+    case BR_INIT_ERROR_DISABLED:
+      errMsg = "Binary relocation disabled";
+      break;
+    default:
+      throw std::runtime_error("Invalid BrInitError");
+  }
+  return errMsg;
+}
+
+//! initialize binreloc
+void init_binreloc() {
+  static bool isInitialized = false;
+  if (!isInitialized) {
+    BrInitError err;
+    int initSuccessful = br_init_lib(&err);
+    if (initSuccessful != 1) {
+      throw std::runtime_error("Resource initialization failed: "+BRErrorAsString(err));
+    } else {
+      isInitialized = true;
+    }
+  }
+}
+
+//! Return relative path from libdir directory to root of resource dir
+std::string relativePathToResourceDir() {
+    return "@PVTREE_LIBDIR_TO_SHAREDIR@";
+}
+
+//! return directory of this library
+std::string getLibraryDir() {
+  init_binreloc();
+  char* exePath(0);
+  exePath = br_find_exe_dir("");
+  std::string sExePath(exePath);
+  free(exePath);
+  return sExePath;
+}
+
+//! return directory to base resource directory
+//! Use environment variable if it exists, selflocation otherwise
+std::string getResourceDir() {
+  char* pvtreeEnv = std::getenv("PVTREE_SHARE_PATH");
+  std::string resolvedPath {pvtreeEnv ? pvtreeEnv : ""};
+  if (resolvedPath.empty()) {
+     resolvedPath = getLibraryDir();
+     resolvedPath += "/" + relativePathToResourceDir();
+  }
+
+  return resolvedPath;
+}
+}
+
+
+namespace pvtree {
+std::string getConfigFile(const std::string& shortpath) {
+  // NB ASSUMES a relative path will be supplied!
+  std::string basePath {getResourceDir()};
+  return basePath + "/" + shortpath;
+}
+
+std::string getClimateDataFile(const std::string& shortpath) {
+  // Use PVTREE_CLIMATE_DATAPATH
+  char* pvtreeEnv = std::getenv("PVTREE_CLIMATE_DATAPATH");
+  std::string resolvedPath {pvtreeEnv ? pvtreeEnv : ""};
+  if(resolvedPath.empty()) {
+    throw std::runtime_error("PVTREE_CLIMATE_DATAPATH environment variable is empty or not set");
+  }
+
+  return resolvedPath + "/" + shortpath;
+}
+
+} // namespace pvtree
+
