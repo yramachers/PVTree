@@ -54,6 +54,29 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # - Standard POSIX/GNU style install
 include(GNUInstallDirs)
 
+# - Use install dirs to make relocatable build structure
+set(PVTREE_BUILDPRODUCTS_DIR ${PROJECT_BINARY_DIR}/BuildProducts)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_BINDIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
+
+# Config files have same structure in all trees, so simply softlink
+add_custom_command(
+  OUTPUT ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  COMMAND ${CMAKE_COMMAND}
+          -E make_directory
+          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}
+  COMMAND ${CMAKE_COMMAND}
+          -E create_symlink
+          ${PROJECT_SOURCE_DIR}/share
+          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  DEPENDS pvtree-utils
+  )
+add_custom_target(pvtree-build-data ALL
+  DEPENDS ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  )
+
+
+
 #-----------------------------------------------------------------------
 # - Find Required External Packages
 # CERN ROOT for I/O, Math, Analysis
