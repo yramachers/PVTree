@@ -1,5 +1,7 @@
 #include "pvtree/climate/climate.hpp"
 
+#include "pvtree/utils/resource.hpp"
+
 #include <libconfig.h++>
 
 #include <fstream>
@@ -50,30 +52,19 @@ bool Climate::openConfiguration(std::string configPath) {
 
   } else {
     // Not a local file so look in the installed share directory
-    const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
+    std::string shareFilePath = pvtree::getConfigFile("config/climate/" + configPath);
 
-    if (environmentVariableContents != 0) {
-      std::string shareFilePath(std::string(environmentVariableContents) +
-                                "/config/climate/" + configPath);
+    if (fileExists(shareFilePath)) {
+      bool isFileOpen = parseConfiguration(shareFilePath, cfg);
 
-      if (fileExists(shareFilePath)) {
-        bool isFileOpen = parseConfiguration(shareFilePath, cfg);
-
-        if (!isFileOpen) {
-          delete cfg;
-          return false;
-        }
-      } else {
-        // Not in either place so give up!
-        std::cerr << "Unable to locate file " << configPath
-                  << " locally or in the shared config." << std::endl;
+      if (!isFileOpen) {
         delete cfg;
         return false;
       }
     } else {
       // Not in either place so give up!
       std::cerr << "Unable to locate file " << configPath
-                << " locally or in the shared config." << std::endl;
+          << " locally or in the shared config." << std::endl;
       delete cfg;
       return false;
     }
@@ -132,12 +123,7 @@ bool Climate::parseConfiguration(std::string fileName, libconfig::Config* cfg) {
 bool Climate::findGRIB() {
   if (!fileExists(m_gribFileName)) {
     // Try under the data directory instead
-    const char* environmentVariableContents =
-        std::getenv("PVTREE_CLIMATE_DATA_PATH");
-
-    if (environmentVariableContents != 0) {
-      std::string dataFilePath(std::string(environmentVariableContents) + "/" +
-                               m_gribFileName);
+      std::string dataFilePath = pvtree::getClimateDataFile(m_gribFileName);
 
       if (fileExists(dataFilePath)) {
         // Alter the stored grib file name
@@ -148,12 +134,6 @@ bool Climate::findGRIB() {
                   << std::endl;
         return false;
       }
-    } else {
-      // Can't find the file
-      std::cerr << "Unable to locate the grib file " << m_gribFileName
-                << " and no climate data path specified." << std::endl;
-      return false;
-    }
   }
 
   return true;

@@ -11,7 +11,7 @@ target_include_directories(pvtree-climate
   )
 target_link_libraries(pvtree-climate
   PUBLIC pvtree-location eccodes ${ROOT_MathMore_LIBRARY}
-  PRIVATE Libconfig::Libconfig
+  PRIVATE Libconfig::Libconfig pvtree-utils
   )
 
 add_cppcheck(pvtree-climate)

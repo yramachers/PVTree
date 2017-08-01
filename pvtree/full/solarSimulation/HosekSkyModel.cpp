@@ -7,6 +7,8 @@
 
 #include "pvtree/full/solarSimulation/HosekSkyModel.hpp"
 
+#include "pvtree/utils/resource.hpp"
+
 SkyFunction::SkyFunction(double solar_elevation, double atmospheric_turbidity,
                          double ground_albedo) {
   state = new HosekSkyModelState();
@@ -24,25 +26,21 @@ SkyFunction::SkyFunction(double solar_elevation, double atmospheric_turbidity,
     tree = (TTree*)ff->Get("skymodeldata");
     init(solar_elevation, atmospheric_turbidity, ground_albedo);
   } else {
-    const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
-    if (environmentVariableContents != 0) {
-      // Environment variable set so give it a try
-      std::string shareFilePath(std::string(environmentVariableContents) + "/" +
-                                "HosekSkyModelData.root");
-      std::ifstream shareTest(shareFilePath.c_str());
+    // Environment variable set so give it a try
+    std::string shareFilePath = pvtree::getConfigFile("HosekSkyModelData.root");
+    std::ifstream shareTest(shareFilePath.c_str());
 
-      if (shareTest.is_open()) {
-        shareTest.close();
-        ff = new TFile(shareFilePath.c_str(), "read");
-        tree = (TTree*)ff->Get("skymodeldata");
-        init(solar_elevation, atmospheric_turbidity, ground_albedo);
-      } else {
-        // If reaching here then unable to extract a file's contents!
-        std::cout << "Spectrum::Spectrum - Unable to find the Sky model file "
-                  << std::endl;
-        throw std::invalid_argument(
-            "Can't find HosekSkyModelData.root input file.");
-      }
+    if (shareTest.is_open()) {
+      shareTest.close();
+      ff = new TFile(shareFilePath.c_str(), "read");
+      tree = (TTree*)ff->Get("skymodeldata");
+      init(solar_elevation, atmospheric_turbidity, ground_albedo);
+    } else {
+      // If reaching here then unable to extract a file's contents!
+      std::cout << "Spectrum::Spectrum - Unable to find the Sky model file "
+          << std::endl;
+      throw std::invalid_argument(
+          "Can't find HosekSkyModelData.root input file.");
     }
   }
 

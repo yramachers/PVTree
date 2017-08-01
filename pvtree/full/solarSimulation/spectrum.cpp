@@ -1,5 +1,6 @@
 #include "pvtree/full/solarSimulation/spectrum.hpp"
 #include "pvtree/utils/equality.hpp"
+#include "pvtree/utils/resource.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -27,18 +28,13 @@ Spectrum::Spectrum(std::string inputFilePath) : m_dataPrecision(10000) {
   }
 
   // Not a local file so look in the installed share directory
-  const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
+  // Environment variable set so give it a try
+  std::string shareFilePath = pvtree::getConfigFile(inputFilePath);
+  std::ifstream shareTest(shareFilePath.c_str());
 
-  if (environmentVariableContents != 0) {
-    // Environment variable set so give it a try
-    std::string shareFilePath(std::string(environmentVariableContents) + "/" +
-                              inputFilePath);
-    std::ifstream shareTest(shareFilePath.c_str());
-
-    if (shareTest.is_open()) {
-      extractFile(shareTest);
-      return;
-    }
+  if (shareTest.is_open()) {
+    extractFile(shareTest);
+    return;
   }
 
   // If reaching here then unable to extract a file's contents!

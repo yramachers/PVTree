@@ -51,10 +51,13 @@ target_include_directories(pvtree-treeSystems
   PUBLIC ${ROOT_INCLUDE_DIRS}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} # For dictionary file
   )
-target_link_libraries(pvtree-treeSystems PUBLIC
-  pvtree-geometry
-  Libconfig::Libconfig
-  ${ROOT_Core_LIBRARY}
+target_link_libraries(pvtree-treeSystems
+  PUBLIC
+    pvtree-geometry
+    Libconfig::Libconfig
+    ${ROOT_Core_LIBRARY}
+  PRIVATE
+    pvtree-utils
   )
 
 add_cppcheck(pvtree-treeSystems)

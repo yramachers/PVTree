@@ -12,7 +12,7 @@ function(pvtree_add_test _name)
   add_test(NAME ${_name} COMMAND ${_name})
   set_tests_properties(${_name}
     PROPERTIES
-      ENVIRONMENT "PVTREE_SHARE_PATH=${PROJECT_SOURCE_DIR}/share;${PVTREE_GEANT4_DATASET_PATHS};PVTREE_CLIMATE_DATA_PATH=$ENV{PVTREE_CLIMATE_DATA_PATH};ROOT_INCLUDE_PATH=${PROJECT_SOURCE_DIR}"
+      ENVIRONMENT "${PVTREE_GEANT4_DATASET_PATHS};PVTREE_CLIMATE_DATA_PATH=$ENV{PVTREE_CLIMATE_DATA_PATH};ROOT_INCLUDE_PATH=${PROJECT_SOURCE_DIR}"
   )
 endfunction()
 
@@ -38,6 +38,7 @@ pvtree_add_test(climateVariableAccess)
 add_executable(configurationReading configurationReading.cpp)
 target_link_libraries(configurationReading
   pvtree-catchmain
+  pvtree-utils
   Libconfig::Libconfig
   )
 pvtree_add_test(configurationReading)

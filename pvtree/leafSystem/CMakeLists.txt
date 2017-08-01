@@ -43,6 +43,7 @@ target_include_directories(pvtree-leafSystems
   )
 target_link_libraries(pvtree-leafSystems
   PUBLIC ${ROOT_Core_LIBRARY} pvtree-geometry Libconfig::Libconfig
+  PRIVATE pvtree-utils
   )
 
 add_cppcheck(pvtree-leafSystems)

@@ -1,5 +1,7 @@
 #include "pvtree/full/material/materialFactory.hpp"
 
+#include "pvtree/utils/resource.hpp"
+
 #include "G4Element.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
@@ -170,30 +172,19 @@ bool MaterialFactory::collectConfigurations(std::string configPath) {
 
   } else {
     // Not a local file so look in the installed share directory
-    const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
+    std::string shareFilePath = pvtree::getConfigFile("config/material/" + configPath);
 
-    if (environmentVariableContents != 0) {
-      std::string shareFilePath(std::string(environmentVariableContents) +
-                                "/config/material/" + configPath);
+    if (fileExists(shareFilePath)) {
+      bool isFileOpen = openConfigurationFile(shareFilePath, cfg);
 
-      if (fileExists(shareFilePath)) {
-        bool isFileOpen = openConfigurationFile(shareFilePath, cfg);
-
-        if (!isFileOpen) {
-          delete cfg;
-          return false;
-        }
-      } else {
-        // Not in either place so give up!
-        std::cerr << "Unable to locate file " << configPath
-                  << " locally or in the shared config." << std::endl;
+      if (!isFileOpen) {
         delete cfg;
         return false;
       }
     } else {
       // Not in either place so give up!
       std::cerr << "Unable to locate file " << configPath
-                << " locally or in the shared config." << std::endl;
+          << " locally or in the shared config." << std::endl;
       delete cfg;
       return false;
     }

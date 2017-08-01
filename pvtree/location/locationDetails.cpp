@@ -1,5 +1,5 @@
 #include "pvtree/location/locationDetails.hpp"
-
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -27,20 +27,14 @@ LocationDetails::LocationDetails(std::string inputFilePath) {
   }
 
   // Not a local file so look in the installed share directory
-  const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
+  std::string shareFilePath = pvtree::getConfigFile("config/" + inputFilePath);
+  std::ifstream shareTest(shareFilePath.c_str());
 
-  if (environmentVariableContents != 0) {
-    // Environment variable set so give it a try
-    std::string shareFilePath(std::string(environmentVariableContents) +
-                              "/config/" + inputFilePath);
-    std::ifstream shareTest(shareFilePath.c_str());
+  if (shareTest.is_open()) {
+    shareTest.close();
 
-    if (shareTest.is_open()) {
-      shareTest.close();
-
-      extractFile(shareFilePath);
-      return;
-    }
+    extractFile(shareFilePath);
+    return;
   }
 
   // If reaching here then unable to extract a file's contents!

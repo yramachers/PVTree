@@ -51,16 +51,35 @@ to CMake, they should be found automatically. Should any errors occur when runni
 due to unfound packages, you may need to add their install locations to `CMAKE_PREFIX_PATH`
 either in the environment or via `cmake -DCMAKE_PREFIX_PATH="path1;path2;...;pathN" <args>`.
 
-Once configuration has run successfully, PVTree can be built and installed via:
+Once configuration has run successfully, PVTree can be built via:
 
 ``` console
 $ make -j4
-$ make install
 ```
 
 Adjust the numeric argument to `make` as appropriate for the cores on your
-build machine. All PVTree resources are installed into a standard filesystem
-hierarchy:
+build machine. The PVTree programs and libraries are output into the `BuildProducts`
+directory under the build directory:
+
+```console
++- BuildProducts/
+   +- bin/
+   |  +- pvtree-XXX
+   + lib/
+     +- PVTree/
+        + lib...
+```
+
+and may be run directly (NB: you will need to set the `PVTREE_CLIMATE_DATA_PATH`
+environment variable to pint to the climate data you wish to use).
+
+You may also install the programs, libraries and configuration files by running:
+
+```console
+$ make install
+```
+
+All PVTree resources are installed into a standard filesystem hierarchy:
 
 ```
 +- CMAKE_INSTALL_PREFIX/
@@ -81,16 +100,7 @@ hierarchy:
 To get started with using PVTree programs, open the file `share/doc/PVTree/html/index.html`
 in your preferred browser.
 
-
-Obtaining Climate Data
-======================
-If the climate data path no longer exists you will have download the files again
-from the ECMWF website. The query specifications are listed in the configuration
-files config/climate/*.cfg. Grib files get big and the website has a limit so you
-will have to download in smaller time periods and then merge the files (can do a
-simple cat with grib files).
-
-Alternatively a debug build can be created using the additional cmake option
+For development, a debug build can be created using the additional cmake option
 -DCMAKE_BUILD_TYPE=DEBUG. This will turn off compiler optimization and
 it will enable code coverage to be run (with 'make test_coverage'). When running
 the executables produced by the debug build the allowed virtual memory usage
@@ -99,21 +109,13 @@ address sanitizers. The debug build requires both lcov and gcov to be present in
 the path (gcov needs to be from the same compiler suit).
 
 
-Running Example Programs
-------------------------
-
-1. Source the environment setup script from within the install directory
-
-> source Install/share/scripts/setup.sh
-
-which will setup the current environment variables for Geant4, ROOT and
-also the PVTree code.
-
-2. Execute one of the example programs now present in the PATH environment
-
-> basicSimulate
-
-3. Look at the output!
+Obtaining Climate Data
+======================
+If the climate data path no longer exists you will have download the files again
+from the ECMWF website. The query specifications are listed in the configuration
+files `config/climate/XXX.cfg`. Grib files get big and the website has a limit so you
+will have to download in smaller time periods and then merge the files (can do a
+simple cat with grib files).
 
 
 

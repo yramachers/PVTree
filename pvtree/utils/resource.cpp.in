@@ -85,10 +85,10 @@ std::string getConfigFile(const std::string& shortpath) {
 
 std::string getClimateDataFile(const std::string& shortpath) {
   // Use PVTREE_CLIMATE_DATAPATH
-  char* pvtreeEnv = std::getenv("PVTREE_CLIMATE_DATAPATH");
+  char* pvtreeEnv = std::getenv("PVTREE_CLIMATE_DATA_PATH");
   std::string resolvedPath {pvtreeEnv ? pvtreeEnv : ""};
   if(resolvedPath.empty()) {
-    throw std::runtime_error("PVTREE_CLIMATE_DATAPATH environment variable is empty or not set");
+    throw std::runtime_error("PVTREE_CLIMATE_DATA_PATH environment variable is empty or not set");
   }
 
   return resolvedPath + "/" + shortpath;

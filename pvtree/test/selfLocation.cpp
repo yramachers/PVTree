@@ -12,5 +12,9 @@ TEST_CASE("Basic self location","") {
 }
 
 TEST_CASE("Climate data","") {
-  REQUIRE_THROWS( pvtree::getClimateDataFile("foo") );
+  if (std::getenv("PVTREE_CLIMATE_DATA_PATH")) {
+    REQUIRE_NOTHROW( pvtree::getClimateDataFile("foo") );
+  } else {
+    REQUIRE_THROWS( pvtree::getClimateDataFile("foo") );
+  }
 }

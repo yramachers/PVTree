@@ -1,5 +1,6 @@
 #include "pvtree/leafSystem/leafConstructionInterface.hpp"
 #include "pvtree/utils/equality.hpp"
+#include "pvtree/utils/resource.hpp"
 #include <stdexcept>
 #include <random>
 #include <iostream>
@@ -495,28 +496,17 @@ void LeafConstructionInterface::applyConfigurationFile(
   }
 
   if (tryShareDirectory) {
-    // Not a local file or buggy so look in the installed share directory
-    const char* environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
+    std::string shareFilePath = pvtree::getConfigFile("config/" + configurationFileName);
+    std::ifstream shareTest(shareFilePath.c_str());
 
-    if (environmentVariableContents != 0) {
-      std::string shareFilePath(std::string(environmentVariableContents) +
-                                "/config/" + configurationFileName);
-      std::ifstream shareTest(shareFilePath.c_str());
+    if (shareTest.is_open()) {
+      bool isFileOpen = openConfigurationFile(shareFilePath, cfg);
 
-      if (shareTest.is_open()) {
-        bool isFileOpen = openConfigurationFile(shareFilePath, cfg);
-
-        if (!isFileOpen) return;
-      } else {
-        // Not in either place so give up!
-        std::cerr << "Unable to locate file " << configurationFileName
-                  << " locally or in the shared config." << std::endl;
-        return;
-      }
+      if (!isFileOpen) return;
     } else {
       // Not in either place so give up!
       std::cerr << "Unable to locate file " << configurationFileName
-                << " locally or in the shared config." << std::endl;
+          << " locally or in the shared config." << std::endl;
       return;
     }
   }

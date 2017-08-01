@@ -1,4 +1,5 @@
 #include "pvtree/test/catch.hpp"
+#include "pvtree/utils/resource.hpp"
 #include <libconfig.h++>
 #include <iostream>
 #include <vector>
@@ -7,13 +8,7 @@ TEST_CASE("libconfig", "[config]") {
   std::string fileName = "validation.cfg";
   libconfig::Config cfg;
 
-  // Not a local file so look in the installed share directory
-  const char *environmentVariableContents = std::getenv("PVTREE_SHARE_PATH");
-
-  REQUIRE(environmentVariableContents != 0);
-
-  std::string shareFilePath =
-      std::string(environmentVariableContents) + "/config/" + fileName;
+  std::string shareFilePath = pvtree::getConfigFile("config/" + fileName);
 
   // Try to open and read the configuration file
   bool fileOpened = false;

@@ -73,6 +73,8 @@ target_link_libraries(pvtree-fullsim
     ${ROOT_Tree_LIBRARY}
     ${ROOT_RIO_LIBRARY}
     pvtree-geometry pvtree-treeSystems pvtree-leafSystems pvtree-climate pvtree-solpos
+  PRIVATE
+    pvtree-utils
   )
 
 add_cppcheck(pvtree-fullsim)

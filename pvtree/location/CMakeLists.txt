@@ -2,7 +2,11 @@ add_library(pvtree-location SHARED
   locationDetails.hpp
   locationDetails.cpp
   )
-target_link_libraries(pvtree-location PRIVATE Libconfig::Libconfig)
+target_link_libraries(pvtree-location
+  PRIVATE
+    pvtree-utils
+    Libconfig::Libconfig
+  )
 
 add_cppcheck(location)
 
