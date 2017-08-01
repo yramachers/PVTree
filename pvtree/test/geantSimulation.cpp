@@ -4,6 +4,7 @@
 #include "pvtree/treeSystem/treeFactory.hpp"
 #include "pvtree/leafSystem/leafFactory.hpp"
 #include "pvtree/utils/equality.hpp"
+#include "pvtree/utils/resource.hpp"
 #include "pvtree/full/detectorConstruction.hpp"
 #include "pvtree/full/layeredLeafConstruction.hpp"
 #include "pvtree/full/leafConstruction.hpp"
@@ -41,6 +42,9 @@ TEST_CASE("simulation/geant", "[simulation]") {
   unsigned int photonNumberPerEvent = 1000u;
   int geant4Seed = 12345;
   int lSystemSeed = 5432;
+
+  // Load PVTree's data environment
+  pvtree::loadEnvironment();
 
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");

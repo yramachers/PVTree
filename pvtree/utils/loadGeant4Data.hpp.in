@@ -1,0 +1,32 @@
+#ifndef LOADGEANT4DATA_HPP_HH
+#define LOADGEANT4DATA_HPP_HH
+
+#include <map>
+#include <cstdlib>
+
+//! Load Geant4 so that users do not need to set environment
+//  variables by hand.
+//  NB: this hard codes paths at present. For bundling etc,
+//  will want to make paths relative as we will bundle G4 with
+//  "PVTree.app"
+namespace pvtree {
+namespace detail {
+class Geant4Data {
+ public:
+  Geant4Data() : map_({@PVTREE_GEANT4_DATASET_PATHS@}) {
+  }
+
+  void loadEnvironment() const {
+    for(const auto& pair: map_) {
+      setenv(pair.first.c_str(),pair.second.c_str(),0);
+    }
+  }
+
+ private:
+  typedef std::map<std::string,std::string> DLMap;
+  DLMap map_;
+};
+}
+}
+#endif // LOADGEANT4DATA_HPP_HH
+

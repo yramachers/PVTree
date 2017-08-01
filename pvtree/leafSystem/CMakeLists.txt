@@ -12,6 +12,17 @@ root_generate_dictionary(pvtree-leafSystem_dict
     -I${Libconfig_INCLUDE_DIR}
   )
 
+foreach(_clingHdr
+  leafConstructionInterface.hpp
+  cordateConstruction.hpp
+  roseConstruction.hpp
+  simpleConstruction.hpp
+  planarConstruction.hpp)
+  configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/leafSystem/${_clingHdr} COPYONLY)
+endforeach()
+
+
+
 add_library(pvtree-leafSystems SHARED
   cordate.cpp
   cordate.hpp

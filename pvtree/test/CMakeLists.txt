@@ -2,17 +2,17 @@
 add_library(pvtree-catchmain SHARED catch-main.cpp catch.hpp)
 
 # Prep Geant4 datasets for test environment
-set(PVTREE_GEANT4_DATASET_PATHS)
-foreach(_g4ds ${Geant4_DATASETS})
-  list(APPEND PVTREE_GEANT4_DATASET_PATHS "${Geant4_DATASET_${_g4ds}_ENVVAR}=${Geant4_DATASET_${_g4ds}_PATH}")
-endforeach()
+#set(PVTREE_GEANT4_DATASET_PATHS)
+#foreach(_g4ds ${Geant4_DATASETS})
+#  list(APPEND PVTREE_GEANT4_DATASET_PATHS "${Geant4_DATASET_${_g4ds}_ENVVAR}=${Geant4_DATASET_${_g4ds}_PATH}")
+#endforeach()
 
 # add_test wrapper so data paths can be set in test environment
 function(pvtree_add_test _name)
   add_test(NAME ${_name} COMMAND ${_name})
   set_tests_properties(${_name}
     PROPERTIES
-      ENVIRONMENT "${PVTREE_GEANT4_DATASET_PATHS};PVTREE_CLIMATE_DATA_PATH=$ENV{PVTREE_CLIMATE_DATA_PATH};ROOT_INCLUDE_PATH=${PROJECT_SOURCE_DIR}"
+      ENVIRONMENT "PVTREE_CLIMATE_DATA_PATH=$ENV{PVTREE_CLIMATE_DATA_PATH};ROOT_INCLUDE_PATH=${PROJECT_SOURCE_DIR}"
   )
 endfunction()
 
@@ -47,6 +47,7 @@ add_executable(geantSimulation geantSimulation.cpp)
 target_link_libraries(geantSimulation
   pvtree-catchmain
   pvtree-fullsim
+  pvtree-utils
   )
 pvtree_add_test(geantSimulation)
 

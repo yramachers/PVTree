@@ -7,6 +7,7 @@ root_generate_dictionary(pvtree-analysis_dict
     -noIncludePaths
     -I${Libconfig_INCLUDE_DIR} # Needed because we depend on pvtree-treeSystems, which depends on...
   )
+configure_file(yearlyResult.hpp ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/analysis/yearlyResult.hpp COPYONLY)
 
 add_library(pvtree-analysis SHARED
   rootStyles.cpp

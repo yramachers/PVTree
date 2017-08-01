@@ -7,6 +7,10 @@ root_generate_dictionary(pvtree-fullsim_dict
   LINKDEF solarSimulation/Linkdef.h
   OPTIONS -noIncludePaths
   )
+foreach(_clingHdr solarSimulation/plenoptic1D.hpp solarSimulation/plenoptic3D.hpp)
+  configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/full/${_clingHdr} COPYONLY)
+endforeach()
+
 
 add_library(pvtree-fullsim SHARED
   actionInitialization.cpp

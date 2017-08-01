@@ -1,6 +1,7 @@
 #include "pvtree/utils/resource.hpp"
-
 #include <stdexcept>
+
+#include "loadGeant4Data.hpp"
 
 #define ENABLE_BINRELOC
 #include "pvtree_binreloc.h"
@@ -75,7 +76,6 @@ std::string getResourceDir() {
 }
 }
 
-
 namespace pvtree {
 std::string getConfigFile(const std::string& shortpath) {
   // NB ASSUMES a relative path will be supplied!
@@ -92,6 +92,18 @@ std::string getClimateDataFile(const std::string& shortpath) {
   }
 
   return resolvedPath + "/" + shortpath;
+}
+
+void loadEnvironment() {
+  pvtree::detail::Geant4Data env;
+  env.loadEnvironment();
+
+  // So cling doesn't complain (we install interactive ROOT bits
+  // next to libs)
+  setenv("ROOT_INCLUDE_PATH",getLibraryDir().c_str(),0);
+
+  // Because smarts295.f still needs the env...
+  setenv("PVTREE_SHARE_PATH", getResourceDir().c_str(),0);
 }
 
 } // namespace pvtree

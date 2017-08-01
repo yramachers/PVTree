@@ -8,6 +8,15 @@ configure_file(pvtree_binreloc.h.in pvtree_binreloc.h @ONLY)
 file(RELATIVE_PATH PVTREE_LIBDIR_TO_SHAREDIR "${CMAKE_INSTALL_FULL_LIBDIR}/Pvtree" "${CMAKE_INSTALL_FULL_DATADIR}/${PROJECT_NAME}")
 configure_file(resource.cpp.in resource.cpp @ONLY)
 
+# Geant4 data
+set(PVTREE_GEANT4_DATASET_PATHS)
+foreach(_g4ds ${Geant4_DATASETS})
+  list(APPEND PVTREE_GEANT4_DATASET_PATHS "{\"${Geant4_DATASET_${_g4ds}_ENVVAR}\", \"${Geant4_DATASET_${_g4ds}_PATH}\"}")
+endforeach()
+string(REPLACE ";" ",\n" PVTREE_GEANT4_DATASET_PATHS "${PVTREE_GEANT4_DATASET_PATHS}")
+configure_file(loadGeant4Data.hpp.in loadGeant4Data.hpp @ONLY)
+
+
 add_library(pvtree-utils SHARED
   equality.hpp
   getRSS.cpp

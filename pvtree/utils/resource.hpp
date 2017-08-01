@@ -10,6 +10,9 @@ std::string getConfigFile(const std::string& shortpath);
 /// Return full path to a climate data file
 std::string getClimateDataFile(const std::string& shortpath);
 
+/// Load data environment
+void loadEnvironment();
+
 } // namespace pvtree
 
 #endif // RESOURCE_HH

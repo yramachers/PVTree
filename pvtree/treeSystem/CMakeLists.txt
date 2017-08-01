@@ -14,6 +14,17 @@ root_generate_dictionary(pvtree-treeSystem_dict
     -I${Libconfig_INCLUDE_DIRS}
   )
 
+foreach(_clingHdr
+  treeConstructionInterface.hpp
+  helicalConstruction.hpp
+  monopodialConstruction.hpp
+  stochasticConstruction.hpp
+  sympodialConstruction.hpp
+  ternaryConstruction.hpp
+  stumpConstruction.hpp)
+  configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/treeSystem/${_clingHdr} COPYONLY)
+endforeach()
+
 add_library(pvtree-treeSystems SHARED
   helical.cpp
   helical.hpp
