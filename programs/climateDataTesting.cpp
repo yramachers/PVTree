@@ -21,6 +21,7 @@
 #include "pvtree/location/locationDetails.hpp"
 #include "pvtree/analysis/rootStyles.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include "eccodes.h"
 
 #include <CLHEP/Units/PhysicalConstants.h>
@@ -412,6 +413,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   std::cout << "Will " << (daytimeOnly ? "" : "not ")
             << "only use day time samples for candle plots" << std::endl;

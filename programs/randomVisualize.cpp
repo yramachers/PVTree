@@ -12,6 +12,7 @@
 #include "pvtree/full/visualizationAction.hpp"
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include "pvtree/climate/climateFactory.hpp"
 
 #include <iostream>
@@ -65,6 +66,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // double updatePeriod = 3.0; //Seconds
   // int randomSeedStart = 1234; //Set a default random number seed starting

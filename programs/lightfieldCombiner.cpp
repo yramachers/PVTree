@@ -13,6 +13,7 @@
 // PVTree includes
 #include "pvtree/full/solarSimulation/plenoptic3D.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 
 void showHelp() {
   std::cout << "lightfieldCombiner help" << std::endl;
@@ -55,6 +56,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   std::vector<Plenoptic3D*> lightfields;
 

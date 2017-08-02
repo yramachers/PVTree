@@ -3,6 +3,7 @@
 #include "pvtree/analysis/yearlyResult.hpp"
 #include "pvtree/geometry/turtle.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -102,6 +103,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Write a file containing usual results
   create(treeType, leafType);

@@ -17,6 +17,7 @@
 #include "pvtree/full/solarSimulation/sun.hpp"
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include "pvtree/climate/climateFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
 #include "pvtree/full/solarSimulation/spectrumFactory.hpp"
@@ -166,6 +167,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;

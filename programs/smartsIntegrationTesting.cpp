@@ -5,6 +5,7 @@
  */
 #include "pvtree/full/solarSimulation/spectrumFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
+#include "pvtree/utils/resource.hpp"
 
 #include <iostream>
 #include <cstring>
@@ -92,6 +93,8 @@ void createProjectedCanvas(std::string canvasName, std::string canvasTitle,
 }
 
 int main() {
+  pvtree::loadEnvironment();
+
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");
 

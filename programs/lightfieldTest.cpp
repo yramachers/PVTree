@@ -6,6 +6,7 @@
  */
 
 #include "pvtree/full/solarSimulation/plenoptic1D.hpp"
+#include "pvtree/utils/resource.hpp"
 
 #include <vector>
 #include <cmath>
@@ -469,6 +470,8 @@ int main(int /*argc*/, char** /*argv*/) {
   double sourceMinimumAngle = 0.0;
   double sourceMaximumAngle = 360.0;
   int photonNumberPerSample = 50000;
+
+  pvtree::loadEnvironment();
 
   // Prepare a root file to store the various results
   TFile testOutput("lightfieldResults.root", "RECREATE");

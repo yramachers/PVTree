@@ -18,6 +18,7 @@
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/util/resource.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -74,6 +75,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Temporarily increase leaf thickness for testing
   leaf->setParameter("thickness", leafThickness);

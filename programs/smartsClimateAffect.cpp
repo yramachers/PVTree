@@ -11,6 +11,7 @@
 #include "pvtree/full/solarSimulation/sun.hpp"
 #include "pvtree/analysis/rootStyles.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include "eccodes.h"
 
 #include <iostream>
@@ -622,6 +623,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Set the plotting style to 'flat' for the Solar Energy journal
   Style_SolarEnergyFlat();

@@ -17,6 +17,7 @@
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
 #include "pvtree/utils/signalReceiver.hpp"
+#include "pvtree/utils/resource.hpp"
 
 #include <iostream>
 #include <vector>
@@ -148,6 +149,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Load the lightfield to be used
   TFile currentLightfieldFile(lightfieldFileName.c_str(), "READ");

@@ -4,6 +4,7 @@
 #include "pvtree/full/visualizationAction.hpp"
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -39,6 +40,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");

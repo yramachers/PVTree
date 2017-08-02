@@ -17,6 +17,7 @@
 #include "pvtree/treeSystem/treeConstructionInterface.hpp"
 #include "pvtree/leafSystem/leafConstructionInterface.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 
 void showHelp() {
   std::cout << "ntupleCombiner help" << std::endl;
@@ -64,6 +65,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   // Fill a set of lists
   std::vector<TList*> listOfLists;

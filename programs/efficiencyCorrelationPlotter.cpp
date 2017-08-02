@@ -12,6 +12,7 @@
 #include "pvtree/analysis/yearlyResult.hpp"
 #include "pvtree/utils/getopt_pp.h"
 #include "pvtree/utils/equality.hpp"
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <string>
 #include <utility>
@@ -334,6 +335,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   TFile ff(filename.c_str(), "READ");
   TList* structureList = (TList*)ff.Get("testedStructures");

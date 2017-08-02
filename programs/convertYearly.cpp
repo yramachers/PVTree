@@ -11,6 +11,7 @@
 #include "pvtree/leafSystem/leafConstructionInterface.hpp"
 #include "pvtree/analysis/yearlyResult.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 
 void showHelp() {
   std::cout << "converter help" << std::endl;
@@ -43,6 +44,8 @@ int main(int argc, char** argv) {
     showHelp();
     return -1;
   }
+
+  pvtree::loadEnvironment();
 
   filename_out = "converted_yearly.root";
   TFile ff(filename.c_str(), "READ");
