@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
-project(PVTree VERSION 0.4.2)
+project(PVTree VERSION 0.5.0)
 enable_language(Fortran)
 
 # - Allow direct inclusion of our own modules
