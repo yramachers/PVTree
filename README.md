@@ -29,6 +29,18 @@ of ROOT dictionaries.
 It is expected that PVTree can be compiled and run on all platforms where the above
 dependencies can be installed, which are primarily Linux and macOS.
 
+On University of Warwick development systems, all of the above packages
+are available through the `pvtree.devel` Environment Module. Run
+
+```console
+$ module use --append /warwick/epp/modules
+$ module load brews/pvtree.devel
+```
+
+to set everything up, or add these commands to your shell configuration
+file.
+
+
 
 Quick Start-up
 ==============
