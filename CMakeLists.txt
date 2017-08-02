@@ -5,20 +5,56 @@ enable_language(Fortran)
 # - Allow direct inclusion of our own modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 
-# - Always use C++11. NB: does/can not check dependencies are compiled
-#   against same standard/ABI this is left as a responsibility of
-#   the builder
+# - General CMake settings
+# Force project directories to appear first in any list of include paths.
+set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+
+# Do not relink a target to any shared library dependencies when
+# only the shared library implementation has changed.
+set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
+
+# Want relocatability, so always require relative install destinations
+set(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION ON)
+
+# Only report new or updated files installed by the ``install`` target.
+set(CMAKE_INSTALL_MESSAGE LAZY)
+
+# - Compiler/Language settings
+# Always C++11 for now
+# NB: Assumes all deps have been compiled against same standard,
+#     but we do/can not check this
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-#Enable compiler warnings in general
-#if(CMAKE_COMPILER_IS_GNUCXX)
-  # This is tested
-  #  set(CMAKE_CXX_FLAGS     "${CMAKE_CXX_FLAGS} -Wall")
-  #set(CMAKE_C_FLAGS       "${CMAKE_C_FLAGS} -Wall -W")
-  #set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wall -Wno-uninitialized -Wno-conversion " )
-  #endif()
+# Always C11
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD_EXTENSIONS OFF)
+
+# Always high warning levels, warings as errors is optional but on by
+# default
+option(PVTREE_ERROR_ON_WARNINGS "Turn compiler warnings into errors" ON)
+foreach(_lang "C" "CXX")
+  # GNU/Clang/Intel are mostly common...
+  if(CMAKE_${_lang}_COMPILER_ID MATCHES "GNU|(Apple)+Clang|Intel")
+    set(PROJECT_${_lang}_FLAGS "-Wall -Wextra -Wshadow -pedantic")
+
+    if(PVTREE_ERROR_ON_WARNINGS)
+      set(PROJECT_${_lang}_FLAGS "${PROJECT_${_lang}_FLAGS} -Werror -Wfatal-errors")
+    endif()
+  endif()
+
+  # Append any user flags
+  set(CMAKE_${_lang}_FLAGS "${PROJECT_${_lang}_FLAGS} ${CMAKE_${_lang}_FLAGS}")
+endforeach()
+
+# Fortran...
+set(PROJECT_Fortran_FLAGS "-Wall -Wno-uninitialized -Wno-conversion")
+if(PVTREE_ERROR_ON_WARNINGS)
+  set(PROJECT_Fortran_FLAGS "${PROJECT_Fortran_FLAGS} -Werror -Wfatal-errors")
+endif()
+set(CMAKE_Fortran_FLAGS "${PROJECT_Fortran_FLAGS} ${CMAKE_Fortran_FLAGS}")
 
 # Use a default set of flags
 # O2 optimization level may break things in strange ways
@@ -65,24 +101,6 @@ set(PVTREE_BUILDPRODUCTS_DIR ${PROJECT_BINARY_DIR}/BuildProducts)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_BINDIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_LIBDIR})
 
-# Config files have same structure in all trees, so simply softlink
-add_custom_command(
-  OUTPUT ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
-  COMMAND ${CMAKE_COMMAND}
-          -E make_directory
-          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}
-  COMMAND ${CMAKE_COMMAND}
-          -E create_symlink
-          ${PROJECT_SOURCE_DIR}/share
-          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
-  DEPENDS pvtree-utils
-  )
-add_custom_target(pvtree-build-data ALL
-  DEPENDS ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
-  )
-
-
-
 #-----------------------------------------------------------------------
 # - Find Required External Packages
 # CERN ROOT for I/O, Math, Analysis
@@ -124,5 +142,20 @@ add_subdirectory(programs)
 add_subdirectory(doc)
 
 # - Build standard config files
+# Config files have same structure in all trees, so simply softlink
+add_custom_command(
+  OUTPUT ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  COMMAND ${CMAKE_COMMAND}
+          -E make_directory
+          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}
+  COMMAND ${CMAKE_COMMAND}
+          -E create_symlink
+          ${PROJECT_SOURCE_DIR}/share
+          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  DEPENDS pvtree-utils
+  )
+add_custom_target(pvtree-build-data ALL
+  DEPENDS ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  )
 add_subdirectory(share)
 

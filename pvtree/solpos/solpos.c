@@ -732,7 +732,8 @@ static void refrac(struct posdata *pdat) {
     else
       refcor = -20.774 / tanelev;
 
-    float prestemp; /* temporary pressure/temperature correction */
+    /* temporary pressure/temperature correction */
+    float prestemp;
 
     prestemp = (pdat->press * 283.0) / (1013.0 * (273.0 + pdat->temp));
     refcor *= prestemp / 3600.0;

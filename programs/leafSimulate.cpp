@@ -18,7 +18,7 @@
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
 #include "pvtree/utils/getopt_pp.h"
-#include "pvtree/util/resource.hpp"
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>

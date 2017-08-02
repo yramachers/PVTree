@@ -46,7 +46,7 @@ static char *_br_find_exe(BrInitError *error) {
 #elif defined(__APPLE__) && defined(__MACH__)
   char path[MAXPATHLEN + 1];
   uint32_t path_len = MAXPATHLEN;
-  // SPI first appeared in Mac OS X 10.2
+  /* SPI first appeared in Mac OS X 10.2 */
   _NSGetExecutablePath(path, &path_len);
   return strdup(path);
 #else
