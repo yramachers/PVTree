@@ -51,6 +51,10 @@ to CMake, they should be found automatically. Should any errors occur when runni
 due to unfound packages, you may need to add their install locations to `CMAKE_PREFIX_PATH`
 either in the environment or via `cmake -DCMAKE_PREFIX_PATH="path1;path2;...;pathN" <args>`.
 
+With newer versions of CMake and ROOT, you will see a warning about
+CMake policies from the `RootNewMacros.cmake` module. This can be
+ignored.
+
 Once configuration has run successfully, PVTree can be built via:
 
 ``` console
