@@ -12,6 +12,7 @@
 #include "pvtree/full/recorders/convergenceRecorder.hpp"
 #include "pvtree/analysis/yearlyResult.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 
 #include <iostream>
 #include <vector>
@@ -631,6 +632,9 @@ int main(int argc, char** argv) {
     showHelp();
     return 1;
   }
+
+  // Load PVTree environment
+  pvtree::loadEnvironment();
 
   // Load from file
   TFile inputTreeFile(inputTreeFileName.c_str(), "READ");

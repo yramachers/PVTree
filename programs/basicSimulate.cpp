@@ -18,6 +18,7 @@
 #include "pvtree/full/recorders/dummyRecorder.hpp"
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include "pvtree/location/locationDetails.hpp"
 
 #include <iostream>
@@ -94,6 +95,9 @@ int main(int argc, char** argv) {
     std::cout << "Leaf type = " << leafType << std::endl;
     singleTreeRunning = false;
   }
+
+  // Load PVTree environment
+  pvtree::loadEnvironment();
 
   // Prepare initial conditions for test trunk and leaves
   std::shared_ptr<TreeConstructionInterface> tree;

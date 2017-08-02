@@ -20,6 +20,7 @@
 #include "pvtree/full/recorders/dummyRecorder.hpp"
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 
 #include <iostream>
 #include <vector>
@@ -100,6 +101,9 @@ int main(int argc, char** argv) {
   std::cout << "Using lightfield defined in " << lightfieldFileName
             << " to generate photons." << std::endl;
 
+  // load enrironment
+  pvtree::loadEnvironment();
+
   // Load the lightfield to be used
   TFile currentLightfieldFile(lightfieldFileName.c_str(), "READ");
   Plenoptic3D* currentLightfield =
@@ -126,6 +130,7 @@ int main(int argc, char** argv) {
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
 
+  // Configure Geant4
   // Detect interactive mode (if no arguments) and define UI session
   //
   G4UIExecutive* ui = new G4UIExecutive(argc, argv);

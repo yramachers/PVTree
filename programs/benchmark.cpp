@@ -9,6 +9,7 @@
 #include "pvtree/full/material/materialFactory.hpp"
 #include "pvtree/location/locationDetails.hpp"
 #include "pvtree/utils/getopt_pp.h"
+#include "pvtree/utils/resource.hpp"
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -70,6 +71,9 @@ int main(int argc, char** argv) {
       stepEnd;
   std::chrono::duration<double> elapsed_seconds, elapsed_initialize,
       elapsed_wrapUp, elapsed_simulation;
+
+  // Initialize PVTree
+  pvtree::loadEnvironment();
 
   // Initialize Geant4
   stepStart = std::chrono::system_clock::now();
