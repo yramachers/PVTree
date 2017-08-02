@@ -19,6 +19,7 @@ foreach(_clingHdr
   simpleConstruction.hpp
   planarConstruction.hpp)
   configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/leafSystem/${_clingHdr} COPYONLY)
+  install(FILES ${_clingHdr} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pvtree/leafSystem/)
 endforeach()
 
 
@@ -62,11 +63,6 @@ add_cppcheck(pvtree-leafSystems)
 #Install results into respective directories
 install(TARGETS pvtree-leafSystems
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-leafSystems_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-leafSystems.rootmap
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
-  )

@@ -13,5 +13,5 @@ add_cppcheck(location)
 #Install results into respective directories
 install(TARGETS pvtree-location
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )

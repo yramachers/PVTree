@@ -23,6 +23,7 @@ foreach(_clingHdr
   ternaryConstruction.hpp
   stumpConstruction.hpp)
   configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/treeSystem/${_clingHdr} COPYONLY)
+  install(FILES ${_clingHdr} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pvtree/treeSystem/)
 endforeach()
 
 add_library(pvtree-treeSystems SHARED
@@ -76,10 +77,6 @@ add_cppcheck(pvtree-treeSystems)
 #Install results into respective directories
 install(TARGETS pvtree-treeSystems
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-treeSystems_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-treeSystems.rootmap
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
-  )
+

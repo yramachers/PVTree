@@ -8,6 +8,7 @@ root_generate_dictionary(pvtree-analysis_dict
     -I${Libconfig_INCLUDE_DIR} # Needed because we depend on pvtree-treeSystems, which depends on...
   )
 configure_file(yearlyResult.hpp ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/analysis/yearlyResult.hpp COPYONLY)
+install(FILES yearlyResult.hpp DESTINATION ${CMAKE_INSTALL_LIBDIR}/pvtree/analysis/)
 
 add_library(pvtree-analysis SHARED
   rootStyles.cpp
@@ -29,11 +30,6 @@ add_cppcheck(pvtree-analysis)
 #Install results into respective directories
 install(TARGETS pvtree-analysis
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
-  )
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-analysis.rootmap
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 

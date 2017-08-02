@@ -68,11 +68,11 @@ foreach(_pv_program ${PVTREE_PROGRAMS})
   # Configure install-time RPATH to builtin libraries
   if(UNIX AND NOT APPLE)
     set_target_properties(pvtree-${_pv_program}
-      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}"
+      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
       )
   elseif(APPLE)
     set_target_properties(pvtree-${_pv_program}
-      PROPERTIES INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}"
+      PROPERTIES INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}"
       )
   endif()
 

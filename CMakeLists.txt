@@ -51,13 +51,19 @@ set(CMAKE_CXX_EXTENSIONS OFF)
   #  add_dependencies(test_coverage unittest)
   #endif()
 
-# - Standard POSIX/GNU style install
+# - Standard POSIX/GNU style install, except for libraries
 include(GNUInstallDirs)
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+if(NOT IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
+  set(CMAKE_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+else()
+  set(CMAKE_INSTALL_FULL_LIBDIR "${CMAKE_INSTALL_LIBDIR}")
+endif()
 
 # - Use install dirs to make relocatable build structure
 set(PVTREE_BUILDPRODUCTS_DIR ${PROJECT_BINARY_DIR}/BuildProducts)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_BINDIR})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_LIBDIR})
 
 # Config files have same structure in all trees, so simply softlink
 add_custom_command(

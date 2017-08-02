@@ -9,6 +9,7 @@ root_generate_dictionary(pvtree-fullsim_dict
   )
 foreach(_clingHdr solarSimulation/plenoptic1D.hpp solarSimulation/plenoptic3D.hpp)
   configure_file(${_clingHdr} ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/pvtree/full/${_clingHdr} COPYONLY)
+  install(FILES ${_clingHdr} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pvtree/full/)
 endforeach()
 
 
@@ -86,11 +87,6 @@ add_cppcheck(pvtree-fullsim)
 #Install results into respective directories
 install(TARGETS pvtree-fullsim
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
-  )
-install(FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-fullsim_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/libpvtree-fullsim.rootmap
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 
