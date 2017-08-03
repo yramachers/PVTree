@@ -149,8 +149,8 @@ add_custom_command(
           -E make_directory
           ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}
   COMMAND ${CMAKE_COMMAND}
-          -E create_symlink
-          ${PROJECT_SOURCE_DIR}/share
+          -E copy_directory
+          ${PROJECT_SOURCE_DIR}/share/
           ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
   DEPENDS pvtree-utils
   )
