@@ -134,13 +134,7 @@ to all the used libraries.
 To get started with using PVTree programs, open the file `share/doc/PVTree/html/index.html`
 in your preferred browser.
 
-For development, a debug build can be created using the additional cmake option
--DCMAKE_BUILD_TYPE=DEBUG. This will turn off compiler optimization and
-it will enable code coverage to be run (with 'make test_coverage'). When running
-the executables produced by the debug build the allowed virtual memory usage
-must be increased (by tools like ulimit) because of the undefined behaviour and
-address sanitizers. The debug build requires both lcov and gcov to be present in
-the path (gcov needs to be from the same compiler suit).
+
 
 
 Obtaining Climate Data
@@ -151,6 +145,43 @@ files `config/climate/XXX.cfg`. Grib files get big and the website has a limit s
 will have to download in smaller time periods and then merge the files (can do a
 simple cat with grib files).
 
+
+Developing PVTree
+=================
+
+Pull requests for new functionality and/or bug fixes are welcome. Please ensure your
+work is done on a branch from the `master`, e.g.
+
+```
+$ git checkout -b myfix master
+```
+
+Collaborators can publish this branch direct to the authoratative repo:
+
+```
+$ git push -u origin myfix
+```
+
+and use this to create a Pull Request for review.
+
+New features or identified bugs should have accompanying tests (in the latter case
+to first reproduce the bug and then demonstrate the fixe resolves it). PVTree tests
+use the [Catch](https://github.com/philsquared/Catch) framework for suites and cases. 
+A "catch main" program is supplied, so you only need [write the needed test cases](https://github.com/philsquared/Catch/blob/master/docs/tutorial.md). 
+All tests should be placed in the `pvtree/tests`
+directory, and the `pvtree/tests/CMakeLists.txt` script shows how to compile, link and
+add the tests so that they can be run by `ctest` (or `make test`).
+
+
+PVTree supports, but does not yet fully implement performance and static analysis
+testing. This is a WIP:
+_For development, a debug build can be created using the additional cmake option
+-DCMAKE_BUILD_TYPE=DEBUG. This will turn off compiler optimization and
+it will enable code coverage to be run (with 'make test_coverage'). When running
+the executables produced by the debug build the allowed virtual memory usage
+must be increased (by tools like ulimit) because of the undefined behaviour and
+address sanitizers. The debug build requires both lcov and gcov to be present in
+the path (gcov needs to be from the same compiler suit)._
 
 
 Licensing
