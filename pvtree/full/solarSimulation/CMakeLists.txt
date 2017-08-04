@@ -1,25 +1,25 @@
-#For persistence with ROOT need to create dictionaries for solar simulation objects.
-root_generate_dictionary(solarDictionary 
-  solarSimulation/plenoptic1D.hpp
-  solarSimulation/plenoptic3D.hpp
-  LINKDEF solarSimulation/Linkdef.h
-  OPTIONS -rmf solarDictionary.rootmap -rml libsolarSimulation.so)
+# - Generate HosekSkyModel data file
+# Generator program
+add_executable(makeHosekSkyModelData makeHosekSkyModelData.cpp ArHosekSkyModelData_Spectral.h)
+target_include_directories(makeHosekSkyModelData PRIVATE ${ROOT_INCLUDE_DIRS})
+target_link_libraries(makeHosekSkyModelData PRIVATE ${ROOT_Tree_LIBRARY} ${ROOT_RIO_LIBRARY})
 
-add_library(solarSimulation SHARED spectrum.cpp sun.cpp smarts295.f
-HosekSkyModel.cpp spectrumFactory.cpp 
-solarDictionary.cxx plenoptic1D.cpp plenoptic3D.cpp)
+# Data file creation
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/HosekSkyModelData.root
+  COMMAND makeHosekSkyModelData
+  COMMAND ${CMAKE_COMMAND}
+          -E copy
+          ${CMAKE_CURRENT_BINARY_DIR}/HosekSkyModelData.root
+          ${PVTREE_BUILDPRODUCTS_DIR}/${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS makeHosekSkyModelData
+  )
+add_custom_target(pvtree-hosekskymodel-data ALL
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/HosekSkyModelData.root
+  )
 
-add_dependencies(solarSimulation ${ROOT_LIBRARIES} solpos)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/HosekSkyModelData.root
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}
+  )
 
-add_cppcheck(solarSimulation)
-
-#Install results into respective directories
-install(TARGETS solarSimulation
-  RUNTIME DESTINATION bin
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib/static)
-
-install(FILES 
-  ${CMAKE_CURRENT_BINARY_DIR}/solarDictionary_rdict.pcm
-  ${CMAKE_CURRENT_BINARY_DIR}/solarDictionary.rootmap
-  DESTINATION lib/)

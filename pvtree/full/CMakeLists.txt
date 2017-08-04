@@ -90,3 +90,6 @@ install(TARGETS pvtree-fullsim
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   )
 
+# - Recurse into solarSimulation to generate HosekSkyModel data
+add_subdirectory(solarSimulation)
+

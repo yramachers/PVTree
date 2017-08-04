@@ -28,11 +28,11 @@ TEST_CASE("climate/climateFactory", "[climate]") {
    */
 
   // Get the device location details
-  // LocationDetails deviceLocation("location.cfg");
+  LocationDetails deviceLocation("location.cfg");
 
   // Prepare the climate factory with the default configuration
-  // ClimateFactory::instance()->setDeviceLocation(deviceLocation);
-  // ClimateFactory::instance()->setConfigurationFile("uk-2013to2015.cfg");
+  ClimateFactory::instance()->setDeviceLocation(deviceLocation);
+  ClimateFactory::instance()->setConfigurationFile("uk-2013to2015.cfg");
 
   // Get the default climate
   const Climate* climate = ClimateFactory::instance()->getClimate();
