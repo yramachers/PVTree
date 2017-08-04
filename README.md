@@ -87,7 +87,8 @@ directory under the build directory:
 ```
 
 and may be run directly (NB: you will need to set the `PVTREE_CLIMATE_DATA_PATH`
-environment variable to pint to the climate data you wish to use).
+environment variable to pint to the climate data you wish to use). This is the
+recommended way to run if you are developing or studying the code.
 
 You may also install the programs, libraries and configuration files by running:
 
@@ -112,6 +113,12 @@ All PVTree resources are installed into a standard filesystem hierarchy:
          +- smarts/
          +- spectra/
 ```
+
+After installation, you may need to set `LD_LIBRARY_PATH` on Linux systems to point
+the `pvtree-*` executables to their dependent libraries such as ROOT and Geant4.
+Alternately, you can add the argument `-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON` when
+running cmake and before installing. This will set the RPATH of the executables to point
+to all the used libraries.
 
 To get started with using PVTree programs, open the file `share/doc/PVTree/html/index.html`
 in your preferred browser.
