@@ -87,8 +87,19 @@ directory under the build directory:
 ```
 
 and may be run directly (NB: you will need to set the `PVTREE_CLIMATE_DATA_PATH`
-environment variable to pint to the climate data you wish to use). This is the
-recommended way to run if you are developing or studying the code.
+environment variable to point to the climate data you wish to use). This is the
+recommended way to run if you are developing or studying the code. Tests can be
+run using
+
+```console
+$ make test
+```
+
+or to get more information:
+
+```console
+$ ctest -VV
+```
 
 You may also install the programs, libraries and configuration files by running:
 
