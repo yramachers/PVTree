@@ -64,6 +64,3 @@ foreach(_pv_program ${PVTREE_PROGRAMS})
   add_cppcheck(pvtree-${_pv_program})
   install(TARGETS pvtree-${_pv_program} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
-
-# - Build example and check applications
-add_subdirectory(examples_checks)
