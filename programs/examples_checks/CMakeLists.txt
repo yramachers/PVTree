@@ -1,24 +1,15 @@
 # Create a list of all the programs
 set(PVTREE_PROGRAMS
   initialTest
-  basicVisualize
   leafVisualize
   leafCheck
-  basicSimulate
-  treeScan
   benchmark
   convergence
   persistenceCheck
   dailyEnergyPlotter
-  bestyearlyEnergyPlotter
   smartsIntegrationTesting
   configurationTesting
   leafSimulate
-  yearlyTreeScan
-  converter
-  convertYearly
-  bestTreeVisualizer
-  treeVisualizer
   efficiencyCorrelationPlotter
   ntupleCombiner
   convergenceCombiner
@@ -28,7 +19,6 @@ set(PVTREE_PROGRAMS
   smartsClimateAffect
   lightfieldTest
   lightfieldCombiner
-  visualiseBestYearly
   )
 
 foreach(_pv_program ${PVTREE_PROGRAMS})

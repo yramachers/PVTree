@@ -1,33 +1,13 @@
 # Create a list of all the programs
 set(PVTREE_PROGRAMS
-  initialTest
   basicVisualize
-  leafVisualize
-  leafCheck
   basicSimulate
   treeScan
-  benchmark
-  convergence
-  persistenceCheck
-  dailyEnergyPlotter
   bestyearlyEnergyPlotter
-  smartsIntegrationTesting
-  configurationTesting
-  leafSimulate
   yearlyTreeScan
   converter
   convertYearly
   bestTreeVisualizer
-  treeVisualizer
-  efficiencyCorrelationPlotter
-  ntupleCombiner
-  convergenceCombiner
-  materialConfigurationTest
-  #particleSwarmTesting Needs eo, not used yet
-  climateDataTesting
-  smartsClimateAffect
-  lightfieldTest
-  lightfieldCombiner
   visualiseBestYearly
   )
 
