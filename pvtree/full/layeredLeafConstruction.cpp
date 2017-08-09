@@ -179,7 +179,7 @@ G4LogicalVolume* LayeredLeafConstruction::constructForTree(
 void LayeredLeafConstruction::ConstructSDandField() {
   // Turn all the leaves into sensitive detectors.
   //  if (!m_constructedSensitiveDetectors) {
-  //    std::cout << "SIM: in Leaf SD Construct()" << std::endl;
+  //  std::cout << "SIM: in Leaf SD Construct()" << std::endl;
   G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
 
   // Check if the sensitive detector has already been constructed elsewhere
@@ -191,18 +191,15 @@ void LayeredLeafConstruction::ConstructSDandField() {
   if (m_trackerSD == 0) {
     m_trackerSD =
         new LeafTrackerSD(photovoltaicCellsName, "TrackerHitsCollection");
+    G4SDManager::GetSDMpointer()->AddNewDetector(m_trackerSD);
   }
+  //  std::cout << "SIM: in Leaf SD Construct(), tracker SD check 2: " 
+  //	    << m_trackerSD->GetName() << " is active? "
+  //	    << m_trackerSD->isActive() << std::endl;
 
   // Set as sensitive all the leave's logical volumes
   SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
 
-  //  m_constructedSensitiveDetectors = true;
-  //  } else {
-  // If the sensitive detectors were previously setup don't completely
-  // recreate...
-  // Set as sensitive all the leave's logical volumes
-  //    SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
-  //  }
 }
 
 void LayeredLeafConstruction::iterateLSystem() {

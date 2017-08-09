@@ -180,26 +180,26 @@ Produced Monopodial Rules = /(67)A(1,0.2)
       R"( --------------------------------------------------------------
  |    Double Parameter :      Value |    Minimum |    Maximum |
  --------------------------------------------------------------
- |       initialHeight :       0.37 |       0.37 |       0.37 |
- |        initialWidth :       0.05 |       0.05 |       0.05 |
- |  initialOrientation :        314 |        314 |        314 |
- |      elongationRate :       1.15 |       1.15 |       1.15 |
- |   widthIncreaseRate :        1.6 |        1.6 |        1.6 |
- |      branchingAngle :         21 |         21 |         21 |
- |     branchingAngle2 :         31 |         31 |         31 |
- |    divergenceAngle1 :         90 |         90 |         90 |
- |    divergenceAngle2 :        167 |        167 |        167 |
- |     angleToVertical :         12 |         12 |         12 |
- |         lengthScale :       0.18 |       0.18 |       0.18 |
- |        lengthScale2 :      0.098 |      0.098 |      0.098 |
- | branchProbReduction :       0.67 |       0.67 |       0.67 |
- |   initialBranchProb :        0.9 |        0.9 |        0.9 |
+ |       initialHeight :       0.37 |        0.3 |       0.57 |
+ |        initialWidth :       0.05 |       0.04 |       0.07 |
+ |  initialOrientation :        314 |          0 |        360 |
+ |      elongationRate :       1.15 |        1.1 |       1.25 |
+ |   widthIncreaseRate :        1.6 |        1.4 |        1.8 |
+ |      branchingAngle :         21 |         11 |         31 |
+ |     branchingAngle2 :         31 |         11 |         41 |
+ |    divergenceAngle1 :         99 |         70 |        120 |
+ |    divergenceAngle2 :        167 |        147 |        177 |
+ |     angleToVertical :         12 |         10 |         15 |
+ |         lengthScale :       0.18 |       0.15 |       0.24 |
+ |        lengthScale2 :      0.098 |       0.09 |       0.12 |
+ | branchProbReduction :       0.67 |       0.57 |       0.77 |
+ |   initialBranchProb :        0.9 |        0.8 |       0.95 |
  --------------------------------------------------------------
  |   Integer Parameter :      Value |    Minimum |    Maximum |
  --------------------------------------------------------------
- | leafIterationNumber :          2 |          2 |          2 |
- | totalLeafIterations :          3 |          3 |          3 |
- |     iterationNumber :          7 |          7 |          7 |
+ | leafIterationNumber :          2 |          2 |          4 |
+ | totalLeafIterations :          3 |          2 |          4 |
+ |     iterationNumber :          7 |          5 |          8 |
  |                seed :       1234 |       1234 |       1234 |
  --------------------------------------------------------------
 Produced Stochastic Rules = RandomSeed(1234)!(0.05,1.6)F(0.37)/(314)A
@@ -250,7 +250,7 @@ Produced Stump Rules = !(0.05)F(0.5)/(180)&(45)F(0.5)
  -------------------------------------------------------------
  |  Integer Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
- |    iterationNumber :          6 |          3 |          7 |
+ |    iterationNumber :          6 |          3 |          8 |
  -------------------------------------------------------------
 Produced Sympodial Rules = /(67)A(1,0.2)
 )";
@@ -278,7 +278,7 @@ Produced Sympodial Rules = /(67)A(1,0.2)
  -------------------------------------------------------------
  |  Integer Parameter :      Value |    Minimum |    Maximum |
  -------------------------------------------------------------
- |    iterationNumber :          6 |          4 |          6 |
+ |    iterationNumber :          7 |          4 |          7 |
  -------------------------------------------------------------
 Produced Ternary Rules = !(0.02)F(0.07)/(67)A
 )";
