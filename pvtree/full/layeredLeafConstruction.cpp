@@ -178,28 +178,34 @@ G4LogicalVolume* LayeredLeafConstruction::constructForTree(
 
 void LayeredLeafConstruction::ConstructSDandField() {
   // Turn all the leaves into sensitive detectors.
-  //  if (!m_constructedSensitiveDetectors) {
+  if (!m_constructedSensitiveDetectors) {
   //  std::cout << "SIM: in Leaf SD Construct()" << std::endl;
-  G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
+    G4String photovoltaicCellsName = "PVTree/LeafSensitiveDetector";
 
-  // Check if the sensitive detector has already been constructed elsewhere
-  bool showSearchWarning = false;
-  m_trackerSD = static_cast<LeafTrackerSD*>(
-      G4SDManager::GetSDMpointer()->FindSensitiveDetector(photovoltaicCellsName,
-                                                          showSearchWarning));
+    // Check if the sensitive detector has already been constructed elsewhere
+    bool showSearchWarning = false;
+    m_trackerSD = static_cast<LeafTrackerSD*>(
+        G4SDManager::GetSDMpointer()->FindSensitiveDetector(
+	    photovoltaicCellsName, showSearchWarning));
 
-  if (m_trackerSD == 0) {
-    m_trackerSD =
+    if (m_trackerSD == 0) {
+      m_trackerSD =
         new LeafTrackerSD(photovoltaicCellsName, "TrackerHitsCollection");
-    G4SDManager::GetSDMpointer()->AddNewDetector(m_trackerSD);
+      G4SDManager::GetSDMpointer()->AddNewDetector(m_trackerSD);
+    }
+    //  std::cout << "SIM: in Leaf SD Construct(), tracker SD check 2: " 
+    //	    << m_trackerSD->GetName() << " is active? "
+    //	    << m_trackerSD->isActive() << std::endl;
+    
+    // Set as sensitive all the leave's logical volumes
+    SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
+  } else {
+    // If the sensitive detectors were previously setup don't completely
+    // recreate...
+    
+    // Set as sensitive all the leave's logical volumes
+    SetSensitiveDetector("Leaf", m_trackerSD, true);
   }
-  //  std::cout << "SIM: in Leaf SD Construct(), tracker SD check 2: " 
-  //	    << m_trackerSD->GetName() << " is active? "
-  //	    << m_trackerSD->isActive() << std::endl;
-
-  // Set as sensitive all the leave's logical volumes
-  SetSensitiveDetector("LeafSensitive", m_trackerSD, true);
-
 }
 
 void LayeredLeafConstruction::iterateLSystem() {
