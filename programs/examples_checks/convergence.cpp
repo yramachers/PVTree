@@ -465,8 +465,9 @@ int main(int argc, char** argv) {
     detector->resetGeometry(tree, leaf);
 
     // Re-initialize the detector geometry
-    G4bool destroyFirst;
-    runManager->ReinitializeGeometry(destroyFirst = true);
+    runManager->GeometryHasBeenModified();
+    //    G4bool destroyFirst;
+    //    runManager->ReinitializeGeometry(destroyFirst = true);
 
     // Simulate with a range of different photon numbers in different events
     for (unsigned int p = 0; p < eventPhotonNumbers.size(); p++) {
