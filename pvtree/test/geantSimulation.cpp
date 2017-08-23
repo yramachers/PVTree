@@ -1,6 +1,7 @@
 #include "pvtree/test/catch.hpp"
 #include "pvtree/climate/climateFactory.hpp"
 #include "pvtree/climate/climate.hpp"
+#include "pvtree/full/solarSimulation/spectrumFactory.hpp"
 #include "pvtree/treeSystem/treeFactory.hpp"
 #include "pvtree/leafSystem/leafFactory.hpp"
 #include "pvtree/utils/equality.hpp"
@@ -39,7 +40,7 @@ TEST_CASE("simulation/geant", "[simulation]") {
   // Define the test case
   std::string treeType = "sympodial";
   std::string leafType = "simple";
-  unsigned int photonNumberPerEvent = 1000u;
+  unsigned int photonNumberPerEvent = 1000u; // was 1000u
   int geant4Seed = 12345;
   int lSystemSeed = 5432;
 
@@ -48,22 +49,38 @@ TEST_CASE("simulation/geant", "[simulation]") {
 
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");
+  //  std::cout << "Got device location." << std::endl;
+
+  // Set the altitude of the spectrum factory using location details
+  SpectrumFactory::instance()->setAltitude(deviceLocation.getAltitude());
 
   // Prepare the climate factory with the default configuration
   ClimateFactory::instance()->setDeviceLocation(deviceLocation);
   ClimateFactory::instance()->setConfigurationFile("uk-2013to2015.cfg");
+  //  ClimateFactory::instance()->setConfigurationFile("default.cfg");
+  //  std::cout << "Got climate configuration." << std::endl;
 
   // Get the LSystems to be used
-  std::shared_ptr<TreeConstructionInterface> tree =
-      TreeFactory::instance()->getTree(treeType);
-  std::shared_ptr<LeafConstructionInterface> leaf =
-      LeafFactory::instance()->getLeaf(leafType);
+  std::shared_ptr<TreeConstructionInterface> tree;
+  tree = TreeFactory::instance()->getTree(treeType);
 
+  std::shared_ptr<LeafConstructionInterface> leaf;
+  leaf =LeafFactory::instance()->getLeaf(leafType);
+
+  //  std::cout << "Got tree and leaf constructed." << std::endl;
+  
   // Define the sun setting, just an arbitrary time and date for now
   Sun sun(deviceLocation);
 
+  // Set the time
+  sun.setDate(getTestTime());
+  // sun.setDate(19, 2014); // fixed day like in treeScan
+  sun.setTime(12, 0, 0);
+  //  std::cout << "Got Sun set up." << std::endl;
+
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
+  //  std::cout << "Got materials." << std::endl;
 
   // Setup Geant4
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
@@ -89,46 +106,55 @@ TEST_CASE("simulation/geant", "[simulation]") {
 
   // Initialize G4 kernel
   runManager->Initialize();
-
+  runManager->SetVerboseLevel(0);
+  //  std::cout << "Run Manager setup and init." << std::endl;
+  
   // Change parameters
   tree->randomizeParameters(lSystemSeed);
   leaf->randomizeParameters(lSystemSeed);
   detector->resetGeometry(tree, leaf);
-
+//   tree->print();
+//   leaf->print();
+//   std::cout << "Done detector reset geometry method." << std::endl;
+  
   // Re-initialize the detector geometry
-  G4bool destroyFirst;
-  runManager->ReinitializeGeometry(destroyFirst = true);
-
-  // Set the time
-  sun.setDate(getTestTime());
-  sun.setTime(12, 0, 0);
-
+  //  G4bool destroyFirst;
+  //  runManager->ReinitializeGeometry(true, false);
+  //  runManager->DefineWorldVolume(detector->Construct());  // reconstruction
+  runManager->GeometryHasBeenModified();
+//   std::cout << "Got run manager reset and re-initialized." << std::endl;
+  
   // Run simulation with a single event per time point
   G4int eventNumber = 1;
   runManager->BeamOn(eventNumber);
-
+  //  std::cout << "Got first beam on done." << std::endl;
+  
   // Get the total surface area which is "sensitive" from current tested
   // detector.
   double sensitiveArea = detector->getSensitiveSurfaceArea();
+//   std::cout << "Got sensitive area: " << sensitiveArea << std::endl;
 
   int checkPrecision = 10;
-  CHECK(almost_equal((float)sensitiveArea, 0.1322582999f, checkPrecision));
+  CHECK(almost_equal((float)sensitiveArea, 0.235914f, checkPrecision));
 
   // Get the number of leaves
   int numberOfLeaves = detector->getNumberOfLeaves();
   int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
 
-  CHECK(numberOfLeaves == 10);
-  CHECK(numberOfRejectedLeaves == 22);
+  CHECK(numberOfLeaves == 31);
+  CHECK(numberOfRejectedLeaves == 113);
 
   // Get size of the axially alligned bounding box structure along the axis
   double structureXSize = detector->getXSize();
   double structureYSize = detector->getYSize();
   double structureZSize = detector->getZSize();
+//   std::cout << "structure size X: " << structureXSize << std::endl;
+//   std::cout << "structure size Y: " << structureYSize << std::endl;
+//   std::cout << "structure size Z: " << structureZSize << std::endl;
 
-  CHECK(almost_equal((float)structureXSize, 0.5467519042f, checkPrecision));
-  CHECK(almost_equal((float)structureYSize, 0.7683677904f, checkPrecision));
-  CHECK(almost_equal((float)structureZSize, 1.9940984162f, checkPrecision));
+  CHECK(almost_equal((float)structureXSize, 1.40908f, checkPrecision));
+  CHECK(almost_equal((float)structureYSize, 1.01907f, checkPrecision));
+  CHECK(almost_equal((float)structureZSize, 3.02026f, checkPrecision));
 
   double totalEnergyDeposited = 0.0;
   long totalPhotonCounts = 0;
@@ -154,9 +180,9 @@ TEST_CASE("simulation/geant", "[simulation]") {
   }
 
   CHECK(
-      almost_equal((float)totalEnergyDeposited, 0.0040563401f, checkPrecision));
+      almost_equal((float)totalEnergyDeposited, 0.00603836f, checkPrecision));
   CHECK(totalPhotonCounts == photonNumberPerEvent);
-  CHECK(totalHitCounts == 5);
+  CHECK(totalHitCounts == 3);
 
   // Clear results
   recorder.reset();
@@ -178,9 +204,6 @@ TEST_CASE("simulation/geant", "[simulation]") {
 
     detector->resetGeometry(tree, leaf);
 
-    // Re-initialize the detector geometry
-    runManager->ReinitializeGeometry(destroyFirst = true);
-
     // Apply pre-selection to the tree after manual construction.
     detector->Construct();
 
@@ -196,62 +219,99 @@ TEST_CASE("simulation/geant", "[simulation]") {
   }
 
   // Check that the same number of structures passed
-  CHECK(passingTrees == 2);
+  CHECK(passingTrees == 0);
   recorder.reset();
 
   // Run simulation using the different tree types
   std::vector<std::string> availableTreeTypes = {
       "helical", "monopodial", "stochastic", "stump", "sympodial", "ternary"};
 
+  std::vector<float> received_energy = {
+    3.76342, 5.25191, 6.53452, 8.51917, 9.80178, 13.8555};
+
+  int counter = 0;
   for (auto currentTreeType : availableTreeTypes) {
     tree = TreeFactory::instance()->getTree(currentTreeType);
     detector->resetGeometry(tree, leaf);
 
     // Re-initialize the detector geometry
-    runManager->ReinitializeGeometry(destroyFirst = true);
+    // runManager->ReinitializeGeometry(true, false);         // clean up
+    // runManager->DefineWorldVolume(detector->Construct());  // reconstruction
+    runManager->GeometryHasBeenModified();
+    //    runManager->ReinitializeGeometry(destroyFirst = true);
 
     // Run the simulation
     runManager->BeamOn(eventNumber);
 
+    // check for total energy deposited
+    totalEnergyDeposited = 0.0;
+    hitEnergies = recorder.getSummedHitEnergies();
+    for (double eventHitEnergy : hitEnergies[0]) {
+      totalEnergyDeposited += eventHitEnergy;
+    }
+    CHECK(
+	almost_equal((float)totalEnergyDeposited, received_energy[counter], checkPrecision));
+
     // Clear up any results
     recorder.reset();
+    counter++;
   }
 
   // Check that single leaves can be simulated
   std::vector<std::string> availableLeafTypes = {"simple", "cordate", "rose",
                                                  "planar"};
+  
+  received_energy.clear();
+  received_energy = {7.03068, 6.53452, 2.48081, 6.53452};
 
   // Default turtle at origin
   Turtle* initialTurtle = new Turtle();
 
+  counter = 0;
   for (auto currentLeafType : availableLeafTypes) {
     // Re-initialize the detector geometry
-    runManager->ReinitializeGeometry(destroyFirst = true);
+    // runManager->ReinitializeGeometry(true, false);         // clean up
+    //    runManager->ReinitializeGeometry(destroyFirst = true);
 
     leaf = LeafFactory::instance()->getLeaf(currentLeafType);
     LayeredLeafConstruction* leafDetector =
         new LayeredLeafConstruction(leaf, initialTurtle);
 
     // Switch to the new detector
-    runManager->SetUserInitialization(leafDetector);
+    // runManager->DefineWorldVolume(leafDetector->Construct());  // reconstruction
+    runManager->GeometryHasBeenModified();
+    //    runManager->SetUserInitialization(leafDetector);
 
     // Run the simulation
     runManager->BeamOn(eventNumber);
 
+    // check for total energy deposited
+    totalEnergyDeposited = 0.0;
+    hitEnergies = recorder.getSummedHitEnergies();
+    for (double eventHitEnergy : hitEnergies[0]) {
+      totalEnergyDeposited += eventHitEnergy;
+    }
+    CHECK(
+	almost_equal((float)totalEnergyDeposited, received_energy[counter], checkPrecision));
+
     // Clear up any results
     recorder.reset();
+    counter++;
   }
 
   // Repeat for alternative leaf constructor
   for (auto currentLeafType : availableLeafTypes) {
     // Re-initialize the detector geometry
-    runManager->ReinitializeGeometry(destroyFirst = true);
+    // runManager->ReinitializeGeometry(true, false);         // clean up
+    //    runManager->ReinitializeGeometry(destroyFirst = true);
 
     leaf = LeafFactory::instance()->getLeaf(currentLeafType);
     LeafConstruction* leafDetector = new LeafConstruction(leaf, initialTurtle);
 
     // Switch to the new detector
-    runManager->SetUserInitialization(leafDetector);
+    // runManager->DefineWorldVolume(leafDetector->Construct());  // reconstruction
+    runManager->GeometryHasBeenModified();
+    //    runManager->SetUserInitialization(leafDetector);
 
     // Run the simulation
     runManager->BeamOn(eventNumber);

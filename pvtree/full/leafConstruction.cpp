@@ -228,6 +228,7 @@ void LeafConstruction::ConstructSDandField() {
     if (m_trackerSD == 0) {
       m_trackerSD =
           new LeafTrackerSD(photovoltaicCellsName, "TrackerHitsCollection");
+      G4SDManager::GetSDMpointer()->AddNewDetector(m_trackerSD);
     }
 
     // Set as sensitive all the leave's logical volumes

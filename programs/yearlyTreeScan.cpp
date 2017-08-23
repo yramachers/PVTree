@@ -338,14 +338,15 @@ int main(int argc, char** argv) {
       leaf->randomizeParameters(leafParameterSeed);
 
       detector->resetGeometry(tree, leaf);
+      runManager->GeometryHasBeenModified();
 
       // Re-initialize the detector geometry
-      G4bool destroyFirst;
-      runManager->ReinitializeGeometry(destroyFirst = true);
+      //      G4bool destroyFirst;
+      //      runManager->ReinitializeGeometry(destroyFirst = true);
 
       // Apply pre-selection to the tree after manual construction.
       //      detector->Construct();
-      runManager->DefineWorldVolume(detector->Construct());  // reconstruction
+      //      runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
       // Lets not bother with small surface areas!
       if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {

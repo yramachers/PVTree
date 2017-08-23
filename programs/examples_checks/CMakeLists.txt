@@ -1,14 +1,24 @@
 # Create a list of all the programs
 set(PVTREE_PROGRAMS
-  basicVisualize
-  basicSimulate
-  treeScan
-  bestyearlyEnergyPlotter
-  yearlyTreeScan
-  converter
-  convertYearly
-  bestTreeVisualizer
-  visualiseBestYearly
+  initialTest
+  leafVisualize
+  leafCheck
+  benchmark
+  convergence
+  persistenceCheck
+  dailyEnergyPlotter
+  smartsIntegrationTesting
+  configurationTesting
+  leafSimulate
+  efficiencyCorrelationPlotter
+  ntupleCombiner
+  convergenceCombiner
+  materialConfigurationTest
+  #particleSwarmTesting Needs eo, not used yet
+  climateDataTesting
+  smartsClimateAffect
+  lightfieldTest
+  lightfieldCombiner
   )
 
 foreach(_pv_program ${PVTREE_PROGRAMS})
@@ -39,21 +49,6 @@ foreach(_pv_program ${PVTREE_PROGRAMS})
     ${ROOT_Graf_LIBRARY}
     )
 
-  # Configure install-time RPATH to builtin libraries
-  if(UNIX AND NOT APPLE)
-    set_target_properties(pvtree-${_pv_program}
-      PROPERTIES INSTALL_RPATH "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
-      )
-  elseif(APPLE)
-    set_target_properties(pvtree-${_pv_program}
-      PROPERTIES INSTALL_RPATH "@executable_path/../${CMAKE_INSTALL_LIBDIR}"
-      )
-  endif()
-
-  # Run static check of source code
-  add_cppcheck(pvtree-${_pv_program})
-  install(TARGETS pvtree-${_pv_program} DESTINATION ${CMAKE_INSTALL_BINDIR})
+  # Don't install - use as source code examples to look at.
+  #  install(TARGETS pvtree-${_pv_program} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()
-
-# - Build example and check applications
-add_subdirectory(examples_checks)
