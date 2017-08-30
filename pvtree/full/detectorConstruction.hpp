@@ -24,6 +24,9 @@ class TreeSystemInterface;
 class DetectorConstruction : public G4VUserDetectorConstruction {
  public:
   DetectorConstruction(std::shared_ptr<TreeConstructionInterface> treeSystem,
+                       std::shared_ptr<LeafConstructionInterface> leafSystem,
+                       unsigned int treeNumber);
+  DetectorConstruction(std::shared_ptr<TreeConstructionInterface> treeSystem,
                        std::shared_ptr<LeafConstructionInterface> leafSystem);
   virtual ~DetectorConstruction();
 
@@ -42,6 +45,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
    *         need to call ReinitializeGeometry() on the run manager to
    *         allow a clean re-running of construction.
    */
+  void resetGeometry(std::shared_ptr<TreeConstructionInterface> treeSystem,
+                     std::shared_ptr<LeafConstructionInterface> leafSystem,
+                     unsigned int treeNumber);
   void resetGeometry(std::shared_ptr<TreeConstructionInterface> treeSystem,
                      std::shared_ptr<LeafConstructionInterface> leafSystem);
 
@@ -129,6 +135,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   // Candidate leaves and their spawn points
   std::vector<std::pair<G4LogicalVolume*, G4VPhysicalVolume*> >
       m_candidateLeaves;
+
+  // Number of trees to construct
+  unsigned int m_treeNumber;
 
   // Volumes
   G4LogicalVolume* m_worldLogicalVolume;

@@ -29,10 +29,12 @@
 
 DetectorConstruction::DetectorConstruction(
     std::shared_ptr<TreeConstructionInterface> treeSystem,
-    std::shared_ptr<LeafConstructionInterface> leafSystem)
+    std::shared_ptr<LeafConstructionInterface> leafSystem,
+    unsigned int treeNumber)
     : G4VUserDetectorConstruction(),
       m_treeSystem(treeSystem),
       m_leafSystem(leafSystem),
+      m_treeNumber(treeNumber),
       m_worldLogicalVolume(nullptr),
       m_worldPhysicalVolume(nullptr),
       m_airMaterialName("pv-air"),
@@ -58,6 +60,11 @@ DetectorConstruction::DetectorConstruction(
       G4Colour(0.0, 0.6, 1.0, 0.1));  // Transparent light blue
 }
 
+DetectorConstruction::DetectorConstruction(
+    std::shared_ptr<TreeConstructionInterface> treeSystem,
+    std::shared_ptr<LeafConstructionInterface> leafSystem)
+    : DetectorConstruction(treeSystem, leafSystem, 1) {}
+
 DetectorConstruction::~DetectorConstruction() {
   // Ensure no turtles survive
   for (auto& turtle : m_turtles) {
@@ -75,10 +82,18 @@ void DetectorConstruction::resetGeometry() { m_constructed = false; }
 
 void DetectorConstruction::resetGeometry(
     std::shared_ptr<TreeConstructionInterface> treeSystem,
-    std::shared_ptr<LeafConstructionInterface> leafSystem) {
+    std::shared_ptr<LeafConstructionInterface> leafSystem,
+    unsigned int treeNumber) {
   m_treeSystem = treeSystem;
   m_leafSystem = leafSystem;
+  m_treeNumber = treeNumber;
   resetGeometry();
+}
+
+void DetectorConstruction::resetGeometry(
+    std::shared_ptr<TreeConstructionInterface> treeSystem,
+    std::shared_ptr<LeafConstructionInterface> leafSystem) {
+  resetGeometry(treeSystem, leafSystem, 1);
 }
 
 double DetectorConstruction::getSensitiveSurfaceArea() {
