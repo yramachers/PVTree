@@ -89,6 +89,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   double getZSize();
 
  private:
+  void constructWorld();
+  void placeTree();
+  double calculateWorldSize();
   void iterateLSystem();
   void generateTurtles();
   void getTurtleTreeExtent(const Turtle* turtle, G4ThreeVector& minExtent,

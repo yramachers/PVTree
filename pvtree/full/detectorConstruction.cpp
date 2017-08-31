@@ -132,58 +132,29 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   m_candidateLeaves.clear();
 
-  // Iterating the LSystem conditions
-  iterateLSystem();
+  // Construct the world
+  constructWorld();
 
-  // Construct the turtles from final L-System
-  generateTurtles();
+  // Construct a tree
+  placeTree();
 
-  // find all the parentless turtles (the starting points for recursive builds).
-  std::vector<Turtle*> startingTurtles;
-  for (auto& candidateTurtle : m_turtles) {
-    if (candidateTurtle->parent == NULL) {
-      startingTurtles.push_back(candidateTurtle);
-    }
-  }
+  // Attempt to create leaves from candidate pool
+  candidateLeafBuild();
 
-  // Find the total extent of the tree geometry to build the world volume
-  // Need to consider all the starting turtles in the evaluation
-  G4ThreeVector totalMaximums(convertVector(m_turtles[0]->position));
-  G4ThreeVector totalMinimums(convertVector(m_turtles[0]->position));
+  // Record that the world has been build
+  m_constructed = true;
 
-  for (auto& startingTurtle : startingTurtles) {
-    getTurtleTreeExtent(startingTurtle, totalMinimums, totalMaximums);
-  }
+  return m_worldPhysicalVolume;
+}
 
-  // Calculate the rough bounding
-  double maximumBoundingBoxX =
-      (fabs(totalMaximums.x()) > fabs(totalMinimums.x())
-           ? fabs(totalMaximums.x())
-           : fabs(totalMinimums.x()));
-  double maximumBoundingBoxY =
-      (fabs(totalMaximums.y()) > fabs(totalMinimums.y())
-           ? fabs(totalMaximums.y())
-           : fabs(totalMinimums.y()));
-  double maximumBoundingBoxZ =
-      (fabs(totalMaximums.z()) > fabs(totalMinimums.z())
-           ? fabs(totalMaximums.z())
-           : fabs(totalMinimums.z()));
+void DetectorConstruction::ConstructSDandField() {
+  // The leaves are the only sensitive element
+  m_leafConstructor.ConstructSDandField();
+}
 
-  m_structureXSize = maximumBoundingBoxX / meter;
-  m_structureYSize = maximumBoundingBoxY / meter;
-  m_structureZSize = maximumBoundingBoxZ / meter;
-
-  // Applying a temporary scale to the world box size whilst I wait for better
-  // construction code to evaluate the
-  // true bounding box.
-  double fudgeScaleFactor = 10.1;
-  maximumBoundingBoxX *= fudgeScaleFactor;
-  maximumBoundingBoxY *= fudgeScaleFactor;
-  maximumBoundingBoxZ *= fudgeScaleFactor;
-
-  double boundingRadius = std::sqrt(std::pow(maximumBoundingBoxX, 2.0) +
-                                    std::pow(maximumBoundingBoxY, 2.0) +
-                                    std::pow(maximumBoundingBoxZ, 2.0));
+void DetectorConstruction::constructWorld() {
+  // Find size of 1 tree and calculate the size of the world box
+  double boundingRadius = calculateWorldSize();
 
   // Create the 'World' (which has to be centred at coordinates 0.0, 0.0, 0.0)
   // Large enough for the sun disk to appear more point-like and hit regardless
@@ -252,6 +223,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
                            floorOpticalSurface);
   new G4LogicalSkinSurface("FloorTopSkin", floorTopLogicalVolume,
                            floorOpticalSurface);
+}
+
+void DetectorConstruction::placeTree() {
+  // Fudgey fix for now to test
+  // Iterating the LSystem conditions
+  iterateLSystem();
+
+  // Construct the turtles from final L-System
+  generateTurtles();
+
+  // find all the parentless turtles (the starting points for recursive builds).
+  std::vector<Turtle*> startingTurtles;
+  for (auto& candidateTurtle : m_turtles) {
+    if (candidateTurtle->parent == NULL) {
+      startingTurtles.push_back(candidateTurtle);
+    }
+  }
 
   // Convert the turtles into Geant4 geometry representing the tree structure
   // through a recursive build
@@ -260,19 +248,63 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     recursiveTreeBuild(startingTurtle, 100, m_worldLogicalVolume,
                        startPosition);
   }
-
-  // Attempt to create leaves from candidate pool
-  candidateLeafBuild();
-
-  // Record that the world has been build
-  m_constructed = true;
-
-  return m_worldPhysicalVolume;
 }
 
-void DetectorConstruction::ConstructSDandField() {
-  // The leaves are the only sensitive element
-  m_leafConstructor.ConstructSDandField();
+double DetectorConstruction::calculateWorldSize() {
+  // Iterating the LSystem conditions
+  iterateLSystem();
+
+  // Construct the turtles from final L-System
+  generateTurtles();
+
+  // find all the parentless turtles (the starting points for recursive builds).
+  std::vector<Turtle*> startingTurtles;
+  for (auto& candidateTurtle : m_turtles) {
+    if (candidateTurtle->parent == NULL) {
+      startingTurtles.push_back(candidateTurtle);
+    }
+  }
+
+  // Find the total extent of the tree geometry to build the world volume
+  // Need to consider all the starting turtles in the evaluation
+  G4ThreeVector totalMaximums(convertVector(m_turtles[0]->position));
+  G4ThreeVector totalMinimums(convertVector(m_turtles[0]->position));
+
+  for (auto& startingTurtle : startingTurtles) {
+    getTurtleTreeExtent(startingTurtle, totalMinimums, totalMaximums);
+  }
+
+  // Calculate the rough bounding
+  double maximumBoundingBoxX =
+      (fabs(totalMaximums.x()) > fabs(totalMinimums.x())
+           ? fabs(totalMaximums.x())
+           : fabs(totalMinimums.x()));
+  double maximumBoundingBoxY =
+      (fabs(totalMaximums.y()) > fabs(totalMinimums.y())
+           ? fabs(totalMaximums.y())
+           : fabs(totalMinimums.y()));
+  double maximumBoundingBoxZ =
+      (fabs(totalMaximums.z()) > fabs(totalMinimums.z())
+           ? fabs(totalMaximums.z())
+           : fabs(totalMinimums.z()));
+
+  m_structureXSize = maximumBoundingBoxX / meter;
+  m_structureYSize = maximumBoundingBoxY / meter;
+  m_structureZSize = maximumBoundingBoxZ / meter;
+
+  // Applying a temporary scale to the world box size whilst I wait for better
+  // construction code to evaluate the
+  // true bounding box.
+  double fudgeScaleFactor = 10.1;
+  maximumBoundingBoxX *= fudgeScaleFactor;
+  maximumBoundingBoxY *= fudgeScaleFactor;
+  maximumBoundingBoxZ *= fudgeScaleFactor;
+
+  double boundingRadius = std::sqrt(std::pow(maximumBoundingBoxX, 2.0) +
+                                    std::pow(maximumBoundingBoxY, 2.0) +
+                                    std::pow(maximumBoundingBoxZ, 2.0));
+
+  return boundingRadius;
 }
 
 void DetectorConstruction::iterateLSystem() {
