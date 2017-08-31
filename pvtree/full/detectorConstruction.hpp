@@ -90,7 +90,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 
  private:
   void constructWorld();
-  void placeTree();
+  void placeTree(unsigned int i, unsigned int j);
   double calculateWorldSize();
   void iterateLSystem();
   void generateTurtles();
@@ -161,12 +161,15 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   bool m_constructed;
 
   // General structural details
+  unsigned int m_treesConstructed;
   double m_sensitiveSurfaceArea;
   unsigned int m_leafNumber;
   unsigned int m_rejectedLeafNumber;
   double m_structureXSize;
   double m_structureYSize;
   double m_structureZSize;
+  double m_treeRadius;
+  double m_shiftedOrigin;
 };
 
 #endif  // PV_FULL_DETECTOR_CONSTRUCTION
