@@ -52,7 +52,7 @@ class LayeredLeafConstruction : public G4VUserDetectorConstruction {
    */
   G4LogicalVolume* constructForTree(
       std::shared_ptr<LeafConstructionInterface> leafSystem,
-      Turtle* initialTurtle);
+      Turtle* initialTurtle, G4ThreeVector offsetPosition);
 
   void getExtentForTree(G4ThreeVector& minExtent, G4ThreeVector& maxExtent);
   void getExtentForTree(std::shared_ptr<LeafConstructionInterface> leafSystem,
@@ -174,6 +174,7 @@ class LayeredLeafConstruction : public G4VUserDetectorConstruction {
   std::shared_ptr<LeafConstructionInterface> m_leafSystem;
   std::vector<std::shared_ptr<LeafSystemInterface>> m_leafConditions;
   Turtle* m_initialTurtle;
+  G4ThreeVector m_offsetPosition;
 
   // Volumes
   G4LogicalVolume* m_worldLogicalVolume;
