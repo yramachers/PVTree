@@ -109,6 +109,7 @@ include(${ROOT_DIR}/modules/RootNewMacros.cmake)
 
 # Geant4 for particle transport simulation
 find_package(Geant4 REQUIRED ui_all vis_all)
+include(${Geant4_USE_FILE})
 
 # LibConfig for input steering files
 # LibConfig's cmake support files are broken, so

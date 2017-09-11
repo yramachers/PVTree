@@ -178,7 +178,7 @@ int main(int argc, char** argv) {
     UImanager->ApplyCommand("/run/initialize");
     UImanager->ApplyCommand("/control/verbose 2");
 
-    UImanager->ApplyCommand("/vis/open OGLSQt");
+    UImanager->ApplyCommand("/vis/open OGL");
     UImanager->ApplyCommand("/vis/scene/create");
     UImanager->ApplyCommand("/vis/scene/add/userAction");
 
