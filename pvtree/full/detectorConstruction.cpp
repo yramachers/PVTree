@@ -139,22 +139,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   // Construct the world
   constructWorld();
 
-  // Construct trees
+  // Construct trees in square grid
   unsigned int treeGridNumber = std::ceil(std::sqrt(m_treeNumber));
   m_shiftedOrigin = -m_treeRadius * (treeGridNumber-1) ;
-  std::cout << "Tree radius is " << m_treeRadius << std::endl;
-  std::cout << "Shifted origin at " << m_shiftedOrigin << std::endl;
+  G4LogicalVolume* tree = createTree();
   for (unsigned int j=0u; j<treeGridNumber; j++) {
     for (unsigned int i=0u; i<treeGridNumber && m_treesConstructed<m_treeNumber;
          i++) {
-      placeTree(i,j);
-      std::cout << "Trees constructed " << m_treesConstructed << "/" << m_treeNumber << std::endl;
+      placeTree(i,j, tree);
     }
   }
-
-
-  // Attempt to create leaves from candidate pool
-  candidateLeafBuild();
 
   // Record that the world has been build
   m_constructed = true;
@@ -240,8 +234,7 @@ void DetectorConstruction::constructWorld() {
                            floorOpticalSurface);
 }
 
-void DetectorConstruction::placeTree(unsigned int i, unsigned int j) {
-  // Fudgey fix for now to test
+G4LogicalVolume* DetectorConstruction::createTree() {
   // Iterating the LSystem conditions
   iterateLSystem();
 
@@ -256,15 +249,40 @@ void DetectorConstruction::placeTree(unsigned int i, unsigned int j) {
     }
   }
 
-  // Convert the turtles into Geant4 geometry representing the tree structure
-  // through a recursive build
-  double xPos = m_shiftedOrigin + 2.0*i*m_treeRadius;
-  double yPos = m_shiftedOrigin + 2.0*j*m_treeRadius;
-  G4ThreeVector startPosition(xPos, yPos, 0.0);
+  // Create bounding logical volume
+  G4Box* treeBox = new G4Box("treeBox", m_structureXSize*meter, 
+                             m_structureYSize*meter, m_structureZSize*meter);
+  G4Material* airMaterial =
+      MaterialFactory::instance()->getMaterial(m_airMaterialName);
+  G4LogicalVolume* treeLogicalVolume = new G4LogicalVolume(treeBox, airMaterial, 
+                                                           "treeLogicalVolume");
+  // Tree box needs to be transparent so that we can see the trees
+  G4VisAttributes treeVisualAttributes;
+  treeVisualAttributes.SetVisibility(false);
+  treeLogicalVolume->SetVisAttributes(treeVisualAttributes);
+
+  // Create tree using turtles, placing the tree within the (unplaced) tree 
+  // bounding logical volume.
+  G4ThreeVector startPosition(0.0, 0.0, 0.0);
   for (auto& startingTurtle : startingTurtles) {
-    recursiveTreeBuild(startingTurtle, 100, m_worldLogicalVolume,
+    recursiveTreeBuild(startingTurtle, 100, treeLogicalVolume,
                        startPosition);
   }
+
+  // Construct leaves
+  candidateLeafBuild();
+
+  return treeLogicalVolume;
+}
+
+void DetectorConstruction::placeTree(unsigned int i, unsigned int j, 
+                                     G4LogicalVolume* treeLogicalVolume) {
+  // Need to place tree within the world orb at an offset determined by (i, j)
+  G4Transform3D identityTransform;
+  identityTransform = G4Translate3D(m_shiftedOrigin + 2.0*i*m_treeRadius, 
+      m_shiftedOrigin + 2.0*j*m_treeRadius, 0.0);
+  new G4PVPlacement(identityTransform, treeLogicalVolume, "tree", 
+                    m_worldLogicalVolume, false, m_treesConstructed);
   
   m_treesConstructed ++;
 }
@@ -328,7 +346,7 @@ double DetectorConstruction::calculateWorldSize() {
                                      std::pow(maximumBoundingBoxY, 2.0)) +
                                     std::pow(maximumBoundingBoxZ, 2.0));
 
-  std::cout << "World radius is " << boundingRadius << std::endl;
+  //std::cout << "World radius is " << boundingRadius << std::endl;
   return boundingRadius;
 }
 
@@ -629,7 +647,8 @@ void DetectorConstruction::candidateLeafBuild() {
   // Leaf already positioned within world with initial turtle
   G4Transform3D identityTransform;
 
-  //std::cout << "SIM: N candidate leaves = " << m_candidateLeaves.size() << std::endl;
+  //std::cout << "SIM: N candidate leaves = " << m_candidateLeaves.size() << 
+  //std::endl;
   for (auto& candidateLeafInfo : m_candidateLeaves) {
     G4LogicalVolume* leafLogicalVolume = candidateLeafInfo.first;
     G4VPhysicalVolume* trunkPhysicalVolume = candidateLeafInfo.second;
@@ -648,8 +667,10 @@ void DetectorConstruction::candidateLeafBuild() {
       // detector. (in units of meter squared)
       m_sensitiveSurfaceArea += m_leafConstructor.getSensitiveSurfaceArea();
       m_leafNumber += 1u;
-      //std::cout << "SIM: non-overlapping - PIECE sensitive area = " << m_leafConstructor.getSensitiveSurfaceArea() << std::endl;
-      //std::cout << "SIM: non-overlapping - sensitive area = " << m_sensitiveSurfaceArea << std::endl;
+      //std::cout << "SIM: non-overlapping - PIECE sensitive area = " << 
+      //m_leafConstructor.getSensitiveSurfaceArea() << std::endl;
+      //std::cout << "SIM: non-overlapping - sensitive area = " << 
+      //m_sensitiveSurfaceArea << std::endl;
     } else {
       // Always reject overlapping leaves.
       delete leafLogicalVolume;
@@ -657,8 +678,9 @@ void DetectorConstruction::candidateLeafBuild() {
       m_rejectedLeafNumber += 1u;
     }
   }
-  // std::cout << "SIM: Leaf Build - sensitive area = " << m_sensitiveSurfaceArea << std::endl;
-  std::cout << "Rejected " << m_rejectedLeafNumber << " leaves" << std::endl;
+  // std::cout << "SIM: Leaf Build - sensitive area = " << 
+  //m_sensitiveSurfaceArea << std::endl;
+  //std::cout << "Rejected " << m_rejectedLeafNumber << " leaves" << std::endl;
 
   m_candidateLeaves.clear();
 }

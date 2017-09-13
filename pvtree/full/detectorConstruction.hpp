@@ -89,8 +89,27 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   double getZSize();
 
  private:
+  /*! \brief Create the 'world', centred at origin, and large enough for
+   *         all trees to fit and the sun disk to appear point-like.
+   */
   void constructWorld();
-  void placeTree(unsigned int i, unsigned int j);
+  /*! \brief Creates, but does not place, a tree logical volume
+   *         containing the trunk/branches/viable leaves of a single
+   *         tree.
+   * 
+   * \returns the bounding logical volume containing the tree.
+   */
+  G4LogicalVolume* createTree();
+  /*! \brief Place a copy of a tree within the world orb, at the 
+   *         specified location in the grid.
+   * 
+   * @param[in] i The grid parameter, i.
+   * @param[in] j The grid parameter, j.
+   * @param[in] treeLogicalVolume The tree to be placed, as created
+   *            by the function createTree().
+   */
+  void placeTree(unsigned int i, unsigned int j, 
+                 G4LogicalVolume* treeLogicalVolume);
   double calculateWorldSize();
   void iterateLSystem();
   void generateTurtles();
