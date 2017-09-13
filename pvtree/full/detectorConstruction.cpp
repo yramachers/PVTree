@@ -43,9 +43,6 @@ DetectorConstruction::DetectorConstruction(
       m_constructedSensitiveDetectors(false),
       m_constructed(false),
       m_treesConstructed(0u),
-      m_sensitiveSurfaceArea(0.0),
-      m_leafNumber(0u),
-      m_rejectedLeafNumber(0u),
       m_structureXSize(0.0),
       m_structureYSize(0.0),
       m_structureZSize(0.0),
@@ -100,13 +97,27 @@ void DetectorConstruction::resetGeometry(
 }
 
 double DetectorConstruction::getSensitiveSurfaceArea() {
-  return m_sensitiveSurfaceArea;
+  double sensitiveSurfaceArea = 0.0;
+  for (auto& tree : m_treeList) {
+    sensitiveSurfaceArea += m_sensitiveSurfaceArea[tree.first]*tree.second;
+  }
+  return sensitiveSurfaceArea;
 }
 
-unsigned int DetectorConstruction::getNumberOfLeaves() { return m_leafNumber; }
+unsigned int DetectorConstruction::getNumberOfLeaves() { 
+  unsigned int leafNumber = 0u;
+  for (auto& tree : m_treeList) {
+    leafNumber += m_leafNumber[tree.first]*tree.second;
+  }
+  return leafNumber; 
+}
 
 unsigned int DetectorConstruction::getNumberOfRejectedLeaves() {
-  return m_rejectedLeafNumber;
+  unsigned int rejectedLeafNumber = 0u;
+  for (auto& tree : m_treeList) {
+    rejectedLeafNumber += m_rejectedLeafNumber[tree.first]*tree.second;
+  }
+  return rejectedLeafNumber;
 }
 
 double DetectorConstruction::getXSize() { return m_structureXSize; }
@@ -124,9 +135,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   // Reset some structural information extracted during construction
   m_treesConstructed = 0u;
-  m_sensitiveSurfaceArea = 0.0;
-  m_leafNumber = 0u;
-  m_rejectedLeafNumber = 0u;
+  for (auto& tree : m_treeList) {
+    G4LogicalVolume* treeLogicalVolume = tree.first;
+    delete treeLogicalVolume;
+  }
+  m_treeList.clear();
+  m_sensitiveSurfaceArea.clear();
+  m_leafNumber.clear();
+  m_rejectedLeafNumber.clear();;
 
   // Clear the candidate leaf list if not already empty
   for (auto& candidateLeafInfo : m_candidateLeaves) {
@@ -146,7 +162,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   for (unsigned int j=0u; j<treeGridNumber; j++) {
     for (unsigned int i=0u; i<treeGridNumber && m_treesConstructed<m_treeNumber;
          i++) {
-      placeTree(i,j, tree);
+      placeTree(i, j, tree);
     }
   }
 
@@ -272,6 +288,7 @@ G4LogicalVolume* DetectorConstruction::createTree() {
   // Construct leaves
   candidateLeafBuild();
 
+  m_treeList.insert({treeLogicalVolume, 0});
   return treeLogicalVolume;
 }
 
@@ -283,7 +300,8 @@ void DetectorConstruction::placeTree(unsigned int i, unsigned int j,
       m_shiftedOrigin + 2.0*j*m_treeRadius, 0.0);
   new G4PVPlacement(identityTransform, treeLogicalVolume, "tree", 
                     m_worldLogicalVolume, false, m_treesConstructed);
-  
+
+  m_treeList[treeLogicalVolume] ++;
   m_treesConstructed ++;
 }
 
@@ -328,7 +346,7 @@ double DetectorConstruction::calculateWorldSize() {
   m_structureXSize = maximumBoundingBoxX / meter;
   m_structureYSize = maximumBoundingBoxY / meter;
   m_structureZSize = maximumBoundingBoxZ / meter;
-  double treeSpacingFactor = 1.2;
+  double treeSpacingFactor = 1.0;
   m_treeRadius = std::sqrt(std::pow(maximumBoundingBoxX, 2.0) + 
                            std::pow(maximumBoundingBoxY, 2.0)) * 
                  treeSpacingFactor;
@@ -343,8 +361,8 @@ double DetectorConstruction::calculateWorldSize() {
 
   double boundingRadius = std::sqrt(m_treeNumber *
                                     (std::pow(maximumBoundingBoxX, 2.0) + 
-                                     std::pow(maximumBoundingBoxY, 2.0)) +
-                                    std::pow(maximumBoundingBoxZ, 2.0));
+                                     std::pow(maximumBoundingBoxY, 2.0) +
+                                    std::pow(maximumBoundingBoxZ, 2.0)));
 
   //std::cout << "World radius is " << boundingRadius << std::endl;
   return boundingRadius;
@@ -665,8 +683,8 @@ void DetectorConstruction::candidateLeafBuild() {
 
       // Sum up the leaf area to get the total sensitive area of the
       // detector. (in units of meter squared)
-      m_sensitiveSurfaceArea += m_leafConstructor.getSensitiveSurfaceArea();
-      m_leafNumber += 1u;
+      m_sensitiveSurfaceArea[trunkPhysicalVolume->GetMotherLogical()] += m_leafConstructor.getSensitiveSurfaceArea();
+      m_leafNumber[trunkPhysicalVolume->GetMotherLogical()] += 1u;
       //std::cout << "SIM: non-overlapping - PIECE sensitive area = " << 
       //m_leafConstructor.getSensitiveSurfaceArea() << std::endl;
       //std::cout << "SIM: non-overlapping - sensitive area = " << 
@@ -675,7 +693,7 @@ void DetectorConstruction::candidateLeafBuild() {
       // Always reject overlapping leaves.
       delete leafLogicalVolume;
 
-      m_rejectedLeafNumber += 1u;
+      m_rejectedLeafNumber[trunkPhysicalVolume->GetMotherLogical()] += 1u;
     }
   }
   // std::cout << "SIM: Leaf Build - sensitive area = " << 

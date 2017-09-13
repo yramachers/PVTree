@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include "globals.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4ThreeVector.hh"
@@ -181,9 +182,10 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
 
   // General structural details
   unsigned int m_treesConstructed;
-  double m_sensitiveSurfaceArea;
-  unsigned int m_leafNumber;
-  unsigned int m_rejectedLeafNumber;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_treeList;
+  std::unordered_map<G4LogicalVolume*, double> m_sensitiveSurfaceArea;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_leafNumber;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_rejectedLeafNumber;
   double m_structureXSize;
   double m_structureYSize;
   double m_structureZSize;
