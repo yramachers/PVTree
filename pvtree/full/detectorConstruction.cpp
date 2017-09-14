@@ -157,11 +157,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   // Construct trees in square grid
   unsigned int treeGridNumber = std::ceil(std::sqrt(m_treeNumber));
-  m_shiftedOrigin = -m_treeRadius * (treeGridNumber-1) ;
+  m_shiftedOrigin = m_treeRadius * (treeGridNumber-1) ;
   G4LogicalVolume* tree = createTree();
-  for (unsigned int j=0u; j<treeGridNumber; j++) {
-    for (unsigned int i=0u; i<treeGridNumber && m_treesConstructed<m_treeNumber;
-         i++) {
+  for (unsigned int i=0u; i<treeGridNumber; i++) {
+    for (unsigned int j=0u; j<treeGridNumber && m_treesConstructed<m_treeNumber;
+         j++) {
       placeTree(i, j, tree);
     }
   }
@@ -296,8 +296,8 @@ void DetectorConstruction::placeTree(unsigned int i, unsigned int j,
                                      G4LogicalVolume* treeLogicalVolume) {
   // Need to place tree within the world orb at an offset determined by (i, j)
   G4Transform3D identityTransform;
-  identityTransform = G4Translate3D(m_shiftedOrigin + 2.0*i*m_treeRadius, 
-      m_shiftedOrigin + 2.0*j*m_treeRadius, 0.0);
+  identityTransform = G4Translate3D(m_shiftedOrigin - 2.0*j*m_treeRadius, 
+      2.0*i*m_treeRadius - m_shiftedOrigin, 0.0);
   new G4PVPlacement(identityTransform, treeLogicalVolume, "tree", 
                     m_worldLogicalVolume, false, m_treesConstructed);
 

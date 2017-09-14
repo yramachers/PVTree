@@ -154,12 +154,16 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
             pi * std::pow(generationRadius / CLHEP::meter,
                           2.0);  // area of normal irradiation source
       } else {                   // ... from the sky function
+        // Generate point in sky to be 'source' of indirect light
         fsky->GetRandom2(theta,
                          gamma);  // theta, gamma random coordinates on sky
         gamma += solar_azimuth - pi / 2.0;  // offset for sun position, TVector3
                                             // out of phi phase by 90deg
         candidatePoint.SetMagThetaPhi(worldSurfaceRadius, theta, gamma);
-        currentLightVector = -1.0 * candidatePoint;
+        // Generate random point on world surface (roughly near the trees)
+        // to be target of indirect light.
+        TVector3 target = targetPoint(generationRadius);
+        currentLightVector = target - candidatePoint;
         // Weight also needs to take into account the surface area over which
         // photons are
         // being generated.
@@ -167,7 +171,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
         photonWeight = totalDiffuse / (m_photonNumber * probability);
         photonWeight *=
             std::pow(0.75 * generationRadius / CLHEP::meter,
-                     2.0);  // horizontal area of receiving structure
+                     2.0);  // horizontal area of receiving structure 
       }
 
       // Set the direction of the photon - point to centre, not to sky
@@ -224,6 +228,18 @@ void PrimaryGeneratorAction::setRandomPhotonPolarisation() {
 
 TVector3 PrimaryGeneratorAction::directSun(double genrad, TVector3 v1,
                                            TVector3 v2, TVector3 lv) {
+  TVector3 point = targetPoint(genrad);
+  TVector3 candidatePoint =
+      TVector3(v1) * point[0] + TVector3(v2) * point[1];
+
+  // Then change the starting position of the photons in the opposite direction
+  TVector3 toStartingPoint = (-1.5 * genrad) * lv;
+  candidatePoint += toStartingPoint;
+
+  return candidatePoint;
+}
+
+TVector3 PrimaryGeneratorAction::targetPoint(double genrad){
   G4double candidateX = 0.0, candidateY = 0.0;
   bool acceptablePoint = false;
 
@@ -240,12 +256,5 @@ TVector3 PrimaryGeneratorAction::directSun(double genrad, TVector3 v1,
       acceptablePoint = true;
     }
   }
-  TVector3 candidatePoint =
-      TVector3(v1) * candidateX + TVector3(v2) * candidateY;
-
-  // Then change the starting position of the photons in the opposite direction
-  TVector3 toStartingPoint = (-1.5 * genrad) * lv;
-  candidatePoint += toStartingPoint;
-
-  return candidatePoint;
+  return TVector3(candidateX, candidateY, 0.0);
 }

@@ -52,6 +52,11 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction {
   /*! \brief source geometry as disk of world radius/sqrt(3)
    */
   TVector3 directSun(double genrad, TVector3 v1, TVector3 v2, TVector3 lv);
+
+  /*! \brief Randomly generate a point on the world surface within 
+   *         genrad distance of the origin.
+   */
+  TVector3 targetPoint(double genrad);
 };
 
 #endif  // PV_FULL_PRIMARY_GENERATOR_ACTION_HPP
