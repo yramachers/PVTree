@@ -32,18 +32,21 @@ class LeafTrackerHit : public G4VHit {
   void setChamberNumber(G4int chamberNumber);
   void setEnergyDeposited(G4double energy);
   void setPosition(G4ThreeVector position);
+  void setTreeNumber(G4int treeNumber); // Copy number of bounding tree
 
   // Getters
   G4int getTrackID();
   G4int getChamberNumber();
   G4double getEnergyDeposited();
   G4ThreeVector getPosition();
+  G4int getTreeNumber();
 
  private:
   G4int m_trackID;
   G4int m_chamberNumber;
   G4double m_energyDeposited;
   G4ThreeVector m_position;
+  G4int m_treeNumber;
 };
 
 typedef G4THitsCollection<LeafTrackerHit> LeafTrackerHitsCollection;

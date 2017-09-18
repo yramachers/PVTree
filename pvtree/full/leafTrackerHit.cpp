@@ -76,6 +76,10 @@ void LeafTrackerHit::setPosition(G4ThreeVector position) {
   m_position = position;
 }
 
+void LeafTrackerHit::setTreeNumber(G4int treeNumber) {
+  m_treeNumber = treeNumber;
+}
+
 // Getters
 G4int LeafTrackerHit::getTrackID() { return m_trackID; }
 
@@ -84,3 +88,5 @@ G4int LeafTrackerHit::getChamberNumber() { return m_chamberNumber; }
 G4double LeafTrackerHit::getEnergyDeposited() { return m_energyDeposited; }
 
 G4ThreeVector LeafTrackerHit::getPosition() { return m_position; }
+
+G4int LeafTrackerHit::getTreeNumber() { return m_treeNumber; }
