@@ -28,6 +28,7 @@ LayeredLeafConstruction::LayeredLeafConstruction(
     : G4VUserDetectorConstruction(),
       m_leafSystem(leafSystem),
       m_initialTurtle(initialTurtle),
+      m_offsetPosition(0.0,0.0,0.0),
       m_worldLogicalVolume(nullptr),
       m_trackerSD(nullptr),
       m_airMaterialName("pv-air"),
@@ -164,11 +165,12 @@ G4VPhysicalVolume* LayeredLeafConstruction::Construct() {
 
 G4LogicalVolume* LayeredLeafConstruction::constructForTree(
     std::shared_ptr<LeafConstructionInterface> leafSystem,
-    Turtle* initialTurtle) {
+    Turtle* initialTurtle, G4ThreeVector offsetPosition) {
   // Make sure to update these settings (may have not been specified in the
   // constructor)
   m_leafSystem = leafSystem;
   m_initialTurtle = initialTurtle;
+  m_offsetPosition = offsetPosition;
 
   // Get the leaf logical geometry from current settings
   G4LogicalVolume* leafEnvelope = constructLeafLogicalVolume();
@@ -238,9 +240,11 @@ std::vector<Polygon*> LayeredLeafConstruction::generateSurface() {
   std::vector<Turtle*> retiredTurtles;
 
   // Create initial active turtle (start from end of last turtle)
+  TVector3 offsetPosition(m_offsetPosition[0]/m, m_offsetPosition[1]/m, 
+                          m_offsetPosition[2]/m);
   TVector3 startPosition =
       m_initialTurtle->position +
-      m_initialTurtle->length * m_initialTurtle->orientation;
+      m_initialTurtle->length * m_initialTurtle->orientation +offsetPosition;
   activeTurtles.push_back(new Turtle(
       startPosition, m_initialTurtle->orientation, m_initialTurtle->lVector));
 

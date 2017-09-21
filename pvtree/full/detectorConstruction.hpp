@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 #include "globals.hh"
 #include "G4VUserDetectorConstruction.hh"
 #include "G4ThreeVector.hh"
@@ -24,6 +25,9 @@ class TreeSystemInterface;
 class DetectorConstruction : public G4VUserDetectorConstruction {
  public:
   DetectorConstruction(std::shared_ptr<TreeConstructionInterface> treeSystem,
+                       std::shared_ptr<LeafConstructionInterface> leafSystem,
+                       unsigned int treeNumber);
+  DetectorConstruction(std::shared_ptr<TreeConstructionInterface> treeSystem,
                        std::shared_ptr<LeafConstructionInterface> leafSystem);
   virtual ~DetectorConstruction();
 
@@ -42,6 +46,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
    *         need to call ReinitializeGeometry() on the run manager to
    *         allow a clean re-running of construction.
    */
+  void resetGeometry(std::shared_ptr<TreeConstructionInterface> treeSystem,
+                     std::shared_ptr<LeafConstructionInterface> leafSystem,
+                     unsigned int treeNumber);
   void resetGeometry(std::shared_ptr<TreeConstructionInterface> treeSystem,
                      std::shared_ptr<LeafConstructionInterface> leafSystem);
 
@@ -83,6 +90,28 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   double getZSize();
 
  private:
+  /*! \brief Create the 'world', centred at origin, and large enough for
+   *         all trees to fit and the sun disk to appear point-like.
+   */
+  void constructWorld();
+  /*! \brief Creates, but does not place, a tree logical volume
+   *         containing the trunk/branches/viable leaves of a single
+   *         tree.
+   * 
+   * \returns the bounding logical volume containing the tree.
+   */
+  G4LogicalVolume* createTree();
+  /*! \brief Place a copy of a tree within the world orb, at the 
+   *         specified location in the grid.
+   * 
+   * @param[in] i The grid parameter, i.
+   * @param[in] j The grid parameter, j.
+   * @param[in] treeLogicalVolume The tree to be placed, as created
+   *            by the function createTree().
+   */
+  void placeTree(unsigned int i, unsigned int j, 
+                 G4LogicalVolume* treeLogicalVolume);
+  double calculateWorldSize();
   void iterateLSystem();
   void generateTurtles();
   void getTurtleTreeExtent(const Turtle* turtle, G4ThreeVector& minExtent,
@@ -130,6 +159,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   std::vector<std::pair<G4LogicalVolume*, G4VPhysicalVolume*> >
       m_candidateLeaves;
 
+  // Number of trees to construct
+  unsigned int m_treeNumber;
+
   // Volumes
   G4LogicalVolume* m_worldLogicalVolume;
   G4VPhysicalVolume* m_worldPhysicalVolume;
@@ -149,12 +181,16 @@ class DetectorConstruction : public G4VUserDetectorConstruction {
   bool m_constructed;
 
   // General structural details
-  double m_sensitiveSurfaceArea;
-  unsigned int m_leafNumber;
-  unsigned int m_rejectedLeafNumber;
+  unsigned int m_treesConstructed;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_treeList;
+  std::unordered_map<G4LogicalVolume*, double> m_sensitiveSurfaceArea;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_leafNumber;
+  std::unordered_map<G4LogicalVolume*, unsigned int> m_rejectedLeafNumber;
   double m_structureXSize;
   double m_structureYSize;
   double m_structureZSize;
+  double m_treeRadius;
+  double m_shiftedOrigin;
 };
 
 #endif  // PV_FULL_DETECTOR_CONSTRUCTION

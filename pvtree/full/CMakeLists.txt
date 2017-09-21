@@ -49,6 +49,8 @@ add_library(pvtree-fullsim SHARED
   recorders/convergenceRecorder.hpp
   recorders/dummyRecorder.cpp
   recorders/dummyRecorder.hpp
+  recorders/forestRecorder.cpp
+  recorders/forestRecorder.hpp
   recorders/recorderBase.hpp
   solarSimulation/HosekSkyModel.cpp
   solarSimulation/HosekSkyModel.hpp

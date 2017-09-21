@@ -45,6 +45,8 @@ G4bool LeafTrackerSD::ProcessHits_user(const G4Step* step,
       step->GetPreStepPoint()->GetTouchableHandle()->GetCopyNumber());
   hit->setEnergyDeposited(energyDeposit);
   hit->setPosition(step->GetPostStepPoint()->GetPosition());
+  hit->setTreeNumber(step->GetPostStepPoint()->GetTouchableHandle()
+                     ->GetCopyNumber(2));
 
   m_hitsCollection->insert(hit);
 
