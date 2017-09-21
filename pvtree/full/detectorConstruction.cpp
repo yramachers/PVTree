@@ -135,10 +135,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   // Reset some structural information extracted during construction
   m_treesConstructed = 0u;
-  for (auto& tree : m_treeList) {
-    G4LogicalVolume* treeLogicalVolume = tree.first;
-    delete treeLogicalVolume;
-  }
   m_treeList.clear();
   m_sensitiveSurfaceArea.clear();
   m_leafNumber.clear();
@@ -266,8 +262,8 @@ G4LogicalVolume* DetectorConstruction::createTree() {
   }
 
   // Create bounding logical volume
-  G4Box* treeBox = new G4Box("treeBox", m_structureXSize*meter, 
-                             m_structureYSize*meter, m_structureZSize*meter);
+  G4Box* treeBox = new G4Box("treeBox", m_treeRadius, 
+                             m_treeRadius, m_structureZSize*meter*2.0);
   G4Material* airMaterial =
       MaterialFactory::instance()->getMaterial(m_airMaterialName);
   G4LogicalVolume* treeLogicalVolume = new G4LogicalVolume(treeBox, airMaterial, 
