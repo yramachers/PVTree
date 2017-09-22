@@ -63,6 +63,8 @@ class Sun {
                                                         {COLUMNOZONE, true},
                                                         {CLOUDCOVER, true}};
 
+  double m_albedo;
+
   /*! \brief Setting environment variables from climate factory.
    *
    */
@@ -190,6 +192,12 @@ class Sun {
    *data to be used.
    */
   void setClimateOption(RealClimateOption option, bool isEnabled);
+  
+  /*! \brief Get the surface albedo from the climate data.
+   *
+   * \returns The surface albedo.
+   */
+  double getAlbedo();
 };
 
 #endif  // PVTREE_SOLAR_SIMULATION_SUN

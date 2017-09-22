@@ -140,10 +140,13 @@ in your preferred browser.
 Obtaining Climate Data
 ======================
 If the climate data path no longer exists you will have download the files again
-from the ECMWF website. The query specifications are listed in the configuration
-files `config/climate/XXX.cfg`. Grib files get big and the website has a limit so you
-will have to download in smaller time periods and then merge the files (can do a
-simple cat with grib files).
+from the [ECMWF website](http://apps.ecmwf.int/datasets/). The query 
+specifications are listed in the configuration files `config/climate/XXX.cfg`. 
+Grib files get big and the website has a limit so you will have to download in 
+smaller time periods and then merge the files (can do a simple cat with grib 
+files). Instructions on retrieving data from ECMWF is provided on their 
+[wiki](https://software.ecmwf.int/wiki/display/WEBAPI/How+to+retrieve+ECMWF+Public+Datasets).
+
 
 
 Developing PVTree

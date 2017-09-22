@@ -30,6 +30,10 @@ void Sun::updateEnvironment() {
   calendarTime.tm_isdst = 1;
   time_t currentTime = mktime(&calendarTime);
 
+  // Get albedo
+  m_albedo = ClimateFactory::instance()->getClimate()->getInterpolatedValue(
+         "Albedo", currentTime);
+
   if (getClimateOption(TEMPERATURE)) {
     // Get current settings from climate factory static instance
     // using interpolation to fill in the gaps.
@@ -329,4 +333,11 @@ bool Sun::getClimateOption(RealClimateOption option) {
 
 void Sun::setClimateOption(RealClimateOption option, bool isEnabled) {
   m_climateOptions[option] = isEnabled;
+}
+
+double Sun::getAlbedo() {
+  if (this->m_recalculateEnvironment) {
+    updateEnvironment();
+  }
+  return m_albedo;
 }
