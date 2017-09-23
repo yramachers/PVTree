@@ -60,8 +60,7 @@ TEST_CASE("simulation/geant", "[simulation]") {
 
   // Prepare the climate factory with the default configuration
   ClimateFactory::instance()->setDeviceLocation(deviceLocation);
-  ClimateFactory::instance()->setConfigurationFile("uk-2013to2015.cfg");
-  //  ClimateFactory::instance()->setConfigurationFile("default.cfg");
+  ClimateFactory::instance()->setConfigurationFile("default.cfg");
   //  std::cout << "Got climate configuration." << std::endl;
 
   // Get the LSystems to be used
@@ -184,9 +183,9 @@ TEST_CASE("simulation/geant", "[simulation]") {
   }
 
   CHECK(
-      almost_equal((float)totalEnergyDeposited, 0.00574807f, checkPrecision));
+      almost_equal((float)totalEnergyDeposited, 0.00277149f, checkPrecision));
   CHECK(totalPhotonCounts == photonNumberPerEvent);
-  CHECK(totalHitCounts == 7);
+  CHECK(totalHitCounts == 1);
   //std::cout << "Energy Deposited: " << totalEnergyDeposited << std::endl;
 
   // Clear results
@@ -232,7 +231,7 @@ TEST_CASE("simulation/geant", "[simulation]") {
       "helical", "monopodial", "stochastic", "stump", "sympodial", "ternary"};
 
   std::vector<float> received_energy = {
-    9.30562, 0.00000, 3.76342, 3.26726, 3.76342, 9.30562};
+    6.03921, 8.8107, 7.52791, 3.76395, 8.8107, 7.03168};
 
   int counter = 0;
   for (auto currentTreeType : availableTreeTypes) {
@@ -278,7 +277,7 @@ TEST_CASE("simulation/geant", "[simulation]") {
                                                  "planar"};
   
   received_energy.clear();
-  received_energy = {8.31329, 3.26726, 9.30562, 3.26726};
+  received_energy = {1.4887, 8.31447, 11.5822, 9.30693};
 
   // Default turtle at origin
   Turtle* initialTurtle = new Turtle();
