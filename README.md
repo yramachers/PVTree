@@ -2,7 +2,7 @@ PVTree simulation code
 =======================
 
 Authors:  Graham Jones, Yorck Ramachers
-Contributor: Kieran Uzzell
+Contributors: Freya Bull, Ben Morgan, Kieran Uzzell
 
 
 External dependencies
@@ -139,7 +139,7 @@ in your preferred browser.
 
 Obtaining Climate Data
 ======================
-If the climate data path no longer exists you will have download the files again
+If the climate data path no longer exists you will have to download the files again
 from the [ECMWF website](http://apps.ecmwf.int/datasets/). The query 
 specifications are listed in the configuration files `config/climate/XXX.cfg`. 
 Grib files get big and the website has a limit so you will have to download in 
