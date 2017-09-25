@@ -2,7 +2,7 @@ PVTree simulation code
 =======================
 
 Authors:  Graham Jones, Yorck Ramachers
-Contributor: Kieran Uzzell
+Contributor: Freya Bull, Kieran Uzzell
 
 
 External dependencies
