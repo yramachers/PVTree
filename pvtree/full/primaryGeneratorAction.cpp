@@ -97,7 +97,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event) {
     if (turb > 10.0) turb = 10.0;
     if (turb < 1.0) turb = 1.0;
 
-    double albedo = 0.9;  // hard-wired for now, high average albedo
+    double albedo = m_sun->getAlbedo(); // Albedo set from climate data
     if (albedo < 0.0) albedo = 0.0;
     if (albedo > 1.0) albedo = 1.0;
 
