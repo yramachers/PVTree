@@ -69,6 +69,7 @@ pvtree_add_test(locationAccess)
 add_executable(smartsRunning smartsRunning.cpp)
 target_link_libraries(smartsRunning
   pvtree-catchmain
+  pvtree-utils
   pvtree-fullsim
   pvtree-location
   )

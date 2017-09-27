@@ -2,7 +2,7 @@
 # Generator program
 add_executable(makeHosekSkyModelData makeHosekSkyModelData.cpp ArHosekSkyModelData_Spectral.h)
 target_include_directories(makeHosekSkyModelData PRIVATE ${ROOT_INCLUDE_DIRS})
-target_link_libraries(makeHosekSkyModelData PRIVATE ${ROOT_Tree_LIBRARY} ${ROOT_RIO_LIBRARY})
+target_link_libraries(makeHosekSkyModelData PRIVATE ${ROOT_Core_LIBRARY} ${ROOT_Tree_LIBRARY} ${ROOT_RIO_LIBRARY})
 
 # Data file creation
 add_custom_command(
