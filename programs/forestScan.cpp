@@ -203,6 +203,8 @@ int main(int argc, char** argv) {
   // Repeat for a number of trees
   unsigned int currentForestNumber = 0u;
   unsigned int treeID = 0u;
+  int xID = 0;
+  int yID = 0;
   double energyReceived = 0.0;
 
   // Prepare a root file to store the results
@@ -210,6 +212,8 @@ int main(int argc, char** argv) {
   TTree* forestdata = new TTree("forestData","Store energy per tree");
   forestdata->Branch("simID", &currentForestNumber); // add simID branch to TTree
   forestdata->Branch("treeID", &treeID);
+  forestdata->Branch("xID", &xID);
+  forestdata->Branch("yID", &yID);
   forestdata->Branch("treeEnergy", &energyReceived);
 
   // Make a TList to store some trees
@@ -360,10 +364,19 @@ int main(int argc, char** argv) {
     exportList.Add(result);
 
     // Store forest data in TFile
+    int treeGridNumber = std::ceil(std::sqrt(treeNumber));
+    int counter = 0;
     for (auto& en : energyPerTree) {
       treeID = en.first;
       energyReceived = en.second;
+      // next x,y pair
+      xID = treeGridNumber-1;
+      yID = -xID;
+      xID -= treeID % treeGridNumber;
+      yID += counter;
+
       forestdata->Fill();
+      if (xID<1) counter++;
     }
 
     // Move onto next forest
