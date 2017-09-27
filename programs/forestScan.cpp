@@ -66,7 +66,7 @@ void showHelp() {
   std::cout << "\t --photonNumber <INTEGER>" << std::endl;
   std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
   std::cout << "\t --parameterSeedOffset <INTEGER>" << std::endl;
-  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0"
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
             << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
 }
@@ -372,6 +372,11 @@ int main(int argc, char** argv) {
 
   // Job termination
   delete runManager;
+
+  // Write results out to the root file
+  resultsFile.cd();
+  exportList.Write("testedStructures", TObject::kSingleKey);
+  forestdata->Write();
 
   // Close the root file
   resultsFile.Close();
