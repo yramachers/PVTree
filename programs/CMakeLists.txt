@@ -11,6 +11,7 @@ set(PVTREE_PROGRAMS
   visualiseBestYearly
   singleForest
   forestScan
+  yearlyForestScan
   )
 
 foreach(_pv_program ${PVTREE_PROGRAMS})

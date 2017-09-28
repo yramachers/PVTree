@@ -46,10 +46,6 @@
 
 #include "TFile.h"
 #include "TList.h"
-#include "TCanvas.h"
-#include "TGraph2D.h"
-#include "TRandom.h"
-#include "TStyle.h"
 #include "TH1D.h"
 #include "TTree.h"
 
