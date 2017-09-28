@@ -56,17 +56,17 @@
 
 void showHelp() {
   std::cout << "yearlyForestScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'" << std::endl;
-  std::cout << "\t --simulations <INTEGER>" << std::endl;
-  std::cout << "\t --treeNumber <INTEGER>" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER>" << std::endl;
-  std::cout << "\t --photonNumber <INTEGER>" << std::endl;
-  std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
-  std::cout << "\t --parameterSeed <INTEGER>" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'monopodial'" << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'" << std::endl;
+  std::cout << "\t --simulations <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --treeNumber <INTEGER> :\t default 9" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 25" << std::endl;
+  std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
+  std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --parameterSeed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --startDate <INTEGER> :\t default 1/1/2014" << std::endl;
   std::cout << "\t --endDate <INTEGER> :\t default 1/1/2015" << std::endl;
-  std::cout << "\t --yearSegments <INTEGER> :\t default 10" << std::endl;
+  std::cout << "\t --yearSegments <INTEGER> :\t default 12" << std::endl;
   std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
             << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
@@ -160,13 +160,13 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
   ops >> GetOpt::Option("simulations", simulations, 1u);
   ops >> GetOpt::Option("treeNumber", treeNumber, 9u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 50u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 25u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);
   ops >> GetOpt::Option("startDate", startDate, "1/1/2014");
   ops >> GetOpt::Option("endDate", endDate, "1/1/2015");
-  ops >> GetOpt::Option("yearSegments", yearSegments, 10u);
+  ops >> GetOpt::Option("yearSegments", yearSegments, 12u);
   ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 1.0);
   ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
   ops >> GetOpt::Option("outputFileName", outputFileName,

@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
-    energy = clonedT->getDoubleParameter("totalEnergy");
+    energy = clonedT->getDoubleParameter("totalIntegratedEnergyDeposit");
     //    ien = clonedT->getDoubleParameter("totalInitial");
     //    density = energy / area;
     sx = clonedT->getDoubleParameter("structureXSize");
