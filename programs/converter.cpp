@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
-    energy = clonedT->getDoubleParameter("totalIntegratedEnergyDeposit");
+    energy = clonedT->getDoubleParameter("totalEnergy");
     //    ien = clonedT->getDoubleParameter("totalInitial");
     //    density = energy / area;
     sx = clonedT->getDoubleParameter("structureXSize");
@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
     eff = energy * lai;  // harvest ratio times leaf area index
     //    eff = density; // harvest ratio times leaf area index
 
+    clonedT->print();
     if (eff > besteff) {  // book best tree
       TreeConstructionInterface* bestT = clonedT;
       besteff = eff;

@@ -54,14 +54,14 @@
 
 void showHelp() {
   std::cout << "forestScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME>" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME>" << std::endl;
-  std::cout << "\t --simulations <INTEGER>" << std::endl;
-  std::cout << "\t --treeNumber <INTEGER>" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER>" << std::endl;
-  std::cout << "\t --photonNumber <INTEGER>" << std::endl;
-  std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
-  std::cout << "\t --parameterSeedOffset <INTEGER>" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'monopodial'" << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'" << std::endl;
+  std::cout << "\t --simulations <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --treeNumber <INTEGER> :\t default 9" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 12" << std::endl;
+  std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
+  std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --parameterSeedOffset <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
             << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
   ops >> GetOpt::Option("simulations", simulations, 1u);
   ops >> GetOpt::Option("treeNumber", treeNumber, 9u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 50u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 12u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeedOffset", parameterSeedOffset, 1);
@@ -247,12 +247,16 @@ int main(int argc, char** argv) {
   while (currentForestNumber < simulations &&
          treeTrialNumber < maximumTreeTrials) {
     treeTrialNumber++;
+
     // Allow the geometry to be rebuilt with new settings
     tree->randomizeParameters(treeTrialNumber + parameterSeedOffset);
     leaf->randomizeParameters(treeTrialNumber + parameterSeedOffset);
     
-    detector->resetGeometry(tree, leaf);
-    runManager->GeometryHasBeenModified();
+    detector->resetGeometry(tree, leaf, treeNumber);
+    //    runManager->GeometryHasBeenModified();
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
+    //    runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
     // Lets not bother with small surface areas!
     if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
@@ -333,7 +337,7 @@ int main(int argc, char** argv) {
     // Clone the settings/results before moving onto next tree so that they can
     // be saved at the end.
     std::string treeName =
-        "tree" + std::to_string(currentForestNumber + parameterSeedOffset);
+      "tree" + std::to_string(currentForestNumber) + "_Job" + std::to_string(parameterSeedOffset);
     TreeConstructionInterface* clonedTree =
         (TreeConstructionInterface*)tree->Clone(treeName.c_str());
 
@@ -348,7 +352,7 @@ int main(int argc, char** argv) {
     clonedTree->setParameter("totalEnergy", totalEnergyDeposited);
 
     std::string leafName =
-        "leaf" + std::to_string(currentForestNumber + parameterSeedOffset);
+        "leaf" + std::to_string(currentForestNumber) + "_Job" + std::to_string(parameterSeedOffset);
     LeafConstructionInterface* clonedLeaf =
         (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
 
@@ -377,6 +381,7 @@ int main(int argc, char** argv) {
 
     // Move onto next forest
     currentForestNumber++;
+
   }
 
   // Job termination

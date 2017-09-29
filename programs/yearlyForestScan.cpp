@@ -329,8 +329,11 @@ int main(int argc, char** argv) {
     tree->randomizeParameters(treeParameterSeed);
     leaf->randomizeParameters(leafParameterSeed);
 
-    detector->resetGeometry(tree, leaf);
-    runManager->GeometryHasBeenModified();
+    detector->resetGeometry(tree, leaf, treeNumber);
+    //    runManager->GeometryHasBeenModified();
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
+    //    runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
     // Lets not bother with small surface areas!
     if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
