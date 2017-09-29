@@ -316,6 +316,10 @@ int main(int argc, char** argv) {
   double totalInitial = 0.0;
   unsigned int treeTrialNumber = 0u;
 
+  std::vector<time_t> dayTimes;
+  std::vector<double> dayEnergySums;
+  std::map<unsigned int, double> yearenergyPerTree;
+
   while (currentForestNumber < simulations &&
          treeTrialNumber < maximumTreeTrials) {
     treeTrialNumber++;
@@ -339,9 +343,6 @@ int main(int argc, char** argv) {
     if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
       continue;
     }
-
-    std::vector<time_t> dayTimes;
-    std::vector<double> dayEnergySums;
 
     // Create a list of days (avoiding duplication).
     double yearSegmentSize =
@@ -368,8 +369,6 @@ int main(int argc, char** argv) {
     }
 
     double totalEvaluatedEnergy = 0.0;
-    std::map<unsigned int, double> yearenergyPerTree;
-
     // Repeat simulation for each day
     for (unsigned int dayIndex = 0; dayIndex < dayTimes.size(); dayIndex++) {
       // Perform the simulation between the sunrise and sunset on the selected
@@ -501,8 +500,10 @@ int main(int argc, char** argv) {
     }
 
     // Move onto next forest
-    dayEnergySums.clear();
     currentForestNumber++;
+    dayTimes.clear();
+    dayEnergySums.clear();
+    yearenergyPerTree.clear();
   }
 
   // Job termination
