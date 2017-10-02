@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 1.0);
   ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
   ops >> GetOpt::Option("outputFileName", outputFileName,
-                        "yearlyTreeScan.results.root");
+                        "yearlyForestScan.results.root");
 
   if (yearSegments == 0) {
     std::cerr << "Need at least one year time segment." << std::endl;
