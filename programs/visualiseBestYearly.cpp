@@ -86,6 +86,7 @@ int main(int argc, char** argv) {
   }
 
   // Identify the optimal tree
+  double id = 0.;
   double area;
   double energy;
   double eff;
@@ -117,7 +118,8 @@ int main(int argc, char** argv) {
       std::cout << "Tree ID: " << id << "; Best efficiency = " << besteff
                 << std::endl;
     }
-
+    id++;
+  }
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
 
