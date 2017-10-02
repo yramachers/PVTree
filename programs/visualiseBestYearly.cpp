@@ -90,6 +90,8 @@ int main(int argc, char** argv) {
   double energy;
   double eff;
   double besteff = 0.0;
+  double lai;
+  double sx, sy;
 
   std::shared_ptr<TreeConstructionInterface> bestT;
   std::shared_ptr<LeafConstructionInterface> bestL;
@@ -98,80 +100,23 @@ int main(int argc, char** argv) {
              (YearlyResult*)structureListIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
     LeafConstructionInterface* clonedL = currentStructure->getLeaf();
-    ;
+
     area = clonedT->getDoubleParameter("sensitiveArea");
-    energy = clonedT->getDoubleParameter("totalEnergy");
-    eff = energy / area;
+    energy = clonedT->getDoubleParameter("totalIntegratedEnergyDeposit");
+    sx = clonedT->getDoubleParameter("structureXSize");
+    sy = clonedT->getDoubleParameter("structureYSize");
+    lai = area / (sx * sy);
+
+    eff = energy * lai;
     if (eff > besteff) {  // book best tree
       bestT = std::shared_ptr<TreeConstructionInterface>(clonedT);
       bestL = std::shared_ptr<LeafConstructionInterface>(clonedL);
       besteff = eff;
       bestT->print();
       bestL->print();
+      std::cout << "Tree ID: " << id << "; Best efficiency = " << besteff
+                << std::endl;
     }
-
-    //   bool foundATree = false;
-
-    //   TreeConstructionInterface* bestTree;
-    //   LeafConstructionInterface* bestLeaf;
-    //   while (TreeConstructionInterface* clonedT =
-    //   (TreeConstructionInterface*)iterTrees()) {
-    //     LeafConstructionInterface* clonedL =
-    //     (LeafConstructionInterface*)iterLeaves();
-
-    //     eff =
-    //     clonedT->getDoubleParameter("totalEnergy")/clonedT->getDoubleParameter("sensitiveArea");
-    //     if (eff > highestEfficiency) { // book best tree
-    //       bestTree          = std::shared_ptr<TreeConstructionInterface>(
-    //       clonedT);
-    //       bestLeaf          = std::shared_ptr<LeafConstructionInterface>(
-    //       clonedL);
-    //       highestEfficiency = eff;
-    //       foundATree = true;
-    //     }
-
-    //   for (int i=0; i<structureList->GetSize(); i++){
-    //     YearlyResult* currentStructure =
-    //     (YearlyResult*)structureListIterator();
-    //     TreeConstructionInterface* currentTree = currentStructure->getTree();
-    //     LeafConstructionInterface* currentLeaf = currentStructure->getLeaf();
-    //     double currentEfficiency =
-    //     currentTree->getDoubleParameter("totalEnergy")/currentTree->getDoubleParameter("sensitiveArea");
-
-    //     // Only consider trees which have produced a minimum ammount of
-    //     energy
-    //     if (currentTree->getDoubleParameter("totalEnergy") <
-    //     minimumTotalEnergy){
-    //       continue;
-    //     }
-
-    //     if (currentEfficiency > highestEfficiency) {
-    //       highestEfficiency = currentEfficiency;
-    //       bestTree          = std::shared_ptr<TreeConstructionInterface>(
-    //       currentTree );
-    //       bestLeaf          = std::shared_ptr<LeafConstructionInterface>(
-    //       currentLeaf );
-    //       foundATree = true;
-    //     }
-  }
-
-  //   if (foundATree == false) {
-  //     std::cout << "Unable to find a structure that meets requirements.
-  //     Nothing to visualize." << std::endl;
-  //     return 1;
-  //   }
-
-  // Print out the best parameters
-  //   bestTree->print();
-  //   bestLeaf->print();
-
-  // If an output file is specified save the chosen tree there
-  //   if (outputRootFile != "") {
-  //     TFile outputFile(outputRootFile.c_str(), "RECREATE");
-  //     bestTree->Write("selectedTree");
-  //     bestLeaf->Write("selectedLeaf");
-  //     outputFile.Close();
-  //   }
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");

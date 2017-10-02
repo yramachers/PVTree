@@ -450,7 +450,7 @@ void fillGraphs(YearlyResult* currentStructure, std::string outputFileName) {
   std::vector<time_t> dayTimes = currentStructure->getDayTimes();
   std::vector<double> energyDeposited = currentStructure->getEnergyDeposited();
   double totalYearEnergySum =
-      currentStructure->getTree()->getDoubleParameter("totalEnergy");
+      currentStructure->getTree()->getDoubleParameter("totalIntegratedEnergyDeposit");
   std::cout << "Got info: totalYearEnergySum = " << totalYearEnergySum
             << std::endl;
   std::cout << "Got info: energy deposited size = " << energyDeposited.size()
@@ -645,12 +645,18 @@ int main(int argc, char** argv) {
   int counter{0};
   int id{0};
   double eff, energy, area;
+  double lai;
+  double sx, sy, sz;
   double besteff{0.0};
   while (YearlyResult* currentStructure = (YearlyResult*)scanIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
     area = clonedT->getDoubleParameter("sensitiveArea");
-    energy = clonedT->getDoubleParameter("totalEnergy");
-    eff = energy / area;
+    energy = clonedT->getDoubleParameter("totalIntegratedEnergyDeposit");
+    sx = clonedT->getDoubleParameter("structureXSize");
+    sy = clonedT->getDoubleParameter("structureYSize");
+    lai = area / (sx * sy);
+
+    eff = energy * lai;
     if (eff > besteff) {  // book best tree
       id = counter;
       besteff = eff;

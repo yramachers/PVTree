@@ -338,7 +338,9 @@ int main(int argc, char** argv) {
       leaf->randomizeParameters(leafParameterSeed);
 
       detector->resetGeometry(tree, leaf);
-      runManager->GeometryHasBeenModified();
+      runManager->ReinitializeGeometry(true, false);         // clean up
+      runManager->BeamOn(0); // fake start to build geometry
+      //      runManager->GeometryHasBeenModified();
 
       // Re-initialize the detector geometry
       //      G4bool destroyFirst;
@@ -476,7 +478,7 @@ int main(int argc, char** argv) {
     double totalEnergyDeposited = result->getEnergyIntegral();
 
     // Also attach this to the tree
-    clonedTree->setParameter("totalEnergy", totalEnergyDeposited);
+    clonedTree->setParameter("totalIntegratedEnergyDeposit", totalEnergyDeposited);
     clonedTree->setParameter("totalEvaluatedEnergy", totalEvaluatedEnergy);
 
     exportList.Add(result);

@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
   while (YearlyResult* currentStructure =
              (YearlyResult*)structureListIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
+
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
     energy = clonedT->getDoubleParameter("totalEnergy");
@@ -97,7 +98,6 @@ int main(int argc, char** argv) {
     eff = energy * lai;  // harvest ratio times leaf area index
     //    eff = density; // harvest ratio times leaf area index
 
-    clonedT->print();
     if (eff > besteff) {  // book best tree
       TreeConstructionInterface* bestT = clonedT;
       besteff = eff;

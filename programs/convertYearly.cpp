@@ -86,7 +86,6 @@ int main(int argc, char** argv) {
     sz = clonedT->getDoubleParameter("structureZSize");
     lai = area / (sx * sy);
 
-    clonedT->print();
     eff = energy * lai;
     if (eff > besteff) {  // book best tree
       TreeConstructionInterface* bestT = clonedT;
