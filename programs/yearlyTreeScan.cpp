@@ -163,19 +163,19 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  ops >> GetOpt::Option('t', "tree", treeType, "stump");
-  ops >> GetOpt::Option('l', "leaf", leafType, "planar");
+  ops >> GetOpt::Option('t', "tree", treeType, "monopodial");
+  ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
   ops >> GetOpt::Option("treeNumber", treeNumber, 10u);
   ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 50u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 25u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
   ops >> GetOpt::Option("startDate", startDate, "1/1/2014");
   ops >> GetOpt::Option("endDate", endDate, "1/1/2015");
-  ops >> GetOpt::Option("yearSegments", yearSegments, 10u);
-  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.0);
+  ops >> GetOpt::Option("yearSegments", yearSegments, 12u);
+  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 1.0);
   ops >> GetOpt::Option("outputFileName", outputFileName,
                         "yearlyTreeScan.results.root");
 
