@@ -1,8 +1,8 @@
 /*!
  * @file
- * \brief Application to investigate the distribution of incident light
- *        across a forest over the period of one day.
- *
+ * \brief Application to investigate the collection efficiency of 
+ *        randomly generated forests of identical tree copies over 
+ *        the period of one day.
  */
 
 #include "pvtree/treeSystem/treeFactory.hpp"
@@ -25,6 +25,9 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <sstream>
+#include <csignal>
 
 #include "globals.hh"
 #include "G4VisExecutive.hh"
@@ -42,26 +45,26 @@
 #pragma GCC diagnostic ignored "-Wshadow"
 
 #include "TFile.h"
-#include "TGraphAsymmErrors.h"
-#include "TAxis.h"
-#include "TCanvas.h"
-#include "TH1F.h"
-#include "TGraph2D.h"
-#include "TRandom.h"
-#include "TStyle.h"
+#include "TList.h"
+#include "TH1D.h"
+#include "TTree.h"
 
 // turn the warnings back on
 #pragma GCC diagnostic pop
 
 void showHelp() {
   std::cout << "forestScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME>" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME>" << std::endl;
-  std::cout << "\t --treeNumber <INTEGER>" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER>" << std::endl;
-  std::cout << "\t --photonNumber <INTEGER>" << std::endl;
-  std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
-  std::cout << "\t --inputTreeFile <ROOT FILENAME>" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'monopodial'" << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'" << std::endl;
+  std::cout << "\t --simulations <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --treeNumber <INTEGER> :\t default 9" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 12" << std::endl;
+  std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
+  std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --parameterSeedOffset <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
+            << std::endl;
+  std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
 }
 
 /*! 
@@ -78,12 +81,14 @@ void showHelp() {
  */
 int main(int argc, char** argv) {
   std::string treeType, leafType;
+  unsigned int simulations;
   unsigned int treeNumber;
   unsigned int simulationTimeSegments;
   unsigned int photonNumberPerTimeSegment;
   int geant4Seed;
-  std::string inputTreeFileName;
-  bool singleTreeRunning = false;
+  int parameterSeedOffset;
+  double minimumSensitiveArea;
+  unsigned int maximumTreeTrials;
 
   GetOpt::GetOpt_pp ops(argc, argv);
 
@@ -95,23 +100,24 @@ int main(int argc, char** argv) {
 
   ops >> GetOpt::Option('t', "tree", treeType, "monopodial");
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
-  ops >> GetOpt::Option("treeNumber", treeNumber, 1u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 50u);
+  ops >> GetOpt::Option("simulations", simulations, 1u);
+  ops >> GetOpt::Option("treeNumber", treeNumber, 9u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 12u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
-  ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
+  ops >> GetOpt::Option("parameterSeedOffset", parameterSeedOffset, 1);
+  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 1.0);
+  ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
+
 
   // Report input parameters
-  if (inputTreeFileName != "") {
-    std::cout << "Just using selected tree from " << inputTreeFileName
-              << std::endl;
-    singleTreeRunning = true;
-  } else {
-    std::cout << "Tree type = " << treeType << std::endl;
-    std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Generating " << treeNumber << " trees." << std::endl;
-    singleTreeRunning = false;
-  }
+  std::cout << "Tree type = " << treeType << std::endl;
+  std::cout << "Leaf type = " << leafType << std::endl;
+    std::cout << "Using the parameter random number seed offset = "
+              << parameterSeedOffset << std::endl;
+  std::cout << "Generating " << treeNumber << " trees per forest." << std::endl;
+  std::cout << "in " << simulations << " simulated forests." << std::endl;
+
   std::cout << "Using the Geant4 random number seed = " << geant4Seed
             << std::endl;
   std::cout << "Simulating in " << simulationTimeSegments << " time segments."
@@ -132,19 +138,8 @@ int main(int argc, char** argv) {
   std::shared_ptr<TreeConstructionInterface> tree;
   std::shared_ptr<LeafConstructionInterface> leaf;
 
-  if (!singleTreeRunning) {
-    tree = TreeFactory::instance()->getTree(treeType);
-    leaf = LeafFactory::instance()->getLeaf(leafType);
-  } else {
-    TFile inputTreeFile(inputTreeFileName.c_str(), "READ");
-    tree = std::shared_ptr<TreeConstructionInterface>(
-        (TreeConstructionInterface*)inputTreeFile.FindObjectAny(
-            "selectedTree"));
-    leaf = std::shared_ptr<LeafConstructionInterface>(
-        (LeafConstructionInterface*)inputTreeFile.FindObjectAny(
-            "selectedLeaf"));
-    inputTreeFile.Close();
-  }
+  tree = TreeFactory::instance()->getTree(treeType);
+  leaf = LeafFactory::instance()->getLeaf(leafType);
 
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");
@@ -201,100 +196,201 @@ int main(int argc, char** argv) {
   // Initialize G4 kernel
   runManager->Initialize();
 
+  // Repeat for a number of trees
+  unsigned int currentForestNumber = 0u;
+  unsigned int treeID = 0u;
+  int xID = 0;
+  int yID = 0;
+  double energyReceived = 0.0;
+
   // Prepare a root file to store the results
   TFile resultsFile("forestScan.results.root", "RECREATE");
+  TTree* forestdata = new TTree("forestData","Store energy per tree");
+  forestdata->Branch("simID", &currentForestNumber); // add simID branch to TTree
+  forestdata->Branch("treeID", &treeID);
+  forestdata->Branch("xID", &xID);
+  forestdata->Branch("yID", &yID);
+  forestdata->Branch("treeEnergy", &energyReceived);
 
+  // Make a TList to store some trees
+  TList exportList;
+  resultsFile.Add(&exportList);
+
+  // Setup a signal handler to catch batch job + user terminations
+  // so that we can still try to output some of the results.
+  // SIGINT == 2 (Ctrl-C on command line)
+  // TERM_RUNLIMIT on LSF uses User Defined Signal 2 == 12
+  SignalReceiver::instance()->setSignals(
+					 {2, 12, 12}, [&resultsFile, &exportList, &forestdata](int signum) {
+        printf("Caught a signal %d\n", signum);
+
+        // Write results out to the root file
+        resultsFile.cd();
+        exportList.Write("testedStructures", TObject::kSingleKey);
+	forestdata->Write(); // rescue whatever is there
+
+        // Close the root file
+        resultsFile.Close();
+
+        printf("Attempted to write root file with %d trees.\n",
+               exportList.GetSize());
+
+        // Terminate program
+        exit(signum);
+      });
 
   double totalNormal;
   double totalDiffuse;
   double totalInitial = 0.0;
+  unsigned int treeTrialNumber = 0u;
 
-  // Simulate at all time points with the same number of events...
-  totalInitial = 0.0;
-  for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
-        timeIndex++) {
-    // Set the time to the mid-point of the time segment
-    sun.setTime((int)(simulationStartingTime +
-                      timeIndex * simulationStepTime +
-                      simulationStepTime / 2.0));
+  while (currentForestNumber < simulations &&
+         treeTrialNumber < maximumTreeTrials) {
+    treeTrialNumber++;
 
-    // Run simulation with a single event per time point
-    G4int eventNumber = 1;
-    runManager->BeamOn(eventNumber);
+    // Allow the geometry to be rebuilt with new settings
+    tree->randomizeParameters(treeTrialNumber + parameterSeedOffset);
+    leaf->randomizeParameters(treeTrialNumber + parameterSeedOffset);
+    
+    detector->resetGeometry(tree, leaf, treeNumber);
+    //    runManager->GeometryHasBeenModified();
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
+    //    runManager->DefineWorldVolume(detector->Construct());  // reconstruction
 
-    auto normalIrradianceHistogram =
+    // Lets not bother with small surface areas!
+    if (detector->getSensitiveSurfaceArea() < minimumSensitiveArea) {
+      continue;
+    }
+
+    if (currentForestNumber % 50 == 0) {
+      std::cout << "Considering forest " << currentForestNumber << std::endl;
+      tree->print();
+      leaf->print();
+    }
+
+    // Simulate at all time points with the same number of events...
+    totalInitial = 0.0;
+    for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+	 timeIndex++) {
+      // Set the time to the mid-point of the time segment
+      sun.setTime((int)(simulationStartingTime +
+			timeIndex * simulationStepTime +
+			simulationStepTime / 2.0));
+
+      // Run simulation with a single event per time point
+      G4int eventNumber = 1;
+      runManager->BeamOn(eventNumber);
+
+      auto normalIrradianceHistogram =
         sun.getSpectrum()->getHistogram("Direct_normal_irradiance");
-    auto diffuseIrradianceHistogram =
+      auto diffuseIrradianceHistogram =
         sun.getSpectrum()->getHistogram("Difuse_horizn_irradiance");
-    totalNormal = normalIrradianceHistogram->Integral("width");    // [W/m^2]
-    totalDiffuse = diffuseIrradianceHistogram->Integral("width");  // [W/m^2]
-    totalInitial +=
+      totalNormal = normalIrradianceHistogram->Integral("width");    // [W/m^2]
+      totalDiffuse = diffuseIrradianceHistogram->Integral("width");  // [W/m^2]
+      totalInitial +=
         (totalNormal + totalDiffuse) / 1000.0 *
         (simulationStepTime / 3600.0);  // sum over all time slices
-  }
+    }
 
-  // Get the total surface area which is "sensitive" from current tested
-  // detector.
-  double sensitiveArea = detector->getSensitiveSurfaceArea();
+    // Get the total surface area which is "sensitive" from current tested
+    // detector.
+    double sensitiveArea = detector->getSensitiveSurfaceArea();
+    
+    // Get the number of leaves
+    int numberOfLeaves = detector->getNumberOfLeaves();
+    int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
 
-  // Get the number of leaves
-  int numberOfLeaves = detector->getNumberOfLeaves();
-  //std::cout << "Number of leaves: " << numberOfLeaves << std::endl;
-  int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
+    // Get size of the rough bounding box structure along the axis
+    double structureXSize = detector->getXSize();
+    double structureYSize = detector->getYSize();
+    double structureZSize = detector->getZSize();
 
+    // Sum up the energy deposited (in KiloWatt-Hours)
+    double totalEnergyDeposited = 0.0;
+    std::map<unsigned int, double> energyPerTree;
+    auto hitEnergies = recorder.getSummedHitEnergies();
 
-  // Sum up the energy deposited (in KiloWatt-Hours)
-  double totalEnergyDeposited = 0.0;
-  std::map<unsigned int, double> energyPerTree;
-  auto hitEnergies = recorder.getSummedHitEnergies();
-
-  for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
-       timeIndex++) {
-    for (auto eventHitEnergies : hitEnergies[timeIndex]) {
-      for (auto treeEnergy : eventHitEnergies) {
-        double hitEnergy = (treeEnergy.second / 1000.0) * 
-                           (simulationStepTime / 3600.0);
-        totalEnergyDeposited += hitEnergy;
-        auto wasInserted = energyPerTree.insert({treeEnergy.first, hitEnergy});
-        if (wasInserted.second == false) {
-          energyPerTree[treeEnergy.first] += hitEnergy;
-        }
+    for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
+	 timeIndex++) {
+      for (auto eventHitEnergies : hitEnergies[timeIndex]) {
+	for (auto treeEnergy : eventHitEnergies) {
+	  double hitEnergy = (treeEnergy.second / 1000.0) * 
+	    (simulationStepTime / 3600.0);
+	  totalEnergyDeposited += hitEnergy;
+	  auto wasInserted = energyPerTree.insert({treeEnergy.first, hitEnergy});
+	  if (wasInserted.second == false) {
+	    energyPerTree[treeEnergy.first] += hitEnergy;
+	  }
+	}
       }
     }
+    // Don't need to keep old records after analysis performed.
+    recorder.reset();
+
+    std::cout << "Scored Energy [kWh] " << totalEnergyDeposited << std::endl;
+//   std::cout << "from Initial [kWh/m^2] " << totalInitial << std::endl;
+//   std::cout << "on Area [m^2] " << sensitiveArea << std::endl;
+//   std::cout << numberOfLeaves << " leaves constructed, out of " 
+//             << numberOfRejectedLeaves <<std::endl;
+
+    // Clone the settings/results before moving onto next tree so that they can
+    // be saved at the end.
+    std::string treeName =
+      "tree" + std::to_string(currentForestNumber) + "_Job" + std::to_string(parameterSeedOffset);
+    TreeConstructionInterface* clonedTree =
+        (TreeConstructionInterface*)tree->Clone(treeName.c_str());
+
+    // Store additional information in the cloned tree for later analysis
+    clonedTree->setParameter("sensitiveArea", sensitiveArea);
+    clonedTree->setParameter("leafNumber", numberOfLeaves);
+    clonedTree->setParameter("rejectedLeafNumber", numberOfRejectedLeaves);
+    clonedTree->setParameter("structureXSize", structureXSize);
+    clonedTree->setParameter("structureYSize", structureYSize);
+    clonedTree->setParameter("structureZSize", structureZSize);
+    clonedTree->setParameter("totalInitial", totalInitial);
+    clonedTree->setParameter("totalEnergy", totalEnergyDeposited);
+
+    std::string leafName =
+        "leaf" + std::to_string(currentForestNumber) + "_Job" + std::to_string(parameterSeedOffset);
+    LeafConstructionInterface* clonedLeaf =
+        (LeafConstructionInterface*)leaf->Clone(leafName.c_str());
+
+    // Add to the list that will be exported
+    YearlyResult* result = new YearlyResult();
+
+    result->setTree(clonedTree);
+    result->setLeaf(clonedLeaf);
+    exportList.Add(result);
+
+    // Store forest data in TFile
+    int treeGridNumber = std::ceil(std::sqrt(treeNumber));
+    int counter = 0;
+    for (auto& en : energyPerTree) {
+      treeID = en.first;
+      energyReceived = en.second;
+      // next x,y pair
+      xID = treeGridNumber-1;
+      yID = -xID;
+      xID -= treeID % treeGridNumber;
+      yID += counter;
+
+      forestdata->Fill();
+      if (xID<1) counter++;
+    }
+
+    // Move onto next forest
+    currentForestNumber++;
+
   }
-  // Don't need to keep old records after analysis performed.
-  recorder.reset();
-
-  std::cout << "Scored Energy [kWh] " << totalEnergyDeposited << std::endl;
-  std::cout << "from Initial [kWh/m^2] " << totalInitial << std::endl;
-  std::cout << "on Area [m^2] " << sensitiveArea << std::endl;
-  std::cout << numberOfLeaves << " leaves constructed, out of " 
-            << numberOfRejectedLeaves <<std::endl;
-
-  // Draw energy per tree in ROOT 
-  unsigned int treeGridNumber = std::ceil(std::sqrt(treeNumber));
-  TCanvas *c1 = new TCanvas("c1","c1");
-  TGraph2D *dt = new TGraph2D();
-  dt->SetTitle("Scored Energy [kwh] across the forest");
-  Double_t x, y, z;
-  Int_t P = treeGridNumber;
-  Int_t np = treeNumber*200;
-  TRandom *r = new TRandom();
-  // Randomly generate points and find the energy incident on the tree at that
-  // location.
-  for (Int_t N=0; N<np; N++) {
-    x = P*(r->Rndm(N));
-    y = P*(r->Rndm(N));
-    unsigned int indexNumber = int(x)+treeGridNumber*int(y);
-    z = energyPerTree[indexNumber];
-    dt->SetPoint(N,x,y,z);
-  }
-  dt->Draw("colz");
-  resultsFile.WriteTObject(c1);
-
 
   // Job termination
   delete runManager;
+
+  // Write results out to the root file
+  resultsFile.cd();
+  exportList.Write("testedStructures", TObject::kSingleKey);
+  forestdata->Write();
 
   // Close the root file
   resultsFile.Close();

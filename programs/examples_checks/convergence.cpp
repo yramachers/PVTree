@@ -465,7 +465,9 @@ int main(int argc, char** argv) {
     detector->resetGeometry(tree, leaf);
 
     // Re-initialize the detector geometry
-    runManager->GeometryHasBeenModified();
+    //    runManager->GeometryHasBeenModified();
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
     //    G4bool destroyFirst;
     //    runManager->ReinitializeGeometry(destroyFirst = true);
 

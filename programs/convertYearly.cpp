@@ -59,36 +59,44 @@ int main(int argc, char** argv) {
 
   TFile ffout(filename_out.c_str(), "RECREATE");
   ffout.cd();
-  TNtupleD* results = new TNtupleD("treeoutput", "Tree data output",
-                                   "id:area:nleaves:energy:efficiency");
+  TNtupleD* results = new TNtupleD(
+      "treeoutput", "Tree data output",
+      "id:area:nleaves:energy:structureX:structureY:structureZ:eff");
+  //  TNtupleD* results = new TNtupleD("treeoutput", "Tree data output",
+  //                                   "id:area:nleaves:energy:efficiency");
   double id = 0.;
   double area;
   double nleaves;
   double energy;
   double eff;
+  double lai;
+  double sx, sy, sz;
 
   ff.cd();
   double besteff = 0.0;
   while (YearlyResult* currentStructure =
              (YearlyResult*)structureListIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
-    LeafConstructionInterface* clonedL = currentStructure->getLeaf();
-    ;
+
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
-    energy = clonedT->getDoubleParameter("totalEnergy");
-    eff = energy / area;
+    energy = clonedT->getDoubleParameter("totalIntegratedEnergyDeposit");
+    sx = clonedT->getDoubleParameter("structureXSize");
+    sy = clonedT->getDoubleParameter("structureYSize");
+    sz = clonedT->getDoubleParameter("structureZSize");
+    lai = area / (sx * sy);
+
+    eff = energy * lai;
     if (eff > besteff) {  // book best tree
       TreeConstructionInterface* bestT = clonedT;
-      LeafConstructionInterface* bestL = clonedL;
       besteff = eff;
       bestT->print();
-      bestL->print();
       std::cout << "Tree ID: " << id << "; Best efficiency = " << besteff
                 << std::endl;
     }
     ffout.cd();
-    results->Fill(id, area, nleaves, energy, eff);
+    results->Fill(id, area, nleaves, energy, sx, sy, sz, eff);
+    //    results->Fill(id, area, nleaves, energy, eff);
     id++;
     ff.cd();
   }

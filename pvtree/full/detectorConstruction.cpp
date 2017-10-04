@@ -87,6 +87,7 @@ void DetectorConstruction::resetGeometry(
   m_treeSystem = treeSystem;
   m_leafSystem = leafSystem;
   m_treeNumber = treeNumber;
+
   resetGeometry();
 }
 
@@ -138,7 +139,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   m_treeList.clear();
   m_sensitiveSurfaceArea.clear();
   m_leafNumber.clear();
-  m_rejectedLeafNumber.clear();;
+  m_rejectedLeafNumber.clear();
 
   // Clear the candidate leaf list if not already empty
   for (auto& candidateLeafInfo : m_candidateLeaves) {
@@ -155,6 +156,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
   unsigned int treeGridNumber = std::ceil(std::sqrt(m_treeNumber));
   m_shiftedOrigin = m_treeRadius * (treeGridNumber-1) ;
   G4LogicalVolume* tree = createTree();
+  //  std::cout<< "created tree at shifted origin " <<   m_shiftedOrigin << std::endl;
+
   for (unsigned int i=0u; i<treeGridNumber; i++) {
     for (unsigned int j=0u; j<treeGridNumber && m_treesConstructed<m_treeNumber;
          j++) {
@@ -248,10 +251,10 @@ void DetectorConstruction::constructWorld() {
 
 G4LogicalVolume* DetectorConstruction::createTree() {
   // Iterating the LSystem conditions
-  iterateLSystem();
+  //  iterateLSystem();
 
   // Construct the turtles from final L-System
-  generateTurtles();
+  //  generateTurtles();
 
   // find all the parentless turtles (the starting points for recursive builds).
   std::vector<Turtle*> startingTurtles;
@@ -346,6 +349,7 @@ double DetectorConstruction::calculateWorldSize() {
   m_treeRadius = std::sqrt(std::pow(maximumBoundingBoxX, 2.0) + 
                            std::pow(maximumBoundingBoxY, 2.0)) * 
                  treeSpacingFactor;
+  //  std::cout << "Tree radius is " << m_treeRadius << std::endl;
 
   // Applying a temporary scale to the world box size whilst I wait for better
   // construction code to evaluate the
@@ -360,7 +364,7 @@ double DetectorConstruction::calculateWorldSize() {
                                      std::pow(maximumBoundingBoxY, 2.0) +
                                     std::pow(maximumBoundingBoxZ, 2.0)));
 
-  //std::cout << "World radius is " << boundingRadius << std::endl;
+  //  std::cout << "World radius is " << boundingRadius << std::endl;
   return boundingRadius;
 }
 

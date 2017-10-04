@@ -84,6 +84,7 @@ int main(int argc, char** argv) {
   while (YearlyResult* currentStructure =
              (YearlyResult*)structureListIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
+
     area = clonedT->getDoubleParameter("sensitiveArea");
     nleaves = clonedT->getIntegerParameter("leafNumber");
     energy = clonedT->getDoubleParameter("totalEnergy");
