@@ -646,7 +646,7 @@ int main(int argc, char** argv) {
   int id{0};
   double eff, energy, area;
   double lai;
-  double sx, sy, sz;
+  double sx, sy;
   double besteff{0.0};
   while (YearlyResult* currentStructure = (YearlyResult*)scanIterator()) {
     TreeConstructionInterface* clonedT = currentStructure->getTree();
