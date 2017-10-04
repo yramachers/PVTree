@@ -133,7 +133,8 @@ Sun::Sun(LocationDetails deviceLocation)
 
   // Initialize all the time values
   this->m_solarPositionData.timezone =
-      0.0; /* = GMT; DO NOT ADJUST FOR DAYLIGHT SAVINGS TIME. */
+    m_deviceLocation.getTimeZone(); 
+  /* = GMT; DO NOT ADJUST FOR DAYLIGHT SAVINGS TIME. */
   this->m_solarPositionData.year = 2014;
   this->m_solarPositionData.daynum = 0;
   this->m_solarPositionData.hour = 12;

@@ -15,7 +15,7 @@
 class LocationDetails {
  public:
   explicit LocationDetails(std::string inputFilePath);
-  explicit LocationDetails(double longitude, double latitiude, double altitude);
+  explicit LocationDetails(double longitude, double latitiude, double altitude, int tzone);
   LocationDetails(const LocationDetails& original);
   ~LocationDetails();
 
@@ -37,6 +37,12 @@ class LocationDetails {
    */
   double getAltitude() const;
 
+  /*! \brief Get the timezone of the location
+   *
+   * \returns the timezone [-12;12]
+   */
+  int getTimeZone() const;
+
  private:
   /*! \brief Extract the location configuration
    *         from specified input file
@@ -46,6 +52,7 @@ class LocationDetails {
   double m_longitude;
   double m_latitude;
   double m_altitude;
+  int    m_timezone;
 };
 
 #endif  // PVTREE_LOCATION_LOCATION_DETAILS

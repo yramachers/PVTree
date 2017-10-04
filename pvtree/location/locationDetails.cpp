@@ -44,16 +44,18 @@ LocationDetails::LocationDetails(std::string inputFilePath) {
 }
 
 LocationDetails::LocationDetails(double longitude, double latitude,
-                                 double altitude) {
+                                 double altitude, int tzone) {
   m_longitude = longitude;
   m_latitude = latitude;
   m_altitude = altitude;
+  m_timezone = tzone;
 }
 
 LocationDetails::LocationDetails(const LocationDetails& original) {
   m_longitude = original.m_longitude;
   m_latitude = original.m_latitude;
   m_altitude = original.m_altitude;
+  m_timezone = original.m_timezone;
 }
 
 LocationDetails::~LocationDetails() {}
@@ -63,6 +65,8 @@ double LocationDetails::getLongitude() const { return m_longitude; }
 double LocationDetails::getLatitude() const { return m_latitude; }
 
 double LocationDetails::getAltitude() const { return m_altitude; }
+
+int    LocationDetails::getTimeZone() const { return m_timezone; }
 
 void LocationDetails::extractFile(std::string configFilePath) {
   libconfig::Config* cfg = new libconfig::Config;
@@ -97,7 +101,12 @@ void LocationDetails::extractFile(std::string configFilePath) {
     readCount++;
   }
 
-  if (readCount != 3) {
+  if (cfg->exists("timezone")) {
+    cfg->lookupValue("timezone", m_timezone);
+    readCount++;
+  }
+
+  if (readCount != 4) {
     throw std::string(
         "Failed to read correct amount of information for LocationDetails.");
   }

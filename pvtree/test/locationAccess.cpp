@@ -11,11 +11,13 @@ TEST_CASE("location/locationDetails", "[location]") {
   double longitude = deviceLocation.getLongitude();
   double latitude = deviceLocation.getLatitude();
   double altitude = deviceLocation.getAltitude();
+  int    tzone    = deviceLocation.getTimeZone();
 
   int checkPrecision = 10;
   CHECK(almost_equal(longitude, -1.563645, checkPrecision));
   CHECK(almost_equal(latitude, 52.383109, checkPrecision));
   CHECK(almost_equal(altitude, 0.088, checkPrecision));
+  CHECK(tzone == 0);
 
   // Try cloning the location
   LocationDetails copiedLocation(deviceLocation);
@@ -27,11 +29,13 @@ TEST_CASE("location/locationDetails", "[location]") {
                      checkPrecision));
   CHECK(almost_equal(deviceLocation.getAltitude(), copiedLocation.getAltitude(),
                      checkPrecision));
+  CHECK(deviceLocation.getTimeZone() == copiedLocation.getTimeZone());
 
   // Try constructor which uses longitude, latitude and altitude
   LocationDetails specificLocation(deviceLocation.getLongitude(),
                                    deviceLocation.getLatitude(),
-                                   deviceLocation.getAltitude());
+                                   deviceLocation.getAltitude(),
+				   deviceLocation.getTimeZone());
 
   // Are the settings identical?
   CHECK(almost_equal(deviceLocation.getLongitude(),
@@ -40,4 +44,5 @@ TEST_CASE("location/locationDetails", "[location]") {
                      specificLocation.getLatitude(), checkPrecision));
   CHECK(almost_equal(deviceLocation.getAltitude(),
                      specificLocation.getAltitude(), checkPrecision));
+  CHECK(deviceLocation.getTimeZone() == specificLocation.getTimeZone());
 }
