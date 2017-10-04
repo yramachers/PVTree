@@ -151,8 +151,9 @@ int main(int argc, char** argv) {
 
     // Re-initialize the detector geometry
     //    G4bool destroyFirst;
-    //    runManager->ReinitializeGeometry(destroyFirst = true);
-    runManager->GeometryHasBeenModified();
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
+    //    runManager->GeometryHasBeenModified();
 
     // Start a simulation run
     stepStart = std::chrono::system_clock::now();

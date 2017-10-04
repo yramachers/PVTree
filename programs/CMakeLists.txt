@@ -9,7 +9,9 @@ set(PVTREE_PROGRAMS
   convertYearly
   bestTreeVisualizer
   visualiseBestYearly
+  singleForest
   forestScan
+  yearlyForestScan
   )
 
 foreach(_pv_program ${PVTREE_PROGRAMS})
