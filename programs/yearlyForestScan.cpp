@@ -382,12 +382,12 @@ int main(int argc, char** argv) {
 
       // Integrate over the representative day
       // Simulate at all time points with the same number of events...
+      int dummytime = 0;
       for (unsigned int timeIndex = 0; timeIndex < simulationTimeSegments;
            timeIndex++) {
         // Set the time to the mid-point of the day-time segment
-        sun.setTime((int)(simulationStartingTime +
-                          timeIndex * simulationStepTime +
-                          simulationStepTime / 2.0));
+	dummytime = (int)simulationStartingTime + (int)timeIndex * simulationStepTime + floor(simulationStepTime / 2.0);
+        sun.setTime(dummytime);
 
 	
 	// Run simulation with a single event per time point
