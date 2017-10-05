@@ -57,21 +57,21 @@
 
 void showHelp() {
   std::cout << "yearlyTreeScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'stump'"
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'monopodial'"
             << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'planar'"
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'"
             << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 10" << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER> :\t default 50" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 12" << std::endl;
   std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
   std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --parameterSeed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME> :\t default ''" << std::endl;
   std::cout << "\t --startDate <INTEGER> :\t default 1/1/2014" << std::endl;
   std::cout << "\t --endDate <INTEGER> :\t default 1/1/2015" << std::endl;
-  std::cout << "\t --yearSegments <INTEGER> :\t default 10" << std::endl;
-  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0"
+  std::cout << "\t --yearSegments <INTEGER> :\t default 12" << std::endl;
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
             << std::endl;
   std::cout << "\t --outputFileName <ROOT FILENAME> : \t default "
                "'yearlyTreeScan.results.root'" << std::endl;
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
   ops >> GetOpt::Option("treeNumber", treeNumber, 10u);
   ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 25u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 12u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);

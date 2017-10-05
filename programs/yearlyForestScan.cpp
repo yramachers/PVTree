@@ -60,7 +60,7 @@ void showHelp() {
   std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'" << std::endl;
   std::cout << "\t --simulations <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --treeNumber <INTEGER> :\t default 9" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER> :\t default 25" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 12" << std::endl;
   std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
   std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --parameterSeed <INTEGER> :\t default 1" << std::endl;
@@ -160,7 +160,7 @@ int main(int argc, char** argv) {
   ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
   ops >> GetOpt::Option("simulations", simulations, 1u);
   ops >> GetOpt::Option("treeNumber", treeNumber, 9u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 25u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 12u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeed", parameterSeed, 1);

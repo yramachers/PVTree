@@ -55,15 +55,15 @@
 
 void showHelp() {
   std::cout << "treeScan help" << std::endl;
-  std::cout << "\t -t, --tree <TREE TYPE NAME>" << std::endl;
-  std::cout << "\t -l, --leaf <LEAF TYPE NAME>" << std::endl;
-  std::cout << "\t --treeNumber <INTEGER>" << std::endl;
-  std::cout << "\t --timeSegments <INTEGER>" << std::endl;
-  std::cout << "\t --photonNumber <INTEGER>" << std::endl;
-  std::cout << "\t --geant4Seed <INTEGER>" << std::endl;
-  std::cout << "\t --parameterSeedOffset <INTEGER>" << std::endl;
+  std::cout << "\t -t, --tree <TREE TYPE NAME> :\t default 'monopodial'" << std::endl;
+  std::cout << "\t -l, --leaf <LEAF TYPE NAME> :\t default 'cordate'" << std::endl;
+  std::cout << "\t --treeNumber <INTEGER> :\t default 10" << std::endl;
+  std::cout << "\t --timeSegments <INTEGER> :\t default 12" << std::endl;
+  std::cout << "\t --photonNumber <INTEGER> :\t default 500" << std::endl;
+  std::cout << "\t --geant4Seed <INTEGER> :\t default 1" << std::endl;
+  std::cout << "\t --parameterSeedOffset <INTEGER> :\t default 1" << std::endl;
   std::cout << "\t --inputTreeFile <ROOT FILENAME>" << std::endl;
-  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 0.0"
+  std::cout << "\t --minimumSensitiveArea <DOUBLE> [m^2] :\t default 1.0"
             << std::endl;
   std::cout << "\t --maximumTreeTrials <INTEGER> :\t default 1000" << std::endl;
 }
@@ -105,15 +105,15 @@ int main(int argc, char** argv) {
     return 0;
   }
 
-  ops >> GetOpt::Option('t', "tree", treeType, "stump");
-  ops >> GetOpt::Option('l', "leaf", leafType, "planar");
-  ops >> GetOpt::Option("treeNumber", treeNumber, 100u);
-  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 50u);
+  ops >> GetOpt::Option('t', "tree", treeType, "monopodial");
+  ops >> GetOpt::Option('l', "leaf", leafType, "cordate");
+  ops >> GetOpt::Option("treeNumber", treeNumber, 10u);
+  ops >> GetOpt::Option("timeSegments", simulationTimeSegments, 12u);
   ops >> GetOpt::Option("photonNumber", photonNumberPerTimeSegment, 500u);
   ops >> GetOpt::Option("geant4Seed", geant4Seed, 1);
   ops >> GetOpt::Option("parameterSeedOffset", parameterSeedOffset, 1);
   ops >> GetOpt::Option("inputTreeFile", inputTreeFileName, "");
-  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 0.0);
+  ops >> GetOpt::Option("minimumSensitiveArea", minimumSensitiveArea, 1.0);
   ops >> GetOpt::Option("maximumTreeTrials", maximumTreeTrials, 1000u);
 
   // Report input parameters
