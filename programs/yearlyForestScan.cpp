@@ -181,8 +181,8 @@ int main(int argc, char** argv) {
   // Report input parameters
   std::cout << "Tree type = " << treeType << std::endl;
   std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Using the parameter random number seed offset = "
-              << parameterSeed << std::endl;
+  std::cout << "Using the parameter random number seed offset = "
+	    << parameterSeed << std::endl;
   std::cout << "Generating " << treeNumber << " trees per forest." << std::endl;
   std::cout << "in " << simulations << " simulated forests." << std::endl;
 
@@ -230,6 +230,7 @@ int main(int argc, char** argv) {
   // Define the sun setting, just an arbitrary date for now
   // Perform the simulation between the sunrise and sunset.
   Sun sun(deviceLocation);
+  sun.setClimateOption(Sun::CLOUDCOVER, false);  // Ignore clouds!
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
