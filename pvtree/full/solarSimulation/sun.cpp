@@ -83,6 +83,8 @@ void Sun::updateEnvironment() {
         ClimateFactory::instance()->getClimate()->getInterpolatedValue(
             "Total cloud cover", currentTime);
     SpectrumFactory::instance()->setCloudCover(currentCloudCover);
+//     std::cout << "cloud cover fraction reducing spectrum bins: " 
+// 	      << currentCloudCover << std::endl;
   }
 
   this->m_recalculateEnvironment = false;
@@ -107,6 +109,8 @@ void Sun::updateSolarPosition() {
   }
 
   this->m_recalculateSolarPosition = false;
+//   std::cout << "update SUN: elevation angle: " << this->getElevationAngle() * (180.0 / M_PI) 
+// 	    << " azimuth angle: " << this->getAzimuthalAngle() * (180.0 / M_PI) << std::endl;
 
   // Update spectrum factory to use this new position
   SpectrumFactory* factory = SpectrumFactory::instance();

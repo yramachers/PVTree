@@ -308,7 +308,7 @@ void MaterialFactory::parseConfigurationForMaterial(std::string materialName) {
 
       materialPropertyTable->AddProperty(propertyName.c_str(), propertyVector);
     }
-
+    //    materialPropertyTable->DumpTable();
     material->SetMaterialPropertiesTable(materialPropertyTable);
   }
 

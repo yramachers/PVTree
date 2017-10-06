@@ -113,8 +113,8 @@ int main(int argc, char** argv) {
   // Report input parameters
   std::cout << "Tree type = " << treeType << std::endl;
   std::cout << "Leaf type = " << leafType << std::endl;
-    std::cout << "Using the parameter random number seed offset = "
-              << parameterSeedOffset << std::endl;
+  std::cout << "Using the parameter random number seed offset = "
+	    << parameterSeedOffset << std::endl;
   std::cout << "Generating " << treeNumber << " trees per forest." << std::endl;
   std::cout << "in " << simulations << " simulated forests." << std::endl;
 
@@ -154,6 +154,8 @@ int main(int argc, char** argv) {
   // Define the sun setting, just an arbitrary date for now
   // Perform the simulation between the sunrise and sunset.
   Sun sun(deviceLocation);
+  sun.setClimateOption(Sun::CLOUDCOVER, false);  // Ignore clouds!
+
   //  sun.setDate(190, 2014); // summer
   sun.setDate(19, 2014);  // winter
   int simulationStartingTime = sun.getSunriseTime() * 60;  // s
@@ -163,7 +165,7 @@ int main(int argc, char** argv) {
       simulationTimeSegments;
 
   std::cout << "Simulation time considered between " << simulationStartingTime
-            << "(s) and " << simulationEndingTime << "(s)." << std::endl;
+            << "[s] and " << simulationEndingTime << "[s] " << std::endl;
 
   // Set the default materials to be used
   MaterialFactory::instance()->addConfigurationFile("defaults-tree.cfg");
@@ -288,6 +290,8 @@ int main(int argc, char** argv) {
         sun.getSpectrum()->getHistogram("Difuse_horizn_irradiance");
       totalNormal = normalIrradianceHistogram->Integral("width");    // [W/m^2]
       totalDiffuse = diffuseIrradianceHistogram->Integral("width");  // [W/m^2]
+//       std::cout << "sun set time " << dummytime << " normal irradiance " 
+// 		<< totalNormal << " diffuse " << totalDiffuse << std::endl;
       totalInitial +=
         (totalNormal + totalDiffuse) / 1000.0 *
         (simulationStepTime / 3600.0);  // sum over all time slices
@@ -325,14 +329,21 @@ int main(int argc, char** argv) {
 	}
       }
     }
-    // Don't need to keep old records after analysis performed.
-    recorder.reset();
-
     std::cout << "Scored Energy [kWh] " << totalEnergyDeposited << std::endl;
-//   std::cout << "from Initial [kWh/m^2] " << totalInitial << std::endl;
-//   std::cout << "on Area [m^2] " << sensitiveArea << std::endl;
+    //    std::cout << "from Initial [kWh/m^2] " << totalInitial << std::endl;
+    //    std::cout << "on Area [m^2] " << sensitiveArea << std::endl;
+//     int nhits = 0;
+//     std::vector<std::vector<long> > hitcontainer = recorder.getHitCounts();
+//     for (std::vector<long> hc : hitcontainer) 
+//       for (long counter : hc)
+// 	nhits += counter;
+//     std::cout << "total number of hits on leaves " << nhits << std::endl;
+
 //   std::cout << numberOfLeaves << " leaves constructed, out of " 
 //             << numberOfRejectedLeaves <<std::endl;
+
+    // Don't need to keep old records after analysis performed.
+    recorder.reset();
 
     // Clone the settings/results before moving onto next tree so that they can
     // be saved at the end.

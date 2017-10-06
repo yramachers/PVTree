@@ -269,8 +269,14 @@ G4LogicalVolume* DetectorConstruction::createTree() {
                              m_treeRadius, m_structureZSize*meter*2.0);
   G4Material* airMaterial =
       MaterialFactory::instance()->getMaterial(m_airMaterialName);
+  G4OpticalSurface* treeboxOpticalSurface =
+      MaterialFactory::instance()->getOpticalSurface(m_airMaterialName);
+
   G4LogicalVolume* treeLogicalVolume = new G4LogicalVolume(treeBox, airMaterial, 
                                                            "treeLogicalVolume");
+  new G4LogicalSkinSurface("treeBoxSkin", treeLogicalVolume,
+                           treeboxOpticalSurface);
+
   // Tree box needs to be transparent so that we can see the trees
   G4VisAttributes treeVisualAttributes;
   treeVisualAttributes.SetVisibility(false);

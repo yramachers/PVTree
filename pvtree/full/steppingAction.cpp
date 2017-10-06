@@ -89,10 +89,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
       }
 
       m_expectedNextStatus = Undefined;
+      //      G4cout << "Boundary status " << boundaryStatus << G4endl;
 
       switch (boundaryStatus) {
         case Absorption:
-          // 	G4cout << "Absorption by " << thePostPV->GetName() << G4endl;
+	  //	  G4cout << "Absorption by " << thePostPV->GetName() << G4endl;
           break;
         case Detection: {
           // 	  G4cout << "Detection by " << thePostPV->GetName() << G4endl;
@@ -113,14 +114,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step) {
           // 	m_expectedNextStatus = StepTooSmall;
           break;
         case Transmission:
-          // 	G4cout << "Transmission by " << thePostPV->GetName() << G4endl;
+	  //	  G4cout << "Transmission by " << thePostPV->GetName() << G4endl;
           break;
         case Undefined:
           // 	G4cout << "Undefined by " << thePostPV->GetName() << G4endl;
           break;
         default:
-          // 	G4cout << "Something else by " << thePostPV->GetName() <<
-          // G4endl;
+// 	  G4cout << "Something else by " << thePostPV->GetName() <<
+// 	    G4endl;
           break;
       }
     }

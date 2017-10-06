@@ -176,6 +176,8 @@ int main(int argc, char** argv) {
   // Define the sun setting, just an arbitrary date for now
   // Perform the simulation between the sunrise and sunset.
   Sun sun(deviceLocation);
+  sun.setClimateOption(Sun::CLOUDCOVER, false);  // Ignore clouds!
+
   //  sun.setDate(190, 2014); // summer
   sun.setDate(19, 2014);  // winter
   int simulationStartingTime = sun.getSunriseTime() * 60;  // s
