@@ -122,9 +122,11 @@ TEST_CASE("simulation/geant", "[simulation]") {
   
   // Re-initialize the detector geometry
   //  G4bool destroyFirst;
-  //  runManager->ReinitializeGeometry(true, false);
+  runManager->ReinitializeGeometry(true, false);
+  runManager->BeamOn(0); // fake start to build geometry
+
   //  runManager->DefineWorldVolume(detector->Construct());  // reconstruction
-  runManager->GeometryHasBeenModified();
+  //  runManager->GeometryHasBeenModified();
 //   std::cout << "Got run manager reset and re-initialized." << std::endl;
   
   // Run simulation with a single event per time point
@@ -135,29 +137,29 @@ TEST_CASE("simulation/geant", "[simulation]") {
   // Get the total surface area which is "sensitive" from current tested
   // detector.
   double sensitiveArea = detector->getSensitiveSurfaceArea();
-//   std::cout << "Got sensitive area: " << sensitiveArea << std::endl;
+  //  std::cout << "Got sensitive area: " << sensitiveArea << std::endl;
 
   int checkPrecision = 10;
-  CHECK(almost_equal((float)sensitiveArea, 0.235914f, checkPrecision));
+  CHECK(almost_equal((float)sensitiveArea, 0.107676f, checkPrecision));
 
   // Get the number of leaves
   int numberOfLeaves = detector->getNumberOfLeaves();
   int numberOfRejectedLeaves = detector->getNumberOfRejectedLeaves();
 
-  CHECK(numberOfLeaves == 31);
-  CHECK(numberOfRejectedLeaves == 113);
+  CHECK(numberOfLeaves == 8);
+  CHECK(numberOfRejectedLeaves == 308);
 
   // Get size of the axially alligned bounding box structure along the axis
   double structureXSize = detector->getXSize();
   double structureYSize = detector->getYSize();
   double structureZSize = detector->getZSize();
-//   std::cout << "structure size X: " << structureXSize << std::endl;
-//   std::cout << "structure size Y: " << structureYSize << std::endl;
-//   std::cout << "structure size Z: " << structureZSize << std::endl;
+  //  std::cout << "structure size X: " << structureXSize << std::endl;
+  //  std::cout << "structure size Y: " << structureYSize << std::endl;
+  //  std::cout << "structure size Z: " << structureZSize << std::endl;
 
-  CHECK(almost_equal((float)structureXSize, 1.40908f, checkPrecision));
-  CHECK(almost_equal((float)structureYSize, 1.01907f, checkPrecision));
-  CHECK(almost_equal((float)structureZSize, 3.02026f, checkPrecision));
+  CHECK(almost_equal((float)structureXSize, 0.592576f, checkPrecision));
+  CHECK(almost_equal((float)structureYSize, 0.820069f, checkPrecision));
+  CHECK(almost_equal((float)structureZSize, 2.03961f, checkPrecision));
 
   double totalEnergyDeposited = 0.0;
   long totalPhotonCounts = 0;
@@ -183,10 +185,10 @@ TEST_CASE("simulation/geant", "[simulation]") {
   }
 
   CHECK(
-      almost_equal((float)totalEnergyDeposited, 0.00277149f, checkPrecision));
+      almost_equal((float)totalEnergyDeposited, 0.0f, checkPrecision));
   CHECK(totalPhotonCounts == photonNumberPerEvent);
-  CHECK(totalHitCounts == 1);
-  //std::cout << "Energy Deposited: " << totalEnergyDeposited << std::endl;
+  CHECK(totalHitCounts == 0);
+  //  std::cout << "Energy Deposited: " << totalEnergyDeposited << std::endl;
 
   // Clear results
   recorder.reset();
@@ -207,9 +209,11 @@ TEST_CASE("simulation/geant", "[simulation]") {
     leaf->randomizeParameters(lSystemSeed + treeTrialNumber);
 
     detector->resetGeometry(tree, leaf);
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
 
     // Apply pre-selection to the tree after manual construction.
-    detector->Construct();
+    //    detector->Construct();
 
     double minimumArea = 0.5;  // m
     if (detector->getSensitiveSurfaceArea() < minimumArea) {
@@ -228,20 +232,27 @@ TEST_CASE("simulation/geant", "[simulation]") {
 
   // Run simulation using the different tree types
   std::vector<std::string> availableTreeTypes = {
-      "helical", "monopodial", "stochastic", "stump", "sympodial", "ternary"};
+      "helical", "monopodial", "stump", "sympodial"};
 
   std::vector<float> received_energy = {
-    6.03921, 8.8107, 7.52791, 3.76395, 8.8107, 7.03168};
+    0.607917f, 0.826579f, 1.10628f, 0.0f};
 
   int counter = 0;
+  checkPrecision = 100;
   for (auto currentTreeType : availableTreeTypes) {
     tree = TreeFactory::instance()->getTree(currentTreeType);
+
+    // Allow the geometry to be rebuilt with new settings
+    tree->randomizeParameters(lSystemSeed + counter);
+    leaf->randomizeParameters(lSystemSeed + counter);
     detector->resetGeometry(tree, leaf);
+    runManager->ReinitializeGeometry(true, false);         // clean up
+    runManager->BeamOn(0); // fake start to build geometry
 
     // Re-initialize the detector geometry
     // runManager->ReinitializeGeometry(true, false);         // clean up
     // runManager->DefineWorldVolume(detector->Construct());  // reconstruction
-    runManager->GeometryHasBeenModified();
+    //    runManager->GeometryHasBeenModified();
     //    runManager->ReinitializeGeometry(destroyFirst = true);
 
     // Run the simulation
@@ -265,97 +276,13 @@ TEST_CASE("simulation/geant", "[simulation]") {
     }
     CHECK(
 	almost_equal((float)totalEnergyDeposited, received_energy[counter], checkPrecision));
-    //std::cout << "Energy: " << totalEnergyDeposited << " Expected: " << received_energy[counter] << std::endl;
+    //    std::cout << "Energy: " << totalEnergyDeposited << " Expected: " << received_energy[counter] << std::endl;
     //std::cout << "Hits: " << totalHitCounts << " / " << totalPhotonCounts << std::endl;
     // Clear up any results
     recorder.reset();
     counter++;
   }
 
-  // Check that single leaves can be simulated
-  std::vector<std::string> availableLeafTypes = {"simple", "cordate", "rose",
-                                                 "planar"};
-  
-  received_energy.clear();
-  received_energy = {1.4887, 8.31447, 11.5822, 9.30693};
-
-  // Default turtle at origin
-  Turtle* initialTurtle = new Turtle();
-
-  counter = 0;
-  for (auto currentLeafType : availableLeafTypes) {
-    // Re-initialize the detector geometry
-    // runManager->ReinitializeGeometry(true, false);         // clean up
-    //    runManager->ReinitializeGeometry(destroyFirst = true);
-
-    leaf = LeafFactory::instance()->getLeaf(currentLeafType);
-    LayeredLeafConstruction* leafDetector =
-        new LayeredLeafConstruction(leaf, initialTurtle);
-
-    // Switch to the new detector
-    // runManager->DefineWorldVolume(leafDetector->Construct());  // reconstruction
-    runManager->GeometryHasBeenModified();
-    //    runManager->SetUserInitialization(leafDetector);
-
-    // Run the simulation
-    runManager->BeamOn(eventNumber);
-
-    // check for total energy deposited
-    totalEnergyDeposited = 0.0;
-    totalPhotonCounts = 0;
-    totalHitCounts = 0;
-    hitEnergies = recorder.getSummedHitEnergies();
-    hitCounts = recorder.getHitCounts();
-    photonCounts = recorder.getPhotonCounts();
-    for (double eventHitEnergy : hitEnergies[0]) {
-      totalEnergyDeposited += eventHitEnergy;
-    }
-    for (long photonCount : photonCounts[0]) {
-    totalPhotonCounts += photonCount;
-    }
-    for (long hitCount : hitCounts[0]) {
-      totalHitCounts += hitCount;
-    }
-    CHECK(
-	almost_equal((float)totalEnergyDeposited, received_energy[counter], checkPrecision));
-    //std::cout << "Energy: " << totalEnergyDeposited << " Expected: " << received_energy[counter] << std::endl;
-    //std::cout << "Hits: " << totalHitCounts << " / " << totalPhotonCounts << std::endl;
-    // Clear up any results
-    recorder.reset();
-    counter++;
-  }
-
-  // Repeat for alternative leaf constructor
-  for (auto currentLeafType : availableLeafTypes) {
-    // Re-initialize the detector geometry
-    // runManager->ReinitializeGeometry(true, false);         // clean up
-    //    runManager->ReinitializeGeometry(destroyFirst = true);
-
-    leaf = LeafFactory::instance()->getLeaf(currentLeafType);
-    LeafConstruction* leafDetector = new LeafConstruction(leaf, initialTurtle);
-
-    // Switch to the new detector
-    // runManager->DefineWorldVolume(leafDetector->Construct());  // reconstruction
-    runManager->GeometryHasBeenModified();
-    //    runManager->SetUserInitialization(leafDetector);
-
-    // Run the simulation
-    runManager->BeamOn(eventNumber);
-
-    // Clear up any results
-    recorder.reset();
-  }
-
-  // Running again but now with a dummy recorder.
-  DummyRecorder dummyRecorder;
-
-  runManager->SetUserInitialization(new ActionInitialization(
-      &dummyRecorder,
-      [&photonNumberPerEvent, &sun ]() -> G4VUserPrimaryGeneratorAction *
-      { return new PrimaryGeneratorAction(photonNumberPerEvent, &sun); }));
-
-  // Run with a single event
-  runManager->BeamOn(eventNumber);
 
   // Clean up
   delete runManager;
