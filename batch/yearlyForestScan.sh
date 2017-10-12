@@ -4,19 +4,20 @@ startDirectory=$1
 jobName=$2
 outputFileDirectory=$3
 
-#Parameters for yearlyTreeScan job
+#Parameters for yearlyForestScan job
 treeType=$4
 leafType=$5
-treesPerJob=$6
-maximumTreeTrials=$7
-timeSegments=$8
-photonsPerTimeSegment=$9
-geant4SeedOffset=${10}
-parameterSeedOffset=${11}
-startDate=${12}
-endDate=${13}
-yearSegments=${14}
-minimumSensitiveArea=${15}
+nsimulations=$6
+treesPerForest=$7
+maximumTreeTrials=$8
+timeSegments=$9
+photonsPerTimeSegment=${10}
+geant4SeedOffset=${11}
+parameterSeedOffset=${12}
+startDate=${13}
+endDate=${14}
+yearSegments=${15}
+minimumSensitiveArea=${16}
 
 
 #Now using job arrays so get index from env
@@ -30,7 +31,7 @@ mkdir -p ${workingDir}
 cd ${workingDir}
 
 #Copy important files
-cp -v ${startDirectory}/../../Install/bin/pvtree-yearlyTreeScan .
+cp -v ${startDirectory}/../../Install/bin/pvtree-yearlyForestScan .
 
 #Is everything here?
 ls -la
@@ -39,9 +40,10 @@ ls -la
 currentGeant4Seed=$[geant4SeedOffset+jobCounter]
 currentParameterSeed=$[parameterSeedOffset+jobCounter]
 
-./pvtree-yearlyTreeScan --tree ${treeType} \
+./pvtree-yearlyForestScan --tree ${treeType} \
     --leaf ${leafType} \
-    --treeNumber ${treesPerJob} \
+    --simulations ${nsimulations} \
+    --treeNumber ${treesPerForest} \
     --timeSegments ${timeSegments} \
     --photonNumber ${photonsPerTimeSegment} \
     --geant4Seed ${currentGeant4Seed} \
@@ -49,14 +51,14 @@ currentParameterSeed=$[parameterSeedOffset+jobCounter]
     --startDate ${startDate} \
     --endDate ${endDate} \
     --yearSegments ${yearSegments} \
-    --outputFileName "yearlyTreeScan.results.root" \
+    --outputFileName "yearlyForestScan.results.root" \
     --minimumSensitiveArea ${minimumSensitiveArea} \
     --maximumTreeTrials ${maximumTreeTrials}
 
 
 #Copy the output root file
-if [ -f yearlyTreeScan.results.root ]; then
-    cp -v yearlyTreeScan.results.root ${outputFileDirectory}/yearlyTreeScan.results.${jobCounter}.root
+if [ -f yearlyForestScan.results.root ]; then
+    cp -v yearlyForestScan.results.root ${outputFileDirectory}/yearlyForestScan.results.${jobCounter}.root
 else
     echo "No analysis output to save, so job FAILED!" 
 fi
