@@ -2,6 +2,7 @@
 set(PVTREE_PROGRAMS
   basicVisualize
   basicSimulate
+  basicForestSim
   treeScan
   bestyearlyEnergyPlotter
   yearlyTreeScan
