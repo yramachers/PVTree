@@ -24,7 +24,7 @@ mkdir -p ${workingDir}
 cd ${workingDir}
 
 #Copy important files
-cp -v ${startDirectory}/../../Install/bin/pvtree-forestScan .
+cp -v ${startDirectory}/../build/BuildProducts/bin/pvtree-forestScan .
 
 #Is everything here?
 ls -la

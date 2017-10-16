@@ -30,7 +30,7 @@ mkdir -p ${workingDir}
 cd ${workingDir}
 
 #Copy important files
-cp -v ${startDirectory}/../../Install/bin/pvtree-yearlyTreeScan .
+cp -v ${startDirectory}/../build/BuildProducts/bin/pvtree-yearlyTreeScan .
 
 #Is everything here?
 ls -la
