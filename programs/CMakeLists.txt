@@ -3,6 +3,7 @@ set(PVTREE_PROGRAMS
   basicVisualize
   basicSimulate
   basicForestSim
+  batchconverter
   treeScan
   bestyearlyEnergyPlotter
   yearlyTreeScan
