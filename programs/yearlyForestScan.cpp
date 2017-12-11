@@ -219,6 +219,8 @@ int main(int argc, char** argv) {
 
   // Get the device location details
   LocationDetails deviceLocation("location.cfg");
+  std::cout << "Location set to Longitude: " << deviceLocation.getLongitude() 
+	    << " and Latitude: " << deviceLocation.getLatitude() << std::endl;
 
   // Set the altitude of the spectrum factory using location details
   SpectrumFactory::instance()->setAltitude(deviceLocation.getAltitude());
