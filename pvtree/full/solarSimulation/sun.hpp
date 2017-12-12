@@ -61,7 +61,7 @@ class Sun {
                                                         {PRESSURE, true},
                                                         {COLUMNWATER, true},
                                                         {COLUMNOZONE, true},
-                                                        {CLOUDCOVER, true}};
+                                                        {CLOUDCOVER, false}};
 
   double m_albedo;
 

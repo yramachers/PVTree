@@ -83,8 +83,8 @@ void Sun::updateEnvironment() {
         ClimateFactory::instance()->getClimate()->getInterpolatedValue(
             "Total cloud cover", currentTime);
     SpectrumFactory::instance()->setCloudCover(currentCloudCover);
-//     std::cout << "cloud cover fraction reducing spectrum bins: " 
-// 	      << currentCloudCover << std::endl;
+    //    std::cout << "cloud cover fraction reducing spectrum bins: " 
+    // 	      << currentCloudCover << std::endl;
   }
 
   this->m_recalculateEnvironment = false;
