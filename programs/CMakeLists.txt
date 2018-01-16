@@ -11,6 +11,7 @@ set(PVTREE_PROGRAMS
   convertYearly
   bestTreeVisualizer
   visualiseBestYearly
+  visualiseBestForest
   singleForest
   forestScan
   yearlyForestScan
